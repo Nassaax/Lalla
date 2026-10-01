@@ -312,6 +312,230 @@
   });
 
   // ---------------------------------------------------------------------------
+  // Pages publiques (le FR des textes statiques est lu dans le HTML)
+  // ---------------------------------------------------------------------------
+  ajouter('fr', {
+    'cat.du': 'Du', 'cat.au': 'Au',
+    'cat.f_categorie': 'Catégorie', 'cat.f_occasion': 'Occasion', 'cat.f_date': 'Disponible pour vos dates', 'cat.f_ville': 'Ville',
+    'cat.f_mesures': 'Vos mesures', 'cat.f_couleur': 'Couleur', 'cat.f_budget': 'Budget', 'cat.f_vendeuse': 'Proposée par',
+    'cat.budget_max': 'Prix maximum (€)', 'cat.recherche': 'Rechercher', 'cat.recherche_ph': 'Velours, brodé main, sfifa…',
+    'cat.toutes': 'Toutes', 'cat.toutes_tailles': 'Toutes', 'cat.toutes_villes': 'Toutes', 'cat.enfant': 'Enfant',
+    'cat.mesures_aide': 'Nous affichons les pièces dont les mesures conviennent, sans retouche (aisance de 0 à 8 cm).',
+    'cat.mes_mesures': 'Utiliser mes mensurations enregistrées',
+    'cat.mesures_absentes': 'Enregistrez d\'abord vos mensurations dans votre espace.',
+    'cat.mesures_appliquees': 'Vos mensurations sont appliquées.',
+    'cat.reinitialiser': 'Réinitialiser',
+    'cat.resultat': '{n} pièce', 'cat.resultats': '{n} pièces',
+    'index.sel.vide': 'Les premières pièces arrivent très bientôt.',
+    'index.simu.note': 'Estimation : prix × locations × (1 − commission de {pct} %). Hors frais de pressing, reversés en plus.',
+    'tenue.introuvable': 'Cette tenue n\'est pas (ou plus) disponible.',
+    'tenue.fil': 'Fil d\'Ariane',
+    'tenue.photos': 'Photos de la tenue',
+    'tenue.photo_face': 'vue de face', 'tenue.photo_dos': 'vue de dos', 'tenue.photo_broderie': 'détail de la broderie',
+    'tenue.photo_portee': 'tenue portée', 'tenue.photo_autre': 'autre vue',
+    'tenue.loupe_aide': 'Survolez ou appuyez longuement pour observer les broderies.',
+    'tenue.par_location': 'la location, de {min} à {max} jours',
+    'tenue.main_propre': 'Remise en main propre',
+    'tenue.envoi': 'Envoi assuré (+{prix})',
+    'tenue.essayage_possible': 'Essayage possible',
+    'tenue.couleurs': 'Couleurs',
+    'tenue.mesures': 'Mesures de la tenue',
+    'tenue.retouche_titre': 'Aucune retouche autorisée.',
+    'tenue.retouche_texte': 'Comparez ces mesures aux vôtres : la tenue doit être rendue dans son état d\'origine.',
+    'tenue.reserver_titre': 'Réserver',
+    'tenue.reserver': 'Réserver',
+    'tenue.date_evenement': 'Date de l\'événement',
+    'tenue.date_debut': 'Récupération',
+    'tenue.date_fin': 'Retour',
+    'tenue.mode_remise': 'Mode de remise',
+    'tenue.choisir_dates': 'Choisissez vos dates pour vérifier la disponibilité.',
+    'tenue.verification': 'Vérification…',
+    'tenue.disponible': 'Disponible à ces dates',
+    'tenue.indisponible': 'Indisponible à ces dates (pressing compris). Essayez d\'autres dates.',
+    'tenue.dates_incoherentes': 'L\'événement doit se situer entre la récupération et le retour.',
+    'tenue.duree_hors': 'Durée de location : de {min} à {max} jours.',
+    'tenue.r_location': 'Location', 'tenue.r_pressing': 'Pressing', 'tenue.r_envoi': 'Envoi assuré', 'tenue.r_service': 'Frais de service',
+    'tenue.r_total': 'Total estimé', 'tenue.r_caution': 'Caution (empreinte, non débitée)',
+    'tenue.r_note': 'Vous ne payez qu\'après l\'acceptation de la fournisseuse.',
+    'tenue.ajouter_panier': 'Envoyer une demande',
+    'tenue.deja_panier': 'Dans le panier',
+    'tenue.ajoute': 'Ajoutée au panier',
+    'tenue.dates_panier_maj': 'Les dates de votre panier ont été mises à jour.',
+    'tenue.essayer': 'Demander un essayage ({prix})',
+    'tenue.showroom_lien': 'Ou essayer lors d\'un showroom',
+    'tenue.whatsapp': 'Partager sur WhatsApp',
+    'tenue.partage_texte': 'Regarde cette tenue : {titre}',
+    'tenue.seo_titre': '{titre} — location {categorie} {ville} | {brand}',
+    'tenue.seo_desc': 'Louez {titre} à {ville} : mesures détaillées, photos des broderies, caution encadrée.',
+    'look.ajouter': 'Ajouter',
+    'look.ensemble': 'Pensé pour cette tenue',
+    'look.meme': 'Même fournisseuse',
+    'look.dates_dabord': 'Choisissez d\'abord vos dates.',
+    'essai.titre': 'Demander un essayage',
+    'essai.intro': 'Proposez un créneau à la fournisseuse. Les frais d\'essayage ({prix}) sont déduits de votre location si vous réservez dans les 30 jours, et remboursés si l\'essayage est refusé.',
+    'essai.creneau': 'Créneau souhaité',
+    'essai.message': 'Message',
+    'essai.payer': 'Payer {prix} et envoyer',
+    'essai.envoye': 'Demande d\'essayage envoyée.',
+    'showroom.titre': 'Showrooms',
+    'showroom.intro': 'Essayez plusieurs pièces au même endroit, lors d\'une journée showroom.',
+    'showroom.aucun': 'Aucun showroom programmé pour le moment.',
+    'showroom.inscrire': 'M\'inscrire',
+    'showroom.inscrite': 'Inscription confirmée. Un email récapitulatif vous a été envoyé.',
+    'boutique.introuvable': 'Cette boutique est introuvable.',
+    'boutique.pieces': 'pièces',
+    'boutique.avis': '{n} avis',
+    'boutique.depuis': 'membre depuis',
+    'boutique.collection': 'La collection',
+    'boutique.vide': 'Aucune pièce en ligne pour le moment.',
+    'boutique.avis_titre': 'Avis des clientes',
+    'boutique.seo_titre': '{nom} — {type} à {ville} | {brand}',
+    'boutique.seo_desc': 'Découvrez et louez la collection de {nom}.'
+  });
+
+  ajouter('nl', {
+    'meta.index.titre': 'Kaftans en takchita\'s huren in Brussel, Luik en Antwerpen — {brand}',
+    'meta.index.desc': 'Huur kaftans, takchita\'s, bruidskledij en accessoires bij geverifieerde particulieren, negafa\'s en ontwerpsters in Brussel, Luik en Antwerpen.',
+    'meta.cat.titre': 'Catalogus: kaftan, takchita en bruidskledij huren — {brand}',
+    'meta.cat.desc': 'Huur een kaftan in Antwerpen, een takchita in Brussel of negafa-kledij in Luik. Filter op gelegenheid, maat, afmetingen, kleur, budget en datum.',
+    'meta.tenue.titre': 'Marokkaanse kledij huren — {brand}',
+    'meta.tenue.desc': 'Gedetailleerde afmetingen, foto\'s van het borduurwerk, beschikbaarheid en veilige reservering.',
+    'meta.boutique.titre': 'Boetiek — negafa en ontwerpster — {brand}',
+    'meta.boutique.desc': 'Ontdek de collectie van een negafa of ontwerpster en huur haar stukken veilig.',
+    'index.hero.surtitre': 'Verhuur van Marokkaanse kledij · België',
+    'index.hero.titre': 'Draag het <em>uitzonderlijke,</em> de tijd van een feest.',
+    'index.hero.texte': 'Kaftans, takchita\'s, bruidskledij en juwelen, uitgeleend door geverifieerde particulieren, negafa\'s en ontwerpsters. Voor een huwelijk, een verloving, een henna-avond of Eid.',
+    'index.hero.cta': 'Ontdek de catalogus',
+    'index.hero.cta2': 'Mijn kledij aanbieden',
+    'index.hero.etiquette_titre': 'Smaragdgroene takchita',
+    'index.hero.etiquette_texte': 'Met de hand geborduurd, mdamma-riem inbegrepen',
+    'index.conf.1t': 'Geverifieerde kledij', 'index.conf.1': 'elke advertentie wordt nagelezen',
+    'index.conf.2t': 'Veilige betaling', 'index.conf.2': 'Bancontact of kaart',
+    'index.conf.3t': 'Omkaderde waarborg', 'index.conf.3': 'enkel een autorisatie, nooit afgeschreven',
+    'index.conf.4t': 'Stomerij inbegrepen', 'index.conf.4': 'breng het stuk terug zoals het is',
+    'index.coll.surtitre': 'Collecties',
+    'index.coll.titre': 'Een stuk voor elk feest',
+    'index.sel.surtitre': 'Selectie',
+    'index.sel.titre': 'Stukken van het moment',
+    'index.sel.lien': 'Alle nieuwigheden',
+    'index.sel.vide': 'De eerste stukken komen er heel binnenkort aan.',
+    'index.cmt.surtitre': 'Hoe werkt het',
+    'index.cmt.titre': 'Eenvoudig, omkaderd, onder ons',
+    'index.cmt.chapeau': 'Het platform controleert, int, beschermt beide partijen en betaalt de rest uit. U concentreert zich op het feest.',
+    'index.cmt.clientes': 'Voor klanten',
+    'index.cmt.c1t': 'Kies', 'index.cmt.c1': 'Filter op gelegenheid, maat, afmetingen, kleur en datum. De exacte afmetingen staan vermeld: aanpassingen zijn niet toegestaan.',
+    'index.cmt.c2t': 'Pas indien nodig', 'index.cmt.c2': 'Reserveer een tijdslot bij de aanbieder of tijdens een showroom. De kosten worden afgetrokken als u huurt.',
+    'index.cmt.c3t': 'Betaal in één keer', 'index.cmt.c3': 'Uw winkelmand kan meerdere aanbieders bevatten. U betaalt zodra iedereen heeft aanvaard, met Bancontact of kaart.',
+    'index.cmt.c4t': 'Draag, breng terug', 'index.cmt.c4': 'Staat in vier foto\'s bij overhandiging en terugbezorging. De waarborg is een autorisatie die automatisch wordt vrijgegeven.',
+    'index.cmt.fournisseuses': 'Voor aanbieders',
+    'index.cmt.f1t': 'Publiceer', 'index.cmt.f1': 'Vier foto\'s, de afmetingen, uw prijs. Ons team leest elke advertentie na voor ze online gaat.',
+    'index.cmt.f2t': 'Aanvaard binnen 24 u', 'index.cmt.f2': 'U behoudt de controle over elke aanvraag en uw kalender. Rond elke huur worden twee dagen geblokkeerd voor de stomerij.',
+    'index.cmt.f3t': 'Overhandig met vertrouwen', 'index.cmt.f3': 'Geverifieerde identiteit bij hoge waarborgen, bankautorisatie en een gedateerde staat.',
+    'index.cmt.f4t': 'Ontvang uw uitbetaling', 'index.cmt.f4': 'De uitbetaling vertrekt 24 uur na de bevestigde terugbezorging, rechtstreeks op uw rekening.',
+    'index.simu.surtitre': 'Particulieren, negafa\'s, ontwerpsters',
+    'index.simu.titre': 'Uw kleerkast is waardevol',
+    'index.simu.chapeau': 'Een takchita die twee keer gedragen werd, hangt vaak tien jaar in een hoes. Geef ze een nieuw leven, in alle veiligheid.',
+    'index.simu.p1': 'Veilige betaling en automatische uitbetaling',
+    'index.simu.p2': 'Waarborg en staat bij elke huur',
+    'index.simu.p3': 'Boetiekpagina voor negafa\'s en ontwerpsters',
+    'index.simu.cta': 'Mijn kledij aanbieden',
+    'index.simu.prix': 'Huurprijs',
+    'index.simu.nb': 'Verhuringen per maand',
+    'index.simu.resultat': 'Geschat inkomen per maand',
+    'index.simu.note': 'Schatting: prijs × verhuringen × (1 − commissie van {pct} %). Stomerijkosten worden extra uitbetaald.',
+    'index.bout.surtitre': 'Negafa\'s en ontwerpsters',
+    'index.bout.titre': 'Huizen om te ontdekken',
+    'index.hub.surtitre': 'Huwelijkshub',
+    'index.hub.titre': 'De hele grote dag, op één plek',
+    'index.hub.chapeau': 'Vertrouwde visagisten, fotografen, hennaya\'s en negafa\'s in Brussel, Luik en Antwerpen. Vraag een offerte aan in één bericht.',
+    'index.hub.cta': 'De hub verkennen',
+    'index.fin.surtitre': 'Uw volgende feest',
+    'index.fin.titre': 'De kaftan van uw dromen bestaat al. Iemand leent hem u.',
+    'cat.surtitre': 'Brussel · Luik · Antwerpen',
+    'cat.titre': 'De catalogus',
+    'cat.chapeau': 'Kaftans, takchita\'s, bruidskledij, herenkledij en accessoires, één voor één gecontroleerd.',
+    'cat.trier': 'Sorteren', 'cat.tri_pertinence': 'Relevantie', 'cat.tri_recent': 'Nieuw', 'cat.tri_prix_asc': 'Prijs oplopend', 'cat.tri_prix_desc': 'Prijs aflopend',
+    'cat.filtres': 'Filters', 'cat.plus': 'Meer tonen', 'cat.reinitialiser': 'Wissen', 'cat.voir_resultats': 'Resultaten bekijken',
+    'cat.du': 'Van', 'cat.au': 'Tot',
+    'cat.f_categorie': 'Categorie', 'cat.f_occasion': 'Gelegenheid', 'cat.f_date': 'Beschikbaar op uw data', 'cat.f_ville': 'Stad',
+    'cat.f_mesures': 'Uw afmetingen', 'cat.f_couleur': 'Kleur', 'cat.f_budget': 'Budget', 'cat.f_vendeuse': 'Aangeboden door',
+    'cat.budget_max': 'Maximumprijs (€)', 'cat.recherche': 'Zoeken', 'cat.recherche_ph': 'Fluweel, handgeborduurd, sfifa…',
+    'cat.toutes': 'Alle', 'cat.toutes_tailles': 'Alle', 'cat.toutes_villes': 'Alle', 'cat.enfant': 'Kind',
+    'cat.mesures_aide': 'We tonen de stukken waarvan de afmetingen passen, zonder aanpassing (0 tot 8 cm ruimte).',
+    'cat.mes_mesures': 'Mijn opgeslagen afmetingen gebruiken',
+    'cat.mesures_absentes': 'Sla eerst uw afmetingen op in uw ruimte.',
+    'cat.mesures_appliquees': 'Uw afmetingen worden toegepast.',
+    'cat.resultat': '{n} stuk', 'cat.resultats': '{n} stukken',
+    'tenue.introuvable': 'Deze kledij is niet (meer) beschikbaar.',
+    'tenue.fil': 'Kruimelpad',
+    'tenue.photos': 'Foto\'s van de kledij',
+    'tenue.photo_face': 'vooraanzicht', 'tenue.photo_dos': 'achteraanzicht', 'tenue.photo_broderie': 'detail van het borduurwerk',
+    'tenue.photo_portee': 'gedragen', 'tenue.photo_autre': 'ander zicht',
+    'tenue.loupe_aide': 'Beweeg erover of druk lang om het borduurwerk te bekijken.',
+    'tenue.par_location': 'per huur, van {min} tot {max} dagen',
+    'tenue.main_propre': 'Persoonlijke overhandiging',
+    'tenue.envoi': 'Verzekerde verzending (+{prix})',
+    'tenue.essayage_possible': 'Passen mogelijk',
+    'tenue.couleurs': 'Kleuren',
+    'tenue.mesures': 'Afmetingen van de kledij',
+    'tenue.retouche_titre': 'Geen aanpassingen toegestaan.',
+    'tenue.retouche_texte': 'Vergelijk deze afmetingen met de uwe: de kledij moet in originele staat worden teruggebracht.',
+    'tenue.reserver_titre': 'Reserveren',
+    'tenue.reserver': 'Reserveren',
+    'tenue.date_evenement': 'Datum van het evenement',
+    'tenue.date_debut': 'Ophalen',
+    'tenue.date_fin': 'Terugbrengen',
+    'tenue.mode_remise': 'Wijze van overhandiging',
+    'tenue.choisir_dates': 'Kies uw data om de beschikbaarheid te controleren.',
+    'tenue.verification': 'Controleren…',
+    'tenue.disponible': 'Beschikbaar op deze data',
+    'tenue.indisponible': 'Niet beschikbaar op deze data (stomerij inbegrepen). Probeer andere data.',
+    'tenue.dates_incoherentes': 'Het evenement moet tussen ophalen en terugbrengen vallen.',
+    'tenue.duree_hors': 'Huurduur: van {min} tot {max} dagen.',
+    'tenue.r_location': 'Huur', 'tenue.r_pressing': 'Stomerij', 'tenue.r_envoi': 'Verzekerde verzending', 'tenue.r_service': 'Servicekosten',
+    'tenue.r_total': 'Geschat totaal', 'tenue.r_caution': 'Waarborg (autorisatie, niet afgeschreven)',
+    'tenue.r_note': 'U betaalt pas na aanvaarding door de aanbieder.',
+    'tenue.ajouter_panier': 'Aanvraag versturen',
+    'tenue.deja_panier': 'In de winkelmand',
+    'tenue.ajoute': 'Toegevoegd aan de winkelmand',
+    'tenue.dates_panier_maj': 'De data van uw winkelmand werden bijgewerkt.',
+    'tenue.essayer': 'Passen aanvragen ({prix})',
+    'tenue.showroom_lien': 'Of passen tijdens een showroom',
+    'tenue.whatsapp': 'Delen via WhatsApp',
+    'tenue.partage_texte': 'Kijk eens naar deze kledij: {titre}',
+    'tenue.seo_titre': '{titre} — {categorie} huren {ville} | {brand}',
+    'tenue.seo_desc': 'Huur {titre} in {ville}: gedetailleerde afmetingen, foto\'s van het borduurwerk, omkaderde waarborg.',
+    'tenue.avis_titre': 'Wat klanten zeggen',
+    'look.surtitre': 'Geheel',
+    'look.titre': 'De look vervolledigen',
+    'look.chapeau': 'Mdamma, juwelen en kronen van dezelfde aanbieder eerst, daarna uit de gemeenschap.',
+    'look.ajouter': 'Toevoegen',
+    'look.ensemble': 'Bedacht voor deze kledij',
+    'look.meme': 'Zelfde aanbieder',
+    'look.dates_dabord': 'Kies eerst uw data.',
+    'essai.titre': 'Passen aanvragen',
+    'essai.intro': 'Stel de aanbieder een tijdslot voor. De paskosten ({prix}) worden afgetrokken van uw huur als u binnen 30 dagen reserveert, en terugbetaald als het passen wordt geweigerd.',
+    'essai.creneau': 'Gewenst tijdslot',
+    'essai.message': 'Bericht',
+    'essai.payer': '{prix} betalen en versturen',
+    'essai.envoye': 'Pasaanvraag verzonden.',
+    'showroom.titre': 'Showrooms',
+    'showroom.intro': 'Pas meerdere stukken op dezelfde plek, tijdens een showroomdag.',
+    'showroom.aucun': 'Momenteel geen showroom gepland.',
+    'showroom.inscrire': 'Inschrijven',
+    'showroom.inscrite': 'Inschrijving bevestigd. U ontving een overzicht per e-mail.',
+    'boutique.introuvable': 'Deze boetiek bestaat niet.',
+    'boutique.pieces': 'stukken',
+    'boutique.avis': '{n} reviews',
+    'boutique.depuis': 'lid sinds',
+    'boutique.collection': 'De collectie',
+    'boutique.vide': 'Momenteel geen stukken online.',
+    'boutique.avis_titre': 'Reviews van klanten',
+    'boutique.seo_titre': '{nom} — {type} in {ville} | {brand}',
+    'boutique.seo_desc': 'Ontdek en huur de collectie van {nom}.'
+  });
+
+  // ---------------------------------------------------------------------------
   // Moteur
   // ---------------------------------------------------------------------------
   var STOCKAGE = 'lalla.langue';
@@ -344,18 +568,33 @@
     return D.fr[cle] != null || D.nl[cle] != null;
   }
 
+  // Le français des pages statiques est écrit directement dans le HTML (référencement, sans JS).
+  // Il est capturé au premier passage : seul le néerlandais doit figurer dans le dictionnaire.
+  function capturer(noeud, cle, html) {
+    if (D.fr[cle] == null) D.fr[cle] = html ? noeud.innerHTML.trim() : noeud.textContent.trim();
+  }
+
   function appliquer(racine) {
     racine = racine || document;
     var noeuds = racine.querySelectorAll('[data-i18n]');
-    for (var i = 0; i < noeuds.length; i++) noeuds[i].textContent = t(noeuds[i].getAttribute('data-i18n'));
+    for (var i = 0; i < noeuds.length; i++) {
+      capturer(noeuds[i], noeuds[i].getAttribute('data-i18n'), false);
+      noeuds[i].textContent = t(noeuds[i].getAttribute('data-i18n'));
+    }
     noeuds = racine.querySelectorAll('[data-i18n-html]');
-    for (i = 0; i < noeuds.length; i++) noeuds[i].innerHTML = t(noeuds[i].getAttribute('data-i18n-html'));
+    for (i = 0; i < noeuds.length; i++) {
+      capturer(noeuds[i], noeuds[i].getAttribute('data-i18n-html'), true);
+      noeuds[i].innerHTML = t(noeuds[i].getAttribute('data-i18n-html'));
+    }
     noeuds = racine.querySelectorAll('[data-i18n-attr]');
     for (i = 0; i < noeuds.length; i++) {
       var paires = noeuds[i].getAttribute('data-i18n-attr').split(';');
       for (var j = 0; j < paires.length; j++) {
         var p = paires[j].split(':');
-        if (p.length === 2) noeuds[i].setAttribute(p[0].trim(), t(p[1].trim()));
+        if (p.length !== 2) continue;
+        var attr = p[0].trim(), cleAttr = p[1].trim();
+        if (D.fr[cleAttr] == null && noeuds[i].hasAttribute(attr)) D.fr[cleAttr] = noeuds[i].getAttribute(attr);
+        noeuds[i].setAttribute(attr, t(cleAttr));
       }
     }
     var marques = racine.querySelectorAll('[data-brand]');

@@ -316,6 +316,16 @@
     L.vider(el).appendChild(h('div', { class: 'vide' }, L.ui.motifSvg('vide__motif'), h('p', null, message), action || null));
   };
 
+  /** Icône SVG (dans le bon espace de noms). */
+  L.ui.icone = function (contenu, classe) {
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('class', classe || 'icone');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = contenu;
+    return svg;
+  };
+
   /** Petit motif zellige (étoile à huit branches) en lignes dorées. */
   L.ui.motifSvg = function (classe) {
     var ns = 'http://www.w3.org/2000/svg';
@@ -378,10 +388,8 @@
         basculeLangue(),
         boutonCompte,
         h('a', { href: 'panier.html', class: 'panier-lien', 'aria-label': t('nav.panier'), 'data-i18n-attr': 'aria-label:nav.panier' },
-          h('svg', { viewBox: '0 0 24 24', 'aria-hidden': 'true', class: 'icone' }), compteur),
+          L.ui.icone('<path d="M6 8h12l-1 12H7L6 8z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.4"/>'), compteur),
         burger)));
-    // Icône panier (sac) en SVG
-    $('.panier-lien svg', zone).innerHTML = '<path d="M6 8h12l-1 12H7L6 8z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.4"/>';
     menu.addEventListener('click', function (e) {
       if (e.target.closest('a')) { document.documentElement.classList.remove('menu-ouvert'); burger.setAttribute('aria-expanded', 'false'); if (L.motion.lenis) L.motion.lenis.start(); }
     });
