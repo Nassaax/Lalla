@@ -3,8 +3,7 @@ import { db } from '../lib/supabase.js';
 import { siteUrl } from '../lib/env.js';
 
 const STATIQUES = ['', 'catalogue.html', 'partenaires.html', 'conditions.html', 'mentions-legales.html', 'confidentialite.html',
-  'catalogue.html?categorie=caftan', 'catalogue.html?categorie=takchita', 'catalogue.html?categorie=mariee',
-  'catalogue.html?ville=Bruxelles', 'catalogue.html?ville=Li%C3%A8ge', 'catalogue.html?ville=Anvers'];
+  'catalogue.html?categorie=caftan', 'catalogue.html?categorie=takchita', 'catalogue.html?categorie=mariee'];
 
 export default async function handler(req, res) {
   const site = siteUrl();

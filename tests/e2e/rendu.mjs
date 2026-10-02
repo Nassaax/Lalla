@@ -43,7 +43,7 @@ for (const largeur of [375, 768, 1440]) {
     await page.goto(`${BASE}/${p}`, { waitUntil: 'networkidle' });
     await verifier(page, p.split('?')[0], largeur);
   }
-  for (const [email, vues] of CONNECTEES) {
+  for (const [email, vues] of process.env.SANS_CONNEXION ? [] : CONNECTEES) {
     const c2 = await contexte(b, { largeur, hauteur: largeur < 800 ? 812 : 900, mobile: largeur < 800 });
     const pg = await c2.newPage();
     await pg.goto(`${BASE}/compte.html?connexion=1`);
@@ -51,7 +51,9 @@ for (const largeur of [375, 768, 1440]) {
     await pg.fill('.modale input[name=email]', email);
     await pg.fill('.modale input[name=mdp]', 'Demo-Lalla-2026');
     await pg.click('.modale button[type=submit]');
-    await pg.waitForSelector('.modale', { state: 'detached' });
+    await pg.waitForSelector('.modale', { state: 'detached' }).catch(async (e) => {
+      throw new Error(`connexion ${email} @${largeur}px : ${await pg.textContent('.modale')}`);
+    });
     for (const v of vues) {
       await pg.goto(`${BASE}/${v}`, { waitUntil: 'networkidle' });
       await verifier(pg, v.replace(/[?#=]/g, '-'), largeur);
@@ -72,7 +74,7 @@ for (const largeur of [375, 768, 1440]) {
   await page.click('.langue__btn[lang=nl]');
   await page.waitForTimeout(300);
   assert.equal(await page.evaluate(() => window.__marqueur), 'sans-rechargement');
-  assert.match(await page.textContent('[data-i18n="index.hero.cta"]'), /Ontdek de catalogus/);
+  assert.match(await page.textContent('[data-i18n="index.hero.cta"]'), /Bekijk een voorproefje/);
   assert.equal(await page.getAttribute('html', 'lang'), 'nl-BE');
   await page.goto(`${BASE}/catalogue.html`, { waitUntil: 'networkidle' });
   assert.match(await page.textContent('h1'), /De catalogus/);
@@ -89,7 +91,9 @@ for (const largeur of [375, 768, 1440]) {
   await page.goto(`${BASE}/index.html`, { waitUntil: 'networkidle' });
   assert.equal(await page.evaluate(() => document.documentElement.classList.contains('mouvement-reduit')), true);
   assert.equal(await page.evaluate(() => Boolean(window.Lalla.motion.lenis)), false);
-  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.hero__titre')).opacity), '1');
+  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.s-hero__titre')).opacity), '1');
+  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.s-hero__scene')).opacity), '1');
+  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.s-promesse:last-child')).opacity), '1');
   problemes.push(...ctx.erreurs);
   await ctx.close();
   console.log('✓ prefers-reduced-motion respecté');

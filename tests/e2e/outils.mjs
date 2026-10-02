@@ -33,7 +33,7 @@ export async function environnement({ stripeMock = null } = {}) {
     CRON_SECRET: 'cron-local',
     ...(stripeMock ? { STRIPE_API_HOST: stripeMock } : {})
   });
-  const pile = await demarrerPile({ reset: true });
+  const pile = await demarrerPile({ reset: true, journal: process.env.JOURNAL === '1' });
   const { creerServeur } = await import('../../scripts/dev-server.mjs');
   const serveur = await creerServeur({ port: PORT });
   return {

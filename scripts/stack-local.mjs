@@ -93,6 +93,8 @@ export async function demarrerPile({ reset = true, journal = false } = {}) {
     GOTRUE_SMTP_USER: 'x',
     GOTRUE_SMTP_PASS: 'x',
     GOTRUE_RATE_LIMIT_EMAIL_SENT: '1000',
+    GOTRUE_RATE_LIMIT_TOKEN_REFRESH: '10000',
+    GOTRUE_RATE_LIMIT_VERIFY: '10000',
     GOTRUE_LOG_LEVEL: 'warn'
   };
   const sortie = journal ? 'inherit' : 'ignore';

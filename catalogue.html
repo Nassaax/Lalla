@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title data-i18n="meta.cat.titre">Catalogue : location de caftans, takchitas et tenues de mariée — LALLA</title>
-  <meta name="description" data-i18n-attr="content:meta.cat.desc" content="Louez un caftan à Bruxelles, une takchita à Liège ou une tenue de negafa à Anvers. Filtrez par occasion, taille, mesures, couleur, budget et date.">
+  <title data-i18n="meta.cat.titre">Catalogue : location de caftans, takchitas et tenues de mariée | LALLA</title>
+  <meta name="description" data-i18n-attr="content:meta.cat.desc" content="Louez un caftan, une takchita ou une tenue de mariée partout en Belgique. Filtrez par occasion, taille, mesures, couleur, budget, province et date.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://lalla.be/catalogue.html">
   <link rel="alternate" hreflang="fr-BE" href="https://lalla.be/catalogue.html">
@@ -12,8 +12,8 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="LALLA">
   <meta property="og:locale" content="fr_BE">
-  <meta property="og:title" content="Catalogue : location de caftans, takchitas et tenues de mariée — LALLA">
-  <meta property="og:description" content="Louez un caftan à Bruxelles, une takchita à Liège ou une tenue de negafa à Anvers. Filtrez par occasion, taille, mesures, couleur, budget et date.">
+  <meta property="og:title" content="Catalogue : location de caftans, takchitas et tenues de mariée | LALLA">
+  <meta property="og:description" content="Louez un caftan, une takchita ou une tenue de mariée partout en Belgique. Filtrez par occasion, taille, mesures, couleur, budget, province et date.">
   <meta property="og:url" content="https://lalla.be/catalogue.html">
   <meta property="og:image" content="https://lalla.be/assets/og-default.jpg">
   <meta name="twitter:card" content="summary_large_image">
@@ -31,7 +31,7 @@
   <main id="contenu">
     <section class="page-entete">
       <div class="conteneur">
-        <p class="surtitre" data-i18n="cat.surtitre">Bruxelles · Liège · Anvers</p>
+        <p class="surtitre" data-i18n="cat.surtitre">Partout en Belgique</p>
         <h1 data-i18n="cat.titre">Le catalogue</h1>
         <p class="chapeau" data-i18n="cat.chapeau">Caftans, takchitas, tenues de mariée, tenues homme et accessoires, vérifiés un par un.</p>
       </div>
@@ -54,7 +54,16 @@
               <button class="bouton bouton--ligne bouton--petit bouton-filtres" type="button" data-ouvrir-filtres aria-expanded="false" aria-controls="tiroir-filtres" data-i18n="cat.filtres">Filtres</button>
             </div>
           </div>
+          <p class="chapeau" data-note-exemples hidden data-i18n="index.ap.note">Les premières pièces sont en cours de sélection. Voici des exemples de ce que vous trouverez bientôt.</p>
           <div class="grille-cartes" data-resultats></div>
+          <div class="s-apercu__mur" data-mur hidden>
+            <h3 data-mur-titre>Envie de voir la suite ?</h3>
+            <p data-i18n="index.ap.mur_texte">Créez votre compte gratuit pour accéder à toute la collection, garder vos coups de cœur et être prévenue dès qu'une pièce arrive près de chez vous.</p>
+            <div class="actions">
+              <button class="bouton" type="button" data-inscription data-i18n="index.ap.mur_cta">Créer mon compte gratuit</button>
+              <button class="bouton bouton--ligne" type="button" data-connexion data-i18n="index.ap.deja">J'ai déjà un compte</button>
+            </div>
+          </div>
           <div style="text-align:center;margin-top:48px"><button class="bouton bouton--ligne" type="button" data-plus hidden data-i18n="cat.plus">Afficher plus</button></div>
         </div>
       </div>
@@ -85,6 +94,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Flip.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+  <script defer src="assets/visuels.js"></script>
   <script defer src="assets/app.js"></script>
   <script defer src="assets/pages.js"></script>
 </body>

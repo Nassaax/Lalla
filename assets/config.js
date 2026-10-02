@@ -13,7 +13,14 @@
       instagram: 'lalla.be',
       domaine: 'lalla.be'
     },
-    villes: ['Bruxelles', 'Liège', 'Anvers'],
+    // Zones couvertes : toute la Belgique (Bruxelles et les 10 provinces). Valeur stockée en français.
+    villes: ['Bruxelles', 'Anvers', 'Brabant flamand', 'Brabant wallon', 'Flandre occidentale', 'Flandre orientale',
+      'Hainaut', 'Liège', 'Limbourg', 'Luxembourg', 'Namur'],
+    villesNl: {
+      'Bruxelles': 'Brussel', 'Anvers': 'Antwerpen', 'Brabant flamand': 'Vlaams-Brabant', 'Brabant wallon': 'Waals-Brabant',
+      'Flandre occidentale': 'West-Vlaanderen', 'Flandre orientale': 'Oost-Vlaanderen', 'Hainaut': 'Henegouwen',
+      'Liège': 'Luik', 'Limbourg': 'Limburg', 'Luxembourg': 'Luxemburg', 'Namur': 'Namen'
+    },
     langues: ['fr', 'nl'],
     liens: {
       // Bloc « Beauté de la mariée » (hub mariage) : boutique externe

@@ -59,6 +59,12 @@
     }).format(n);
   };
 
+  /** Libellé d'une zone (province) dans la langue courante. */
+  L.zone = function (v) {
+    if (!v) return '';
+    return (I.langue === 'nl' && C.villesNl && C.villesNl[v]) || v;
+  };
+
   L.date = function (iso, options) {
     if (!iso) return '';
     var d = iso.length === 10 ? new Date(iso + 'T12:00:00') : new Date(iso);
@@ -338,7 +344,7 @@
   };
 
   function lienNav(href, cle, extra) {
-    var actif = location.pathname.split('/').pop() === href.split('?')[0].split('#')[0];
+    var actif = href.indexOf('#') < 0 && (location.pathname.split('/').pop() || 'index.html') === href.split('?')[0];
     return h('a', Object.assign({ href: href, class: 'nav__lien' + (actif ? ' est-actif' : ''), 'data-i18n': cle, 'aria-current': actif ? 'page' : null }, extra || {}), t(cle));
   }
 
@@ -594,100 +600,14 @@
     return L.sb.storage.from(bucket).createSignedUrl(chemin, 3600).then(function (r) { return r.data && r.data.signedUrl; });
   };
 
-  function teinte(hex, f) {
-    var n = parseInt(hex.slice(1), 16);
-    var r = n >> 16, g = (n >> 8) & 255, b = n & 255;
-    var c = f < 0 ? 0 : 255, a = Math.abs(f);
-    r = Math.round(r + (c - r) * a); g = Math.round(g + (c - g) * a); b = Math.round(b + (c - b) * a);
-    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-  }
-
   var cachePlaceholder = {};
   /**
-   * Illustration originale servant de placeholder (aucune photo externe).
+   * Illustration originale servant de visuel tant qu'aucune photo n'est publiée (aucune photo externe).
    * Format : placeholder:<categorie|sous_categorie>:<couleur>:<face|dos|broderie|portee|doublure>:<graine>
+   * Le rendu est fait par assets/visuels.js.
    */
   L.img.placeholder = function (spec) {
-    if (cachePlaceholder[spec]) return cachePlaceholder[spec];
-    var p = spec.split(':');
-    var cat = p[1] || 'caftan', coul = C.couleurs[p[2]] || C.couleurs.emeraude, vue = p[3] || 'face', graine = parseInt(p[4] || '0', 10) || 0;
-    var or = '#C3A35A', orClair = '#E2CF9F';
-    var fond = teinte(coul, 0.82), fond2 = teinte(coul, 0.7);
-    var tissu = coul, ombre = teinte(coul, -0.25), clair = teinte(coul, 0.18);
-    var motif = '<defs><pattern id="z" width="' + (36 + (graine % 3) * 6) + '" height="' + (36 + (graine % 3) * 6) + '" patternUnits="userSpaceOnUse"><g fill="none" stroke="' + or + '" stroke-width=".6" opacity=".35"><rect x="9" y="9" width="18" height="18"/><rect x="9" y="9" width="18" height="18" transform="rotate(45 18 18)"/></g></pattern>' +
-      '<linearGradient id="l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + fond + '"/><stop offset="1" stop-color="' + fond2 + '"/></linearGradient>' +
-      '<linearGradient id="t" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="' + ombre + '"/><stop offset=".45" stop-color="' + clair + '"/><stop offset="1" stop-color="' + ombre + '"/></linearGradient></defs>';
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400">' + motif + '<rect width="300" height="400" fill="url(#l)"/><rect width="300" height="400" fill="url(#z)"/>';
-    var caftan = 'M150 58C138 58 128 62 122 66L96 76C80 82 68 96 60 120L34 238C33 244 37 248 43 247L78 240L84 150L80 372C80 377 84 380 89 380L211 380C216 380 220 377 220 372L216 150L222 240L257 247C263 248 267 244 266 238L240 120C232 96 220 82 204 76L178 66C172 62 162 58 150 58Z';
-    var homme = 'M150 56C140 56 130 60 124 64L100 74C86 80 78 92 74 110L60 230L86 232L92 130L92 376L208 376L208 130L214 232L240 230L226 110C222 92 214 80 200 74L176 64C170 60 160 56 150 56Z';
-    function silhouette(chemin, details) {
-      return '<ellipse cx="150" cy="388" rx="92" ry="6" fill="' + ombre + '" opacity=".18"/><path d="' + chemin + '" fill="url(#t)"/>' + details;
-    }
-    function boutons(y1, y2) {
-      var s = '<path d="M150 92V' + y2 + '" stroke="' + or + '" stroke-width="2.2"/>';
-      for (var y = y1; y < y2; y += 11) s += '<circle cx="150" cy="' + y + '" r="2.4" fill="' + orClair + '"/>';
-      return s;
-    }
-    var garnitures = '<path d="M136 64L150 92L164 64" fill="none" stroke="' + or + '" stroke-width="3"/><path d="M84 360H216" stroke="' + or + '" stroke-width="6" opacity=".85"/><path d="M40 238L76 232M224 232L260 238" stroke="' + or + '" stroke-width="4"/>';
-    var ceinture = '<rect x="84" y="150" width="132" height="18" rx="3" fill="' + or + '"/><g fill="none" stroke="' + teinte(or, -0.3) + '" stroke-width="1">' +
-      [100, 124, 176, 200].map(function (x) { return '<rect x="' + (x - 5) + '" y="154" width="10" height="10" transform="rotate(45 ' + x + ' 159)"/>'; }).join('') + '</g><circle cx="150" cy="159" r="9" fill="' + orClair + '" stroke="' + teinte(or, -0.3) + '"/>';
-    var tete = '<circle cx="150" cy="34" r="17" fill="#3A2C25"/><path d="M133 30C134 14 166 14 167 30C170 22 160 10 150 10S130 22 133 30Z" fill="#1E1714"/><rect x="144" y="48" width="12" height="12" fill="#C99B7A"/>';
-    var corps = '';
-    if (cat === 'mdamma' || cat === 'bijoux' || cat === 'couronne') {
-      if (cat === 'mdamma') {
-        corps = '<rect x="30" y="160" width="240" height="70" rx="8" fill="' + or + '"/><rect x="38" y="168" width="224" height="54" rx="5" fill="none" stroke="' + teinte(or, -0.3) + '"/>' +
-          '<g transform="translate(150 195)"><rect x="-26" y="-26" width="52" height="52" fill="' + orClair + '" transform="rotate(45)"/><rect x="-26" y="-26" width="52" height="52" fill="' + or + '"/><circle r="12" fill="' + coul + '"/></g>';
-        for (var i = 0; i < 8; i++) corps += '<circle cx="' + (52 + i * 12 + (i > 3 ? 100 : 0)) + '" cy="195" r="3" fill="' + orClair + '"/>';
-      } else if (cat === 'couronne') {
-        corps = '<path d="M50 250C90 230 210 230 250 250L240 270C200 254 100 254 60 270Z" fill="' + or + '"/>';
-        for (var j = 0; j < 7; j++) {
-          var x = 70 + j * 26.6, hy = 150 + Math.abs(3 - j) * 16;
-          corps += '<path d="M' + (x - 12) + ' 246L' + x + ' ' + hy + 'L' + (x + 12) + ' 246Z" fill="none" stroke="' + or + '" stroke-width="3"/><circle cx="' + x + '" cy="' + (hy - 6) + '" r="5" fill="' + coul + '" stroke="' + orClair + '" stroke-width="2"/>';
-        }
-      } else {
-        corps = '<path d="M60 120C70 260 230 260 240 120" fill="none" stroke="' + or + '" stroke-width="4"/><path d="M80 120C92 230 208 230 220 120" fill="none" stroke="' + orClair + '" stroke-width="2"/>';
-        for (var k = 0; k < 9; k++) {
-          var a = Math.PI * (0.12 + k * 0.095), cx = 150 - 88 * Math.cos(a), cy = 150 + 88 * Math.sin(a);
-          corps += '<path d="M' + cx.toFixed(1) + ' ' + cy.toFixed(1) + 'l-7 16l7 12l7 -12z" fill="' + coul + '" stroke="' + or + '" stroke-width="2"/>';
-        }
-      }
-      svg += corps;
-    } else if (vue === 'broderie' || vue === 'doublure') {
-      if (vue === 'doublure') {
-        svg += '<rect x="20" y="20" width="260" height="360" fill="' + teinte(coul, 0.55) + '"/><path d="M20 20L280 380M280 20L20 380" stroke="' + teinte(coul, 0.4) + '" stroke-width="1"/>';
-      } else {
-        svg += '<rect width="300" height="400" fill="' + tissu + '"/><g transform="translate(150 200)" fill="none" stroke="' + or + '">';
-        for (var r = 1; r <= 4; r++) {
-          var s = 26 * r;
-          svg += '<rect x="' + (-s / 2) + '" y="' + (-s / 2) + '" width="' + s + '" height="' + s + '" stroke-width="' + (r === 1 ? 3 : 1.6) + '"/><rect x="' + (-s / 2) + '" y="' + (-s / 2) + '" width="' + s + '" height="' + s + '" transform="rotate(45)" stroke-width="' + (r === 1 ? 3 : 1.6) + '"/>';
-        }
-        svg += '<circle r="10" fill="' + orClair + '"/></g>';
-        for (var d = 0; d < 16; d++) {
-          var ang = (d / 16) * Math.PI * 2;
-          svg += '<circle cx="' + (150 + Math.cos(ang) * 120).toFixed(1) + '" cy="' + (200 + Math.sin(ang) * 120).toFixed(1) + '" r="3" fill="' + orClair + '"/>';
-        }
-      }
-    } else {
-      var chemin = cat === 'homme' ? homme : caftan;
-      var details = '';
-      if (vue === 'dos') {
-        details = '<path d="M150 66V370" stroke="' + ombre + '" stroke-width="1" opacity=".5"/><path d="M84 360H216" stroke="' + or + '" stroke-width="6" opacity=".85"/>';
-      } else {
-        details = garnitures + boutons(cat === 'homme' ? 100 : 104, cat === 'homme' ? 200 : 340);
-        if (cat === 'takchita' || cat === 'mariee') {
-          details += '<path d="M122 66L92 140L86 376L130 376L146 96Z" fill="' + teinte(coul, cat === 'mariee' ? 0.45 : 0.3) + '" opacity=".55"/><path d="M178 66L208 140L214 376L170 376L154 96Z" fill="' + teinte(coul, cat === 'mariee' ? 0.45 : 0.3) + '" opacity=".55"/>' + ceinture;
-        }
-        if (cat === 'mariee') {
-          for (var e = 0; e < 22; e++) details += '<circle cx="' + (96 + (e * 37) % 110) + '" cy="' + (190 + (e * 53) % 160) + '" r="1.8" fill="' + orClair + '"/>';
-        }
-      }
-      var groupe = silhouette(chemin, details);
-      if (cat === 'enfant') groupe = '<g transform="translate(37 90) scale(.75)">' + groupe + '</g>';
-      if (vue === 'portee') groupe = (cat === 'enfant' ? '<g transform="translate(37 90) scale(.75)">' + tete + '</g>' : tete) + groupe;
-      svg += groupe;
-    }
-    svg += '</svg>';
-    cachePlaceholder[spec] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    if (!cachePlaceholder[spec]) cachePlaceholder[spec] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(window.LallaVisuels.svg(spec, C.couleurs));
     return cachePlaceholder[spec];
   };
 

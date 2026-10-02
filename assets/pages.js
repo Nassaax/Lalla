@@ -47,7 +47,7 @@
       h('div', { class: 'carte__visuel' }, h('div', { class: 'arche' }, img), badge),
       h('div', { class: 'carte__infos' },
         h('h3', { class: 'carte__titre' }, tn.titre),
-        h('p', { class: 'carte__meta' }, h('span', null, libelleCategorie(tn)), h('span', null, '·'), h('span', null, tn.ville),
+        h('p', { class: 'carte__meta' }, h('span', null, libelleCategorie(tn)), h('span', null, '·'), h('span', null, L.zone(tn.ville)),
           tn.taille_indicative ? [h('span', null, '·'), h('span', null, tn.taille_indicative === 'unique' ? 'TU' : tn.taille_indicative)] : null),
         h('p', { class: 'carte__prix' }, L.euros(tn.prix_location_cents, true), ' ', h('small', null, t('commun.par_jour')))),
       options.extra || null);
@@ -77,41 +77,177 @@
   // ===========================================================================
   L.pages.index = function () {
     remplirPlaceholders(document);
-    animerHero();
+    ouverture();
+    motsQuiSallument();
+    promesses();
     collections();
-    selection();
+    apercu();
     boutiques();
     commentCaMarche();
     simulateur();
+    belgique();
     $$('[data-devenir-fournisseuse]').forEach(function (b) {
       b.addEventListener('click', function () {
         if (L.session) location.href = 'compte.html?vue=annonces';
         else L.ui.authentification('inscription', { role: 'fournisseuse' });
       });
     });
+    $$('[data-inscription]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (L.session) location.href = 'catalogue.html';
+        else L.ui.authentification('inscription');
+      });
+    });
+    $$('[data-connexion]').forEach(function (b) {
+      b.addEventListener('click', function () { L.ui.authentification('connexion'); });
+    });
   };
 
-  function animerHero() {
-    var titre = $('.hero__titre');
-    var autres = $$('[data-anim-hero]');
-    var zelliges = $$('[data-zellige]');
-    if (!window.gsap || !L.motion.actif) {
-      if (window.gsap) gsap.set([titre].concat(autres), { opacity: 1 });
-      return;
-    }
+  /**
+   * Ouverture : le titre apparaît ligne par ligne, puis, au défilement, la tenue
+   * grandit jusqu'à remplir l'écran pendant que le texte s'efface (section épinglée).
+   */
+  function ouverture() {
+    var titre = $('.s-hero__titre'), elements = $$('[data-hero-el]'), scene = $('.s-hero__scene');
+    if (!titre) return;
+    if (!window.gsap || !L.motion.actif) { if (window.gsap) gsap.set([titre].concat(elements), { opacity: 1 }); return; }
     var d = L.motion.duree;
     var tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-    zelliges.forEach(function (z, i) { L.motion.dessinerMotif(z, i * 0.3); });
-    // Le masque en arche s'ouvre comme deux portes, l'image se pose.
-    tl.fromTo('.hero__image', { scale: 1.28 }, { scale: 1, duration: d(1.9) }, 0.15)
-      .to('.hero__porte--g', { xPercent: -101, duration: d(1.3), ease: 'expo.inOut' }, 0.15)
-      .to('.hero__porte--d', { xPercent: 101, duration: d(1.3), ease: 'expo.inOut' }, 0.15);
-    L.motion.titreLignes(titre, 0.35);
-    tl.fromTo(autres, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: d(1), stagger: 0.08 }, 0.8);
-    if (window.ScrollTrigger && !L.motion.mobile()) {
-      gsap.to('.hero__image', { yPercent: 8, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-      gsap.to('.hero__zellige--1', { yPercent: -18, rotate: 12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+    tl.fromTo(scene, { y: 120, opacity: 0, scale: 0.92 }, { y: 0, opacity: 1, scale: 1, duration: d(1.8) }, 0.1)
+      .fromTo('.s-hero__image', { scale: 1.25 }, { scale: 1, duration: d(2.2) }, 0.1)
+      .fromTo(elements, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: d(1.1), stagger: 0.12 }, 0.55);
+    L.motion.titreLignes(titre, 0.25);
+    if (!window.ScrollTrigger) return;
+    var collant = $('.s-hero__collant');
+    // L'arche grandit jusqu'à dépasser la hauteur de l'écran : on « entre » dans la pièce, la tenue reste entière.
+    var echelle = function () {
+      var r = scene.getBoundingClientRect();
+      return Math.max(window.innerHeight * 1.18 / r.height, Math.min(window.innerWidth / r.width, 1.6));
+    };
+    var decalage = function () {
+      var r = scene.getBoundingClientRect(), c = collant.getBoundingClientRect();
+      return (c.top + c.height / 2) - (r.top + r.height / 2);
+    };
+    var defil = gsap.timeline({
+      scrollTrigger: { trigger: '.s-hero', start: 'top top', end: '+=130%', pin: collant, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true }
+    });
+    defil.to('.s-hero__texte', { y: -140, opacity: 0, scale: 0.94, ease: 'power2.in', duration: 0.45 }, 0)
+      .to('.s-hero__defiler', { opacity: 0, duration: 0.1 }, 0)
+      .to(scene, { y: decalage, scale: echelle, ease: 'power2.inOut', duration: 1 }, 0)
+      .to('.s-hero__image', { scale: 1.12, ease: 'none', duration: 1 }, 0)
+      .fromTo('.s-hero__legende', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, 0.72);
+  }
+
+  /** Découpe un texte en mots puis les allume un à un au fil du défilement. */
+  function motsQuiSallument() {
+    $$('[data-mots]').forEach(function (el) {
+      var anim = null;
+      function preparer() {
+        if (anim) { anim.scrollTrigger && anim.scrollTrigger.kill(); anim.kill(); anim = null; }
+        var texte = el.textContent;
+        L.vider(el);
+        texte.split(/(\s+)/).forEach(function (m) {
+          el.appendChild(/^\s+$/.test(m) ? document.createTextNode(m) : h('span', { class: 'mot' }, m));
+        });
+        if (!window.gsap || !window.ScrollTrigger || !L.motion.actif) { el.classList.add('mots--fixes'); return; }
+        anim = gsap.fromTo($$('.mot', el), { opacity: 0.16 }, {
+          opacity: 1, ease: 'none', stagger: 0.1,
+          scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 45%', scrub: true }
+        });
+      }
+      preparer();
+      document.addEventListener('lalla:langue', function () { I.appliquer(el.parentNode); preparer(); });
+    });
+  }
+
+  /** Engagements : le visuel reste fixe, il change à chaque texte qui passe au centre de l'écran. */
+  function promesses() {
+    var items = $$('.s-promesse'), images = $$('.s-promesses__arche img');
+    if (!items.length) return;
+    function activer(i) {
+      items.forEach(function (it, j) { it.classList.toggle('est-actif', i === j); });
+      images.forEach(function (img, j) { img.classList.toggle('est-actif', i === j); });
     }
+    if (!window.ScrollTrigger || !L.motion.actif) { items.forEach(function (it) { it.classList.add('est-actif'); }); return; }
+    items.forEach(function (it, i) {
+      ScrollTrigger.create({ trigger: it, start: 'top 60%', end: 'bottom 40%', onToggle: function (st) { if (st.isActive) activer(i); } });
+    });
+    gsap.fromTo('.s-promesses__arche', { scale: 0.9 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.s-promesses__grille', start: 'top bottom', end: 'top 30%', scrub: true } });
+  }
+
+  // Exemples affichés tant qu'aucune tenue n'est publiée (illustrations générées, non réservables).
+  var EXEMPLES = [
+    { cle: 'index.ex.1', categorie: 'takchita', couleurs: ['emeraude'], prix_location_cents: 9500, ville: 'Bruxelles', graine: 5 },
+    { cle: 'index.ex.2', categorie: 'caftan', couleurs: ['bordeaux'], prix_location_cents: 7000, ville: 'Liège', graine: 3 },
+    { cle: 'index.ex.3', categorie: 'mariee', couleurs: ['ivoire'], prix_location_cents: 22000, ville: 'Flandre orientale', graine: 9 },
+    { cle: 'index.ex.4', categorie: 'homme', couleurs: ['bleu_nuit'], prix_location_cents: 4500, ville: 'Hainaut', graine: 2 },
+    { cle: 'index.ex.5', categorie: 'accessoire', sous_categorie: 'mdamma', couleurs: ['or'], prix_location_cents: 3500, ville: 'Namur', graine: 1 },
+    { cle: 'index.ex.6', categorie: 'enfant', couleurs: ['rose'], prix_location_cents: 3000, ville: 'Anvers', graine: 4 }
+  ];
+  L.exemples = EXEMPLES;
+
+  /** Carte d'exemple : même allure qu'une vraie carte, marquée « Exemple », ouvre l'inscription. */
+  L.carteExemple = function (ex) {
+    var cat = ex.categorie === 'accessoire' ? ex.sous_categorie : ex.categorie;
+    var titre = h('h3', { class: 'carte__titre', 'data-i18n': ex.cle }, t(ex.cle));
+    var carte = h('button', { type: 'button', class: 'carte carte--exemple' },
+      h('div', { class: 'carte__visuel' },
+        h('div', { class: 'arche' }, h('img', { src: L.img.placeholder('placeholder:' + cat + ':' + ex.couleurs[0] + ':face:' + ex.graine), alt: '', loading: 'lazy', width: 600, height: 800 })),
+        h('span', { class: 'carte__badge carte__badge--exemple', 'data-i18n': 'index.ap.exemple' }, t('index.ap.exemple'))),
+      h('div', { class: 'carte__infos' }, titre,
+        h('p', { class: 'carte__meta' }, h('span', { 'data-i18n': ex.categorie === 'accessoire' ? 'scat.' + ex.sous_categorie : 'cat.' + ex.categorie }, libelleCategorie(ex)), h('span', null, '·'), h('span', null, L.zone(ex.ville))),
+        h('p', { class: 'carte__prix' }, L.euros(ex.prix_location_cents, true), ' ', h('small', null, t('commun.par_jour')))));
+    carte.addEventListener('click', function () {
+      if (L.session) location.href = 'catalogue.html';
+      else L.ui.authentification('inscription');
+    });
+    return carte;
+  };
+
+  /** Aperçu : 6 pièces (réelles s'il y en a, sinon des exemples) puis l'invitation à s'inscrire. */
+  function apercu() {
+    var zone = $('[data-apercu]');
+    if (!zone) return;
+    var mur = $('[data-apercu-mur]'), connecte = $('[data-apercu-connecte]'), note = $('[data-apercu-note]');
+    L.ui.chargement(zone);
+    rechercher({ p_tri: 'recent', p_limite: 6 }).catch(function () { return []; }).then(function (liste) {
+      L.vider(zone);
+      if (liste.length) {
+        note.setAttribute('data-i18n', 'index.ap.note_reel');
+        note.textContent = t('index.ap.note_reel');
+        liste.forEach(function (tn) { var c = L.carteTenue(tn); c.setAttribute('data-reveal', ''); zone.appendChild(c); });
+      } else {
+        EXEMPLES.forEach(function (ex) { var c = L.carteExemple(ex); c.setAttribute('data-reveal', ''); zone.appendChild(c); });
+      }
+      L.motion.reveler(zone);
+      L.auth.pret.then(function () {
+        var avecCompte = !!L.session;
+        mur.hidden = avecCompte;
+        connecte.hidden = !avecCompte || !liste.length;
+        zone.classList.toggle('s-apercu__grille--voilee', !avecCompte);
+      });
+    });
+  }
+
+  /** Bandeaux des provinces qui glissent en sens opposés pendant le défilement. */
+  function belgique() {
+    var bandes = $$('[data-bande]');
+    if (!bandes.length) return;
+    function remplir() {
+      var noms = C.villes.map(L.zone);
+      bandes.forEach(function (b, i) {
+        var liste = i ? noms.slice().reverse() : noms;
+        b.textContent = liste.concat(liste).join('  ·  ');
+      });
+    }
+    remplir();
+    document.addEventListener('lalla:langue', remplir);
+    if (!window.gsap || !window.ScrollTrigger || !L.motion.actif) return;
+    bandes.forEach(function (b) {
+      var sens = Number(b.getAttribute('data-sens') || 1);
+      gsap.fromTo(b, { xPercent: sens > 0 ? 0 : -40 }, { xPercent: sens > 0 ? -40 : 0, ease: 'none',
+        scrollTrigger: { trigger: '.s-belgique', start: 'top bottom', end: 'bottom top', scrub: true } });
+    });
   }
 
   function collections() {
@@ -162,18 +298,6 @@
     });
   }
 
-  function selection() {
-    var zone = $('[data-selection]');
-    if (!zone) return;
-    L.ui.chargement(zone);
-    rechercher({ p_tri: 'recent', p_limite: 8 }).then(function (liste) {
-      L.vider(zone);
-      if (!liste.length) { L.ui.etatVide(zone, t('index.sel.vide')); return; }
-      liste.forEach(function (tn) { var c = L.carteTenue(tn); c.setAttribute('data-reveal', ''); zone.appendChild(c); });
-      L.motion.reveler(zone);
-    }).catch(function () { L.ui.etatVide(zone, t('commun.erreur')); });
-  }
-
   function boutiques() {
     var zone = $('[data-boutiques]');
     if (!zone || !L.sb) return;
@@ -195,7 +319,7 @@
         h('span', { class: 'carte__badge' }, t('type.' + p.type_fournisseuse))),
       h('div', { class: 'carte__infos' },
         h('h3', { class: 'carte__titre' }, p.boutique_nom || p.nom_affiche),
-        h('p', { class: 'carte__meta' }, p.ville || '', p.nb_avis ? [' · ', h('span', { class: 'note' }, '★ ' + Number(p.note_moyenne).toFixed(1))] : null)));
+        h('p', { class: 'carte__meta' }, L.zone(p.ville), p.nb_avis ? [' · ', h('span', { class: 'note' }, '★ ' + Number(p.note_moyenne).toFixed(1))] : null)));
   }
 
   function commentCaMarche() {
@@ -245,6 +369,10 @@
     var page = 0;
     var PAR_PAGE = 24;
     var total = 0;
+    var mur = $('[data-mur]'), murTitre = $('[data-mur-titre]'), noteExemples = $('[data-note-exemples]');
+    $$('[data-inscription]').forEach(function (b) { b.addEventListener('click', function () { L.ui.authentification('inscription'); }); });
+    $$('[data-connexion]').forEach(function (b) { b.addEventListener('click', function () { L.ui.authentification('connexion'); }); });
+    L.auth.surChangement(function () { if (grille.childNodes.length) { page = 0; charger(false); } });
 
     // Un seul panneau de filtres : tiroir sur mobile, colonne latérale sur desktop.
     var zoneFiltres = $('[data-filtres-zone]');
@@ -314,17 +442,34 @@
         p_tri: etat.tri || 'pertinence', p_limite: PAR_PAGE, p_decalage: page * PAR_PAGE
       };
       var etatFlip = ajout || !window.Flip || !L.motion.actif ? null : window.Flip.getState($$('.carte', grille));
-      rechercher(p).then(function (liste) {
+      Promise.all([rechercher(p), L.auth.pret]).then(function (res) {
+        var liste = res[0];
         total = liste.length ? Number(liste[0].total) : (ajout ? total : 0);
         if (!ajout) L.vider(grille);
         compte.textContent = t(total === 1 ? 'cat.resultat' : 'cat.resultats', { n: total });
+        // Visiteur sans compte : aperçu limité (6 pièces côté serveur), puis invitation à s'inscrire.
+        var limite = !L.session && total > liste.length;
+        mur.hidden = !limite;
+        grille.classList.toggle('s-apercu__grille--voilee', limite);
+        if (limite) murTitre.textContent = t('cat.mur_titre', { n: total - liste.length });
+        noteExemples.hidden = true;
+        var sansFiltre = Object.keys(etat).every(function (k) { return k === 'tri' || !etat[k]; });
+        if (!liste.length && !ajout && sansFiltre) {
+          // Catalogue encore vide : exemples illustrés, clairement signalés.
+          compte.textContent = '';
+          noteExemples.hidden = false;
+          L.exemples.forEach(function (ex) { grille.appendChild(L.carteExemple(ex)); });
+          mur.hidden = !!L.session;
+          if (!L.session) murTitre.textContent = t('index.ap.mur_titre');
+          return;
+        }
         if (!liste.length && !ajout) {
           L.ui.etatVide(grille, t('commun.aucun_resultat'), h('button', { class: 'bouton bouton--ligne', type: 'button', onclick: function () { etat = {}; synchroniserForm(form, etat); appliquer(); } }, t('cat.reinitialiser')));
           return;
         }
         var nouvelles = liste.map(function (tn) { return L.carteTenue(tn); });
         nouvelles.forEach(function (c) { grille.appendChild(c); });
-        plus.hidden = (page + 1) * PAR_PAGE >= total;
+        plus.hidden = limite || (page + 1) * PAR_PAGE >= total;
         if (etatFlip && etatFlip.elementStates.length) {
           window.Flip.from(etatFlip, { targets: $$('.carte', grille), duration: 0.6, ease: 'power3.inOut', absolute: true, scale: false, stagger: 0.015,
             onEnter: function (els) { return gsap.fromTo(els, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.03 }); },
@@ -384,7 +529,7 @@
       h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-debut' }, t('cat.du')), h('input', { id: 'f-debut', name: 'debut', type: 'date', class: 'champ__controle', min: L.aujourdhui(), value: etat.debut || '' })),
       h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-fin' }, t('cat.au')), h('input', { id: 'f-fin', name: 'fin', type: 'date', class: 'champ__controle', min: L.aujourdhui(), value: etat.fin || '' })))));
     form.appendChild(groupe('cat.f_ville', h('div', { class: 'choix-pastilles' },
-      [['', t('cat.toutes_villes')]].concat(C.villes.map(function (v) { return [v, v]; })).map(function (v) {
+      [['', t('cat.toutes_villes')]].concat(C.villes.map(function (v) { return [v, L.zone(v)]; })).map(function (v) {
         return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'ville', value: v[0], checked: (etat.ville || '') === v[0] }), h('span', null, v[1]));
       }))));
     form.appendChild(groupe('mes.taille_indicative', h('div', { class: 'choix-pastilles' },
@@ -468,7 +613,7 @@
     majSeo(tn, photos);
 
     // --- Galerie
-    var imgPrincipale = h('img', { src: L.img.url(photos[0].chemin), alt: tn.titre + ' — ' + t('tenue.photo_' + photos[0].type), width: 900, height: 1200, fetchpriority: 'high' });
+    var imgPrincipale = h('img', { src: L.img.url(photos[0].chemin), alt: tn.titre + ', ' + t('tenue.photo_' + photos[0].type), width: 900, height: 1200, fetchpriority: 'high' });
     var arche = h('div', { class: 'arche' }, imgPrincipale);
     var loupe = h('div', { class: 'loupe', 'aria-hidden': 'true' });
     var legende = h('p', { class: 'galerie__legende' }, t('tenue.loupe_aide'));
@@ -479,7 +624,7 @@
           $$('.galerie__vignette', vignettes).forEach(function (v) { v.classList.remove('est-actif'); v.setAttribute('aria-selected', 'false'); });
           e.currentTarget.classList.add('est-actif');
           e.currentTarget.setAttribute('aria-selected', 'true');
-          changerImage(L.img.url(ph.chemin), tn.titre + ' — ' + t('tenue.photo_' + ph.type));
+          changerImage(L.img.url(ph.chemin), tn.titre + ', ' + t('tenue.photo_' + ph.type));
         } }, h('img', { src: L.img.url(ph.chemin), alt: '', loading: 'lazy' })));
     });
     function changerImage(src, alt) {
@@ -499,12 +644,12 @@
     var lienBoutique = h(f.type_fournisseuse && f.type_fournisseuse !== 'particuliere' ? 'a' : 'div', { class: 'fiche__fournisseuse', href: 'boutique.html?id=' + f.id },
       h('span', { class: 'avatar' }, f.avatar_chemin ? h('img', { src: L.img.url(f.avatar_chemin, 'avatars'), alt: '' }) : (nomBoutique[0] || '·').toUpperCase()),
       h('span', null, h('strong', null, nomBoutique), h('br'),
-        h('small', { class: 'texte' }, t('type.' + (f.type_fournisseuse || 'particuliere')), ' · ', tn.ville,
+        h('small', { class: 'texte' }, t('type.' + (f.type_fournisseuse || 'particuliere')), ' · ', L.zone(tn.ville),
           f.nb_avis ? [' · ', h('span', { class: 'note' }, '★ ' + Number(f.note_moyenne).toFixed(1) + ' (' + f.nb_avis + ')')] : null)));
 
     var mesures = tn.categorie === 'accessoire' ? null : h('table', { class: 'mesures' },
       h('caption', { class: 'sr' }, t('tenue.mesures')),
-      h('tbody', null, [['mes.taille_indicative', tn.taille_indicative || '—'], ['mes.poitrine', tn.poitrine_cm], ['mes.taille', tn.taille_cm], ['mes.hanches', tn.hanches_cm], ['mes.longueur', tn.longueur_cm], ['mes.manche', tn.manche_cm]].map(function (l) {
+      h('tbody', null, [['mes.taille_indicative', tn.taille_indicative || ''], ['mes.poitrine', tn.poitrine_cm], ['mes.taille', tn.taille_cm], ['mes.hanches', tn.hanches_cm], ['mes.longueur', tn.longueur_cm], ['mes.manche', tn.manche_cm]].map(function (l) {
         return h('tr', null, h('th', { scope: 'row' }, t(l[0])), h('td', null, typeof l[1] === 'number' || /^\d/.test(String(l[1])) ? String(Number(l[1])) + ' cm' : l[1]));
       })));
 
@@ -523,7 +668,7 @@
 
     var infos = h('div', { class: 'fiche__infos' },
       h('nav', { class: 'fil', 'aria-label': t('tenue.fil') }, h('a', { href: 'catalogue.html' }, t('nav.catalogue')), h('span', null, h('a', { href: 'catalogue.html?categorie=' + tn.categorie }, libelleCategorie(tn)))),
-      h('div', null, h('p', { class: 'surtitre' }, libelleCategorie(tn) + ' · ' + tn.ville), h('h1', { class: 'fiche__titre' }, tn.titre)),
+      h('div', null, h('p', { class: 'surtitre' }, libelleCategorie(tn) + ' · ' + L.zone(tn.ville)), h('h1', { class: 'fiche__titre' }, tn.titre)),
       h('p', { class: 'fiche__prix' }, h('strong', null, L.euros(tn.prix_location_cents, true)), h('span', { class: 'texte' }, t('tenue.par_location', { min: tn.duree_min_jours, max: tn.duree_max_jours }))),
       modes,
       lienBoutique,
@@ -725,8 +870,8 @@
       contenu.appendChild(h('p', { class: 'texte' }, t('showroom.intro')));
       liste.forEach(function (s) {
         contenu.appendChild(h('div', { class: 'ligne-resa' },
-          h('div', { class: 'ligne-resa__tete' }, h('h3', { class: 'ligne-resa__titre' }, s.titre), h('span', { class: 'statut' }, s.ville)),
-          h('p', { class: 'texte', style: { margin: 0 } }, L.dateHeure(s.debut) + ' — ' + L.date(s.fin, { hour: '2-digit', minute: '2-digit' }) + ' · ' + s.lieu + ', ' + s.adresse),
+          h('div', { class: 'ligne-resa__tete' }, h('h3', { class: 'ligne-resa__titre' }, s.titre), h('span', { class: 'statut' }, L.zone(s.ville))),
+          h('p', { class: 'texte', style: { margin: 0 } }, L.dateHeure(s.debut) + ' → ' + L.date(s.fin, { hour: '2-digit', minute: '2-digit' }) + ' · ' + s.lieu + ', ' + s.adresse),
           h('div', null, h('button', { class: 'bouton bouton--petit', type: 'button', onclick: function (e) {
             var b = e.currentTarget;
             L.auth.exiger('connexion').then(function () {
@@ -740,9 +885,9 @@
   };
 
   function majSeo(tn, photos) {
-    var titre = t('tenue.seo_titre', { titre: tn.titre, categorie: libelleCategorie(tn), ville: tn.ville });
+    var titre = t('tenue.seo_titre', { titre: tn.titre, categorie: libelleCategorie(tn), ville: L.zone(tn.ville) });
     document.title = titre;
-    var desc = (tn.description || '').slice(0, 150) || t('tenue.seo_desc', { titre: tn.titre, ville: tn.ville });
+    var desc = (tn.description || '').slice(0, 150) || t('tenue.seo_desc', { titre: tn.titre, ville: L.zone(tn.ville) });
     var meta = function (sel, attr, val) { var m = $(sel); if (m) m.setAttribute(attr, val); };
     meta('meta[name=description]', 'content', desc);
     meta('meta[property="og:title"]', 'content', titre);
@@ -830,7 +975,7 @@
       var p = res[0].data, tenues = res[1], avis = res[2].data || [];
       if (!p || !p.est_fournisseuse) { L.ui.etatVide(zone, t('boutique.introuvable')); return; }
       var nom = p.boutique_nom || p.nom_affiche;
-      document.title = t('boutique.seo_titre', { nom: nom, type: t('type.' + p.type_fournisseuse), ville: p.ville || '' });
+      document.title = t('boutique.seo_titre', { nom: nom, type: t('type.' + p.type_fournisseuse), ville: L.zone(p.ville) });
       var mdesc = $('meta[name=description]');
       if (mdesc) mdesc.setAttribute('content', (p.boutique_bio || '').slice(0, 150) || t('boutique.seo_desc', { nom: nom }));
       var ld = { '@context': 'https://schema.org', '@type': 'Store', name: nom, address: { '@type': 'PostalAddress', addressLocality: p.ville || '', addressCountry: 'BE' } };
@@ -844,7 +989,7 @@
         h('header', { class: 'boutique-entete' },
           h('div', { class: 'arche-cadre boutique-entete__avatar' }, h('div', { class: 'arche' }, h('img', { src: visuel, alt: '' }))),
           h('div', null,
-            h('p', { class: 'surtitre' }, t('type.' + p.type_fournisseuse) + (p.ville ? ' · ' + p.ville : '')),
+            h('p', { class: 'surtitre' }, t('type.' + p.type_fournisseuse) + (p.ville ? ' · ' + L.zone(p.ville) : '')),
             h('h1', { style: { marginBottom: '12px' } }, nom),
             p.boutique_bio ? h('p', { class: 'chapeau', style: { whiteSpace: 'pre-line' } }, p.boutique_bio) : null,
             h('div', { class: 'boutique-entete__chiffres' },
@@ -1037,7 +1182,7 @@
         }),
         r.statut === 'demande' ? h('p', { class: 'texte', style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, t('panier.attente_reponse', { heure: L.dateHeure(r.expire_at) })) : null,
         r.statut === 'annulee' && r.motif_annulation ? h('p', { class: 'texte', style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, r.motif_annulation) : null,
-        ['payee', 'remise'].indexOf(r.statut) >= 0 && r.caution_cents ? h('p', { style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, t('panier.caution') + ' ' + L.euros(r.caution_cents) + ' — ', h('span', { class: 'statut statut--' + r.caution_statut }, t('caution.' + r.caution_statut)),
+        ['payee', 'remise'].indexOf(r.statut) >= 0 && r.caution_cents ? h('p', { style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, t('panier.caution') + ' ' + L.euros(r.caution_cents) + ', ', h('span', { class: 'statut statut--' + r.caution_statut }, t('caution.' + r.caution_statut)),
           r.caution_statut === 'echec' ? h('button', { class: 'lien', type: 'button', style: { marginLeft: '10px' }, onclick: function (e) { rediriger(e.currentTarget, 'caution-reessayer', { reservation_id: r.id }); } }, t('panier.autoriser_caution')) : null) : null));
     });
 
@@ -1120,7 +1265,7 @@
         barre.appendChild(h('button', { type: 'button', class: 'puce', 'aria-pressed': String(filtres.metier === m[0]), onclick: function () { filtres.metier = m[0]; puces(); charger(); } }, m[1]));
       });
       barre.appendChild(h('select', { class: 'champ__controle', style: { width: 'auto', minHeight: '38px', fontSize: '14px' }, 'aria-label': t('cat.f_ville'), onchange: function (e) { filtres.ville = e.target.value; charger(); } },
-        [h('option', { value: '' }, t('cat.toutes_villes'))].concat(C.villes.map(function (v) { return h('option', { value: v, selected: filtres.ville === v }, v); }))));
+        [h('option', { value: '' }, t('cat.toutes_villes'))].concat(C.villes.map(function (v) { return h('option', { value: v, selected: filtres.ville === v }, L.zone(v)); }))));
     }
     function charger() {
       if (!L.sb) return;
@@ -1137,7 +1282,7 @@
           var carte = h('article', { class: 'partenaire', id: 'p-' + p.id, 'data-reveal': '' },
             h('div', { class: 'partenaire__visuel' }, h('img', { src: L.img.url(visuel, 'partenaires'), alt: '', loading: 'lazy' })),
             h('div', { class: 'partenaire__corps' },
-              h('p', { class: 'surtitre', style: { margin: 0 } }, t('metier.' + p.metier) + ' · ' + p.ville),
+              h('p', { class: 'surtitre', style: { margin: 0 } }, t('metier.' + p.metier) + ' · ' + L.zone(p.ville)),
               h('h3', { class: 'partenaire__nom' }, p.nom),
               p.bio ? h('p', { class: 'texte', style: { margin: 0, fontSize: '14px' } }, p.bio.length > 160 ? p.bio.slice(0, 157) + '…' : p.bio) : null,
               h('div', { class: 'actions', style: { marginTop: '8px' } },
@@ -1165,7 +1310,7 @@
 
   function fiche(p) {
     var contenu = h('div', { style: { display: 'grid', gap: '16px' } },
-      h('p', { class: 'surtitre', style: { margin: 0 } }, t('metier.' + p.metier) + ' · ' + p.ville),
+      h('p', { class: 'surtitre', style: { margin: 0 } }, t('metier.' + p.metier) + ' · ' + L.zone(p.ville)),
       p.bio ? h('p', { style: { whiteSpace: 'pre-line', margin: 0 } }, p.bio) : null,
       (p.galerie || []).length ? h('div', { class: 'edl__photos' }, p.galerie.map(function (g) { return h('img', { src: L.img.url(g, 'partenaires'), alt: '', loading: 'lazy', style: { aspectRatio: '1', objectFit: 'cover', width: '100%' } }); })) : null,
       h('p', { style: { margin: 0 } },
@@ -1186,7 +1331,7 @@
       h('div', { class: 'grille-2' },
         L.ui.champ('telephone', 'profil.telephone', { type: 'tel', pattern: '[+0-9 ().-]{6,25}', autocomplete: 'tel' }),
         L.ui.champ('date', 'tenue.date_evenement', { type: 'date', min: L.aujourdhui() })),
-      L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: [['', '—']].concat(C.villes.map(function (v) { return [v, v, v === p.ville]; })) }),
+      L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: [['', t('commun.non_precise')]].concat(C.villes.map(function (v) { return [v, L.zone(v), v === p.ville]; })) }),
       L.ui.champ('message', 'hub.message', { tag: 'textarea', required: true, minlength: 10, maxlength: 1500 }),
       L.ui.honeypot(), retour,
       h('button', { class: 'bouton bouton--plein', type: 'submit' }, t('hub.envoyer')),

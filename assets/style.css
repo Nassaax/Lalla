@@ -651,3 +651,102 @@ select.champ__controle { appearance: none; -webkit-appearance: none; padding-rig
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* ==========================================================================
+   Accueil : récit au défilement (ouverture épinglée, mots qui s'allument,
+   visuel fixe, bandeaux). Seuls transform et opacity sont animés.
+   ========================================================================== */
+.page-accueil { background: var(--noir); }
+.page-accueil main { background: var(--ivoire); }
+
+/* En-tête en verre fumé sur l'accueil */
+.page-accueil .entete, .page-accueil .entete.est-defile {
+  background: rgba(18, 17, 16, .86); border-bottom-color: rgba(255, 255, 255, .06); color: var(--ivoire-clair);
+  -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+}
+.page-accueil .entete .marque { color: var(--ivoire-clair); }
+.page-accueil .entete .marque__arche { background: var(--or-clair); }
+.page-accueil .entete .panier-lien, .page-accueil .entete .nav__compte { color: var(--ivoire-clair); }
+.page-accueil .entete .burger__ligne { background: var(--ivoire-clair); }
+.page-accueil .entete .langue { border-color: rgba(255, 255, 255, .22); }
+.page-accueil .entete .langue__btn { color: #BDB4A4; }
+.page-accueil .entete .langue__btn.est-actif { background: var(--ivoire-clair); color: var(--noir); }
+@media (min-width: 1024px) {
+  .page-accueil .entete .nav__lien { color: #E6DED0; }
+  .page-accueil .entete .nav__lien--accent { color: var(--or-clair); }
+}
+@media (max-width: 1023px) { .page-accueil .nav { color: var(--noir); } }
+
+.bouton--ligne-clair { --fond: transparent; --texte: var(--ivoire-clair); border-color: rgba(251, 248, 242, .5); }
+.bouton--ligne-clair:hover { --fond: var(--ivoire-clair); --texte: var(--noir); border-color: var(--ivoire-clair); }
+.s-titre-xl { font-size: clamp(2.4rem, 7vw, 5.6rem); line-height: 1; letter-spacing: -.015em; max-width: 16ch; }
+
+/* Ouverture */
+.s-hero { position: relative; background: radial-gradient(120% 80% at 50% 30%, #2B2420 0%, #161412 55%, #0E0D0C 100%); color: var(--ivoire-clair); }
+.s-hero__collant { position: relative; min-height: calc(100svh - var(--entete-h)); overflow: hidden; display: flex; flex-direction: column; align-items: center; padding: clamp(36px, 7vh, 80px) var(--gouttiere) 0; }
+.s-hero__texte { position: relative; z-index: 2; text-align: center; will-change: transform, opacity; }
+.s-hero__surtitre { font-size: 11px; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; color: var(--or-clair); margin: 0 0 22px; }
+.s-hero__titre { color: #FBF8F2; font-size: clamp(2.7rem, 7.4vw, 6.6rem); line-height: .98; font-weight: 300; letter-spacing: -.025em; margin: 0 auto 26px; max-width: 15ch; }
+.s-hero__titre em { color: var(--or-clair); }
+.s-hero__actions { justify-content: center; margin-top: 0; }
+.s-hero__scene { position: relative; z-index: 1; width: min(68vw, 380px); margin-top: clamp(28px, 5vh, 56px); transform-origin: 50% 50%; }
+.s-hero__scene::before { content: ''; position: absolute; inset: -30% -40%; background: radial-gradient(closest-side, rgba(217, 197, 151, .28), transparent 70%); pointer-events: none; }
+.s-hero__arche { background: #1E1A17; }
+.s-hero__legende { position: absolute; z-index: 3; left: 0; right: 0; bottom: 9vh; margin: 0; text-align: center; opacity: 0; pointer-events: none; }
+.s-hero__legende span { display: block; font-family: var(--serif); font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 300; color: #FBF8F2; text-shadow: 0 2px 30px rgba(0, 0, 0, .35); }
+.s-hero__legende small { display: block; margin-top: 6px; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: #F3E8CF; text-shadow: 0 1px 12px rgba(0, 0, 0, .4); }
+.s-hero__defiler { position: absolute; left: 50%; bottom: 18px; width: 1px; height: 46px; background: linear-gradient(rgba(217, 197, 151, 0), var(--or-clair)); z-index: 2; }
+.anime .s-hero__titre, .anime [data-hero-el], .anime .s-hero__scene { opacity: 0; }
+@media (max-width: 767px) { .s-hero__scene { width: min(74vw, 340px); } }
+
+/* Manifeste */
+.s-manifeste { background: #0E0D0C; padding: clamp(110px, 20vh, 220px) 0; }
+.s-manifeste__texte { font-family: var(--serif); font-weight: 300; font-size: clamp(1.9rem, 4.6vw, 4rem); line-height: 1.16; letter-spacing: -.01em; color: #FBF8F2; max-width: 22ch; margin: 0 auto; text-align: center; }
+.mot { display: inline; }
+
+/* Engagements */
+.s-promesses { background: var(--ivoire); padding: clamp(90px, 14vw, 170px) 0 clamp(60px, 10vw, 120px); }
+.s-promesses__grille { display: grid; gap: 40px; margin-top: clamp(40px, 6vw, 80px); }
+.s-promesses__visuel { display: none; }
+.s-promesses__arche { aspect-ratio: 3 / 4; }
+.s-promesses__arche img { opacity: 0; transition: opacity .9s var(--ease), transform 1.4s var(--ease); transform: scale(1.06); }
+.s-promesses__arche img.est-actif { opacity: 1; transform: none; }
+.s-promesses__liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 56px; }
+.s-promesse { transition: opacity .6s var(--ease); }
+.s-promesse__num { display: block; font-size: 12px; font-weight: 700; letter-spacing: .2em; color: var(--or-fonce); margin-bottom: 14px; }
+.s-promesse h3 { font-size: clamp(2.4rem, 6vw, 4.4rem); font-weight: 300; margin-bottom: 14px; }
+.s-promesse p { font-size: clamp(1.05rem, 1.6vw, 1.3rem); color: var(--gris); max-width: 34ch; margin: 0; }
+@media (min-width: 900px) {
+  .s-promesses__grille { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(48px, 8vw, 120px); align-items: start; }
+  .s-promesses__visuel { display: block; position: sticky; top: calc(var(--entete-h) + 6vh); }
+  .s-promesses__arche { max-height: calc(100svh - var(--entete-h) - 12vh); margin: 0 auto; }
+  .s-promesses__liste { gap: 0; }
+  .s-promesse { min-height: 72vh; display: flex; flex-direction: column; justify-content: center; opacity: .18; }
+  .s-promesse.est-actif { opacity: 1; }
+  .mouvement-reduit .s-promesse { opacity: 1; }
+}
+
+/* Aperçu */
+.s-apercu .chapeau { margin-bottom: clamp(32px, 5vw, 56px); }
+.carte--exemple { border: 0; padding: 0; background: none; text-align: left; font: inherit; width: 100%; }
+.carte__badge--exemple { background: rgba(18, 17, 16, .78); color: var(--ivoire-clair); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.s-apercu__grille--voilee { -webkit-mask-image: linear-gradient(to bottom, #000 62%, rgba(0, 0, 0, .12) 100%); mask-image: linear-gradient(to bottom, #000 62%, rgba(0, 0, 0, .12) 100%); }
+.s-apercu__mur { position: relative; z-index: 2; max-width: 640px; margin: -40px auto 0; text-align: center; background: rgba(251, 248, 242, .82); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border: 1px solid var(--ligne); padding: clamp(28px, 5vw, 48px); box-shadow: 0 30px 80px -40px rgba(18, 17, 16, .45); }
+.s-apercu__mur h3 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 300; }
+.s-apercu__mur p { color: var(--gris); }
+.s-apercu__mur .actions { justify-content: center; }
+.s-apercu__connecte { text-align: center; margin-top: 48px; }
+
+/* Partout en Belgique */
+.s-belgique { background: var(--noir); color: var(--ivoire); padding: clamp(100px, 16vw, 200px) 0 clamp(60px, 10vw, 120px); overflow: hidden; }
+.s-belgique h2 { color: #FBF8F2; }
+.s-belgique .surtitre { color: var(--or-clair); }
+.s-belgique .chapeau { color: #CFC6B6; }
+.s-belgique__bandes { margin-top: clamp(48px, 8vw, 100px); display: grid; gap: 4px; }
+.s-belgique__bande { margin: 0; white-space: nowrap; font-family: var(--serif); font-weight: 300; font-size: clamp(3rem, 9vw, 7.5rem); line-height: 1.05; color: #FBF8F2; will-change: transform; }
+.s-belgique__bande--contour { color: transparent; -webkit-text-stroke: 1px var(--or); }
+
+/* Fin */
+.s-fin { background: var(--ivoire); padding: clamp(110px, 18vw, 220px) 0; text-align: center; }
+.s-fin__titre { font-size: clamp(2.4rem, 7vw, 5.8rem); font-weight: 300; line-height: 1.02; letter-spacing: -.02em; max-width: 18ch; margin: 0 auto 36px; }
+.s-fin__actions { justify-content: center; }

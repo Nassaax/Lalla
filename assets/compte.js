@@ -207,8 +207,8 @@
       var vC = validations.length && validations.every(function (e) { return e.valide_cliente_at; }) ? validations[0].valide_cliente_at : null;
       var vF = validations.length && validations.every(function (e) { return e.valide_fournisseuse_at; }) ? validations[0].valide_fournisseuse_at : null;
       contenu.appendChild(h('div', { class: 'panneau', style: { margin: 0 } },
-        h('p', { class: 'horodatage' }, t('edl.validation_cliente') + ' : ' + (vC ? L.dateHeure(vC) : '—')),
-        h('p', { class: 'horodatage', style: { margin: 0 } }, t('edl.validation_fournisseuse') + ' : ' + (vF ? L.dateHeure(vF) : '—'))));
+        h('p', { class: 'horodatage' }, t('edl.validation_cliente') + ' : ' + (vC ? L.dateHeure(vC) : t('commun.en_attente'))),
+        h('p', { class: 'horodatage', style: { margin: 0 } }, t('edl.validation_fournisseuse') + ' : ' + (vF ? L.dateHeure(vF) : t('commun.en_attente')))));
       var dejaMoi = role === 'cliente' ? vC : vF;
       var retour = h('div');
       contenu.appendChild(retour);
@@ -276,7 +276,7 @@
     if (remise) {
       comparaison = h('div', null, h('p', { class: 'kpi__libelle' }, t('edl.comparaison')), h('div', { class: 'edl__comparaison' }));
       slots.forEach(function (s) {
-        var a = h('img', { alt: t('edl.remise') + ' — ' + t(s[1]) }), b = h('img', { alt: t('edl.retour') + ' — ' + t(s[1]) });
+        var a = h('img', { alt: t('edl.remise') + ', ' + t(s[1]) }), b = h('img', { alt: t('edl.retour') + ', ' + t(s[1]) });
         L.img.signee('etats-des-lieux', remise[s[0]]).then(function (u) { if (u) a.src = u; });
         if (donnees[s[0]]) L.img.signee('etats-des-lieux', donnees[s[0]]).then(function (u) { if (u) b.src = u; });
         $('.edl__comparaison', comparaison).appendChild(h('figure', null, a, h('figcaption', null, t('edl.remise') + ' · ' + t(s[1]))));
@@ -496,7 +496,7 @@
     var form = h('form', { class: 'formulaire' },
       h('p', { class: 'chapeau' }, t('devenir.intro')),
       h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'creatrice'].map(function (ty, i) { return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'type', value: ty, checked: i === 0 }), h('span', null, t('type.' + ty))); })),
-      L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: C.villes.map(function (v) { return [v, v, v === etat.profil.ville]; }) }),
+      L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: C.villes.map(function (v) { return [v, L.zone(v), v === etat.profil.ville]; }) }),
       h('div', { class: 'retour' }),
       h('button', { class: 'bouton', type: 'submit' }, t('devenir.activer')));
     form.addEventListener('submit', function (e) {
@@ -556,7 +556,7 @@
       h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('cat.f_occasion')), occasions),
       h('div', { class: 'grille-2' },
         L.ui.champ('taille_indicative', 'mes.taille_indicative', { tag: 'select', options: C.tailles.map(function (x) { return [x, x === 'unique' ? t('annonce.taille_unique') : x === 'enfant' ? t('cat.enfant') : x, v.taille_indicative === x]; }) }),
-        L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: C.villes.map(function (x) { return [x, x, v.ville === x]; }) })),
+        L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: C.villes.map(function (x) { return [x, L.zone(x), v.ville === x]; }) })),
       h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('annonce.mesures')), h('p', { class: 'champ__aide', style: { margin: 0 } }, t('annonce.mesures_aide')), mesures),
       h('div', { class: 'grille-2' },
         L.ui.champ('prix', 'annonce.prix', { type: 'number', required: true, min: '5', max: '5000', step: '1', inputmode: 'numeric', value: v.prix_location_cents ? v.prix_location_cents / 100 : '' }),
@@ -717,7 +717,7 @@
             (function (jour) {
               var bloc = blocs.find(function (b) { return jour >= b.debut && jour <= b.fin; });
               var classe = 'calendrier__jour' + (bloc ? ' calendrier__jour--' + bloc.motif : '') + (selection === jour ? ' calendrier__jour--selection' : '');
-              grille.appendChild(h('button', { type: 'button', class: classe, disabled: jour < L.aujourdhui() || (bloc && bloc.motif === 'reservation') || null, 'aria-label': L.date(jour) + (bloc ? ' — ' + t('calendrier.' + (bloc.motif === 'manuel' ? 'manuel' : 'reservation')) : ''),
+              grille.appendChild(h('button', { type: 'button', class: classe, disabled: jour < L.aujourdhui() || (bloc && bloc.motif === 'reservation') || null, 'aria-label': L.date(jour) + (bloc ? ', ' + t('calendrier.' + (bloc.motif === 'manuel' ? 'manuel' : 'reservation')) : ''),
                 onclick: function () {
                   if (bloc && bloc.motif === 'manuel') {
                     L.sb.from('blocages').delete().eq('id', bloc.id).then(function (x) { if (x.error) L.ui.toast(L.messageErreur(x.error), 'erreur'); dessiner(); });
@@ -750,7 +750,7 @@
       var avenir = liste.filter(function (r) { return !r.verse_at && ['payee', 'remise', 'rendue', 'litige', 'acceptee'].indexOf(r.statut) >= 0; }).reduce(function (s, r) { return s + r.montant_transfert_cents; }, 0);
       contenu.appendChild(h('div', { class: 'kpis' },
         kpi(t('revenus.verse'), L.euros(verse)), kpi(t('revenus.a_venir'), L.euros(avenir)),
-        kpi(t('revenus.locations'), String(liste.length)), kpi(t('revenus.note'), etat.profil.nb_avis ? '★ ' + Number(etat.profil.note_moyenne).toFixed(1) : '—', t('boutique.avis', { n: etat.profil.nb_avis })),
+        kpi(t('revenus.locations'), String(liste.length)), kpi(t('revenus.note'), etat.profil.nb_avis ? '★ ' + Number(etat.profil.note_moyenne).toFixed(1) : '', t('boutique.avis', { n: etat.profil.nb_avis })),
         etat.profil.solde_penalites_cents ? kpi(t('revenus.penalites'), L.euros(etat.profil.solde_penalites_cents), t('revenus.penalites_aide')) : null));
       var table = h('table', { class: 'table table--defile' }, h('thead', null, h('tr', null, h('th', null, t('revenus.date')), h('th', null, t('revenus.piece')), h('th', null, t('revenus.statut')), h('th', { class: 'num' }, t('revenus.location')), h('th', { class: 'num' }, t('revenus.commission')), h('th', { class: 'num' }, t('revenus.versement')))),
         h('tbody', null, liste.map(function (r) {
@@ -851,7 +851,7 @@
         L.ui.champ('nom', 'partenaire.nom', { required: true, minlength: 2, maxlength: 80, value: pa.nom || '' }),
         h('div', { class: 'grille-2' },
           L.ui.champ('metier', 'partenaire.metier', { tag: 'select', options: C.metiers.map(function (m) { return [m, t('metier.' + m), pa.metier === m]; }) }),
-          L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: C.villes.map(function (v) { return [v, v, pa.ville === v]; }) })),
+          L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: C.villes.map(function (v) { return [v, L.zone(v), pa.ville === v]; }) })),
         L.ui.champ('bio', 'partenaire.bio', { tag: 'textarea', maxlength: 1500 }),
         h('div', { class: 'grille-2' },
           L.ui.champ('email', 'partenaire.email', { type: 'email', required: true, value: pa.email_contact || L.session.user.email }),
@@ -879,7 +879,7 @@
       contenu.appendChild(panneau(t('compte.v_leads'), h('div', null, liste.map(function (l) {
         return h('article', { class: 'ligne-resa' },
           h('div', { class: 'ligne-resa__tete' }, h('h3', { class: 'ligne-resa__titre' }, l.nom), h('span', { class: 'statut statut--' + (l.statut === 'envoye' ? 'demande' : 'confirme') }, t('leads.s_' + l.statut))),
-          h('p', { style: { margin: 0, fontSize: '14px' } }, [l.date_evenement ? L.date(l.date_evenement) : null, l.ville, L.dateCourte(l.created_at)].filter(Boolean).join(' · ')),
+          h('p', { style: { margin: 0, fontSize: '14px' } }, [l.date_evenement ? L.date(l.date_evenement) : null, L.zone(l.ville), L.dateCourte(l.created_at)].filter(Boolean).join(' · ')),
           h('p', { style: { margin: 0 } }, l.message),
           h('p', { style: { margin: 0, fontSize: '14px' } }, h('a', { href: 'mailto:' + l.email }, l.email), l.telephone ? [' · ', h('a', { href: 'tel:' + l.telephone.replace(/\s/g, '') }, l.telephone)] : null),
           l.statut === 'envoye' ? h('div', null, h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () { L.sb.from('leads').update({ statut: 'converti' }).eq('id', l.id).then(function () { etat.aller('leads'); }); } }, t('leads.converti'))) : null);
@@ -896,7 +896,7 @@
     var form = h('form', { class: 'formulaire' },
       h('div', { class: 'grille-2' }, L.ui.champ('prenom', 'auth.prenom', { maxlength: 60, value: pr.prenom || '' }), L.ui.champ('nom', 'auth.nom', { maxlength: 80, value: pr.nom || '' })),
       h('div', { class: 'grille-2' }, L.ui.champ('nom_affiche', 'profil.nom_affiche', { maxlength: 80, value: p.nom_affiche || '', aide: t('profil.nom_affiche_aide') }), L.ui.champ('telephone', 'profil.telephone', { type: 'tel', value: pr.telephone || '', pattern: '[+0-9 ().-]{6,25}', aide: t('profil.telephone_aide') })),
-      h('div', { class: 'grille-2' }, L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: [['', '—']].concat(C.villes.map(function (v) { return [v, v, p.ville === v]; })) }),
+      h('div', { class: 'grille-2' }, L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: [['', t('commun.non_precise')]].concat(C.villes.map(function (v) { return [v, L.zone(v), p.ville === v]; })) }),
         L.ui.champ('langue', 'profil.langue', { tag: 'select', options: [['fr', 'Français', p.langue === 'fr'], ['nl', 'Nederlands', p.langue === 'nl']] })),
       L.ui.champ('adresse', 'profil.adresse', { maxlength: 200, value: pr.adresse || '', autocomplete: 'street-address' }),
       retour, h('button', { class: 'bouton', type: 'submit' }, t('commun.enregistrer')));

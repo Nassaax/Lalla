@@ -2,7 +2,7 @@
 
 > Portez l'exceptionnel, le temps d'une fête.
 
-LALLA est une plateforme belge de location de tenues marocaines (caftans, takchitas, tenues de mariée, tenues homme, enfant, accessoires). Elle met en relation des particulières, negafas et créatrices avec des clientes, à Bruxelles, Liège et Anvers. La plateforme vérifie les annonces, encaisse le paiement, prend sa commission et reverse le reste.
+LALLA est une plateforme belge de location de tenues marocaines (caftans, takchitas, tenues de mariée, tenues homme, enfant, accessoires). Elle met en relation des particulières, negafas et créatrices avec des clientes, partout en Belgique (Bruxelles et les dix provinces). La plateforme vérifie les annonces, encaisse le paiement, prend sa commission et reverse le reste.
 
 Ce guide s'adresse à une personne **non développeuse** : il explique pas à pas comment mettre le site en ligne. Comptez environ deux heures la première fois.
 
@@ -205,7 +205,9 @@ npm install
 SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… npm run seed
 # avec de vrais comptes Connect de test : ajoutez STRIPE_SECRET_KEY=sk_test_… SEED_STRIPE=1
 ```
-Tous les comptes de démo utilisent le mot de passe `Demo-Lalla-2026`, par exemple `cliente1@demo.lalla.be`, `negafa1@demo.lalla.be` ou `admin@demo.lalla.be`. **Supprimez-les avant l'ouverture au public.**
+Tous les comptes de démo utilisent le mot de passe `Demo-Lalla-2026`, par exemple `cliente1@demo.lalla.be`, `negafa1@demo.lalla.be` ou `admin@demo.lalla.be`. **Supprimez-les avant l'ouverture au public** : collez le contenu de `supabase/nettoyage-demo.sql` dans Supabase → *SQL Editor* puis *Run*. Seuls les comptes `@demo.lalla.be`, leurs tenues et les partenaires et showrooms de démo sont effacés.
+
+Tant qu'aucune tenue n'est publiée, l'accueil et le catalogue affichent six **exemples illustrés**, marqués « Exemple » et non réservables. Les visiteurs sans compte voient un aperçu de six pièces, puis une invitation à créer leur compte pour voir la suite.
 
 ---
 
@@ -235,7 +237,7 @@ Avant d'ouvrir le site :
 - [ ] Recréer les **deux webhooks** en mode live et mettre à jour `STRIPE_WEBHOOK_SECRET`.
 - [ ] Remplacer `STRIPE_SECRET_KEY` par la clé `sk_live_…`.
 - [ ] Vérifier `SITE_URL`, le domaine et les URL de redirection Supabase.
-- [ ] Supprimer les comptes et tenues de démo.
+- [ ] Supprimer les comptes et tenues de démo (`supabase/nettoyage-demo.sql`).
 - [ ] Ajuster les **paramètres** dans le back-office : commission, frais de pressing et d'essayage, seuil Identity, politique d'annulation.
 - [ ] Activer les **sauvegardes** Supabase (plan Pro) et la double authentification sur tous les comptes (GitHub, Vercel, Supabase, Stripe, Resend).
 - [ ] Faire une vraie location à petit prix entre deux personnes de confiance.

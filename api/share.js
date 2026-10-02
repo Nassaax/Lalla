@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   const photo = photos.find((p) => p.type === 'portee') || photos.find((p) => p.type === 'face');
   const image = photo ? `${process.env.SUPABASE_URL}/storage/v1/object/public/tenues/${photo.chemin}` : `${site}/assets/og-default.jpg`;
   const prix = tn ? `${(tn.prix_location_cents / 100).toFixed(0)} €` : '';
-  const titre = tn ? `${tn.titre} — ${prix} la location | ${MARQUE}` : `${MARQUE} — location de tenues marocaines`;
+  const titre = tn ? `${tn.titre} | ${prix} la location | ${MARQUE}` : `${MARQUE} | location de tenues marocaines`;
   const nomBoutique = tn?.fournisseuse?.boutique_nom || tn?.fournisseuse?.nom_affiche || '';
   const desc = tn ? `${LIBELLES[tn.categorie] || ''} à louer à ${tn.ville}${nomBoutique ? `, proposé par ${nomBoutique}` : ''}. ${(tn.description || '').slice(0, 120)}` : 'Portez l\'exceptionnel, le temps d\'une fête.';
   res.statusCode = 200;

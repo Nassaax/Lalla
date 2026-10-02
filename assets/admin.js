@@ -80,7 +80,7 @@
       L.vider(z);
       z.appendChild(h('div', { class: 'kpis' },
         kpi('Locations payées (6 mois)', String(s.locations)), kpi('Volume de location', eur(s.volume_cents)),
-        kpi('Commissions + frais', eur(s.commissions_cents)), kpi('Taux d\'acceptation', s.taux_acceptation == null ? '—' : s.taux_acceptation + ' %'),
+        kpi('Commissions + frais', eur(s.commissions_cents)), kpi('Taux d\'acceptation', s.taux_acceptation == null ? '' : s.taux_acceptation + ' %'),
         kpi('Litiges ouverts', String(s.litiges_ouverts), s.litiges_total + ' au total'), kpi('Annonces à valider', String(s.annonces_en_attente)),
         kpi('Comptes à valider', String(s.comptes_a_valider)), kpi('Remboursements', eur(s.rembourse_cents))));
       var mois = Object.keys(s.mois);
@@ -132,7 +132,7 @@
           if (c.score_visibilite < 100) boutons.appendChild(h('button', { class: 'lien', type: 'button', onclick: function () { action('admin-compte', { user_id: c.id, action: 'reinitialiser_score' }).then(charger); } }, 'Score à 100'));
           return h('tr', null, h('td', null, h('strong', null, c.boutique_nom || c.nom_affiche), h('br'), h('small', { class: 'texte' }, (c.ville || '') + ' · ' + L.dateCourte(c.created_at))),
             h('td', null, roles), h('td', null, statut(c.statut_compte), ' ', c.compte_valide ? '' : statut('en_attente')),
-            h('td', null, c.est_fournisseuse ? (c.stripe_onboarding_complet ? 'actif' : 'incomplet') : '—'), h('td', null, c.identite_verifiee ? 'vérifiée' : '—'),
+            h('td', null, c.est_fournisseuse ? (c.stripe_onboarding_complet ? 'actif' : 'incomplet') : ''), h('td', null, c.identite_verifiee ? 'vérifiée' : ''),
             h('td', null, c.score_visibilite + (c.solde_penalites_cents ? ' · pénalités ' + eur(c.solde_penalites_cents) : '')), h('td', null, boutons));
         })));
       });
@@ -151,9 +151,9 @@
       sb(q).then(function (resas) {
         L.vider(liste).appendChild(tableau(['Réf.', 'Pièces', 'Parties', 'Dates', 'Statut', 'Caution', 'Montant €', ''], resas.map(function (r) {
           return h('tr', null, h('td', null, r.id.slice(0, 8).toUpperCase()), h('td', null, (r.reservation_lignes || []).map(function (l) { return l.titre_snapshot; }).join(', ')),
-            h('td', null, ((r.cliente && r.cliente.nom_affiche) || '—') + ' → ' + ((r.fournisseuse && (r.fournisseuse.boutique_nom || r.fournisseuse.nom_affiche)) || '—')),
-            h('td', null, L.dateCourte(r.date_debut) + ' – ' + L.dateCourte(r.date_fin)), h('td', null, statut(r.statut)),
-            h('td', null, r.caution_cents ? eur(r.caution_cents) + ' · ' + r.caution_statut : '—'), h('td', { class: 'num' }, eur(r.montant_location_cents)),
+            h('td', null, ((r.cliente && r.cliente.nom_affiche) || '') + ' → ' + ((r.fournisseuse && (r.fournisseuse.boutique_nom || r.fournisseuse.nom_affiche)) || '')),
+            h('td', null, L.dateCourte(r.date_debut) + ' au ' + L.dateCourte(r.date_fin)), h('td', null, statut(r.statut)),
+            h('td', null, r.caution_cents ? eur(r.caution_cents) + ' · ' + r.caution_statut : ''), h('td', { class: 'num' }, eur(r.montant_location_cents)),
             h('td', null, ['demande', 'acceptee', 'payee'].indexOf(r.statut) >= 0 ? h('button', { class: 'lien', type: 'button', onclick: function () {
               L.ui.confirmer('Annuler cette réservation (remboursement intégral de la cliente) ?', 'Annuler').then(function (o) { if (o) action('reservation-annuler', { reservation_id: r.id, motif: 'Annulée par l\'équipe' }, 'Réservation annulée').then(charger); });
             } }, 'Annuler') : null));
@@ -189,7 +189,7 @@
               });
             });
             var constat = function (e) { return [e.taches ? 'taches' : null, e.accrocs ? 'accrocs' : null, e.perles_manquantes ? 'perles' : null].filter(Boolean).join(', ') || 'RAS'; };
-            photosZone.appendChild(h('div', null, h('p', { class: 'kpi__libelle' }, l.titre_snapshot + ' — remise : ' + constat(remise) + ' · retour : ' + constat(retour)), grille));
+            photosZone.appendChild(h('div', null, h('p', { class: 'kpi__libelle' }, l.titre_snapshot + ', remise : ' + constat(remise) + ' · retour : ' + constat(retour)), grille));
           });
           if (lt.photos.length) {
             var g = h('div', { class: 'edl__photos', style: { gridTemplateColumns: 'repeat(4, 1fr)' } });
@@ -215,7 +215,7 @@
         } else {
           corps.appendChild(h('p', { class: 'message' }, 'Résolu le ' + L.dateHeure(lt.resolu_at) + ' : retenue ' + eur(lt.montant_capture_cents) + ', remboursement ' + eur(lt.montant_rembourse_cents) + '. ' + (lt.decision || '')));
         }
-        z.appendChild(panneau('Litige ' + r.id.slice(0, 8).toUpperCase() + ' — ' + (r.reservation_lignes || []).map(function (l) { return l.titre_snapshot; }).join(', '), corps, statut(lt.statut)));
+        z.appendChild(panneau('Litige ' + r.id.slice(0, 8).toUpperCase() + ', ' + (r.reservation_lignes || []).map(function (l) { return l.titre_snapshot; }).join(', '), corps, statut(lt.statut)));
       });
     });
   };
@@ -227,7 +227,7 @@
         var def = LIBELLES_PARAMS[p.cle] || [p.cle, 'brut', p.description];
         var champ;
         if (def[1] === 'politique') {
-          champ = L.ui.champ(p.cle, def[0], { tag: 'textarea', aide: def[2] + ' — une ligne par palier : « jours_min:pourcentage », par ex. 30:100' });
+          champ = L.ui.champ(p.cle, def[0], { tag: 'textarea', aide: def[2] + '. Une ligne par palier : « jours_min:pourcentage », par ex. 30:100' });
           $('textarea', champ).value = p.valeur.map(function (x) { return x.jours_min + ':' + x.pct; }).join('\n');
         } else {
           var v = def[1] === 'euros' ? p.valeur / 100 : p.valeur;
@@ -282,7 +282,7 @@
     L.ui.modale(c, { titre: s.titre, large: true });
     L.ui.chargement(c);
     sb(L.sb.from('showroom_inscriptions').select('created_at, tenue_ids, message, profil:profils(nom_affiche)').eq('showroom_id', s.id)).then(function (l) {
-      L.vider(c).appendChild(l.length ? tableau(['Cliente', 'Inscrite le', 'Pièces demandées'], l.map(function (i) { return h('tr', null, h('td', null, i.profil ? i.profil.nom_affiche : '—'), h('td', null, L.dateCourte(i.created_at)), h('td', null, String(i.tenue_ids.length))); })) : h('p', null, 'Aucune inscription.'));
+      L.vider(c).appendChild(l.length ? tableau(['Cliente', 'Inscrite le', 'Pièces demandées'], l.map(function (i) { return h('tr', null, h('td', null, i.profil ? i.profil.nom_affiche : ''), h('td', null, L.dateCourte(i.created_at)), h('td', null, String(i.tenue_ids.length))); })) : h('p', null, 'Aucune inscription.'));
     });
   }
 
@@ -291,7 +291,7 @@
       L.vider(z).appendChild(panneau('Leads du hub mariage', liste.length ? tableau(['Date', 'Partenaire', 'Client', 'Statut', 'Commission €', ''], liste.map(function (l) {
         var sel = h('select', { class: 'champ__controle', style: { minHeight: '34px', fontSize: '13px' }, 'aria-label': 'Statut' }, ['envoye', 'converti', 'commission_due', 'payee'].map(function (s) { return h('option', { value: s, selected: l.statut === s }, s); }));
         var com = h('input', { class: 'champ__controle', type: 'number', step: '0.01', min: '0', value: String(l.montant_commission_cents / 100), style: { minHeight: '34px', width: '100px' }, 'aria-label': 'Commission' });
-        return h('tr', null, h('td', null, L.dateCourte(l.created_at)), h('td', null, l.partenaire ? l.partenaire.nom : '—'), h('td', null, l.nom, h('br'), h('small', null, l.email)),
+        return h('tr', null, h('td', null, L.dateCourte(l.created_at)), h('td', null, l.partenaire ? l.partenaire.nom : ''), h('td', null, l.nom, h('br'), h('small', null, l.email)),
           h('td', null, sel), h('td', null, com),
           h('td', null, h('button', { class: 'bouton bouton--petit', type: 'button', onclick: function () {
             sb(L.sb.from('leads').update({ statut: sel.value, montant_commission_cents: Math.round(Number(com.value) * 100) }).eq('id', l.id)).then(function () { L.ui.toast('Lead mis à jour', 'succes'); }).catch(function (e) { L.ui.toast(L.messageErreur(e), 'erreur'); });
