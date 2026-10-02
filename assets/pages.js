@@ -1105,7 +1105,113 @@
   }
 
   // ===========================================================================
+  // Hub mariage : annuaire des partenaires et demandes de devis
+  // ===========================================================================
+  L.pages.partenaires = function () {
+    remplirPlaceholders(document);
+    var lienBeaute = $('[data-beaute]');
+    if (lienBeaute) lienBeaute.href = C.liens.beauteMariee;
+    var grille = $('[data-partenaires]');
+    var filtres = { metier: L.param('metier') || '', ville: L.param('ville') || '' };
+    var barre = $('[data-filtres-partenaires]');
+    function puces() {
+      L.vider(barre);
+      [['', t('hub.tous')]].concat(C.metiers.map(function (m) { return [m, t('metier.' + m)]; })).forEach(function (m) {
+        barre.appendChild(h('button', { type: 'button', class: 'puce', 'aria-pressed': String(filtres.metier === m[0]), onclick: function () { filtres.metier = m[0]; puces(); charger(); } }, m[1]));
+      });
+      barre.appendChild(h('select', { class: 'champ__controle', style: { width: 'auto', minHeight: '38px', fontSize: '14px' }, 'aria-label': t('cat.f_ville'), onchange: function (e) { filtres.ville = e.target.value; charger(); } },
+        [h('option', { value: '' }, t('cat.toutes_villes'))].concat(C.villes.map(function (v) { return h('option', { value: v, selected: filtres.ville === v }, v); }))));
+    }
+    function charger() {
+      if (!L.sb) return;
+      L.ui.chargement(grille);
+      var q = L.sb.from('partenaires').select('id, nom, metier, ville, bio, galerie, instagram, site').eq('valide', true).order('created_at');
+      if (filtres.metier) q = q.eq('metier', filtres.metier);
+      if (filtres.ville) q = q.eq('ville', filtres.ville);
+      q.then(function (r) {
+        L.vider(grille);
+        var liste = r.data || [];
+        if (!liste.length) { L.ui.etatVide(grille, t('hub.aucun')); return; }
+        liste.forEach(function (p, i) {
+          var visuel = (p.galerie && p.galerie[0]) || 'placeholder:' + ['couronne', 'bijoux', 'mdamma'][i % 3] + ':' + ['or', 'emeraude', 'bordeaux'][i % 3] + ':face:' + i;
+          var carte = h('article', { class: 'partenaire', id: 'p-' + p.id, 'data-reveal': '' },
+            h('div', { class: 'partenaire__visuel' }, h('img', { src: L.img.url(visuel, 'partenaires'), alt: '', loading: 'lazy' })),
+            h('div', { class: 'partenaire__corps' },
+              h('p', { class: 'surtitre', style: { margin: 0 } }, t('metier.' + p.metier) + ' · ' + p.ville),
+              h('h3', { class: 'partenaire__nom' }, p.nom),
+              p.bio ? h('p', { class: 'texte', style: { margin: 0, fontSize: '14px' } }, p.bio.length > 160 ? p.bio.slice(0, 157) + '…' : p.bio) : null,
+              h('div', { class: 'actions', style: { marginTop: '8px' } },
+                h('button', { class: 'bouton bouton--petit', type: 'button', onclick: function () { devis(p); } }, t('hub.devis')),
+                h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () { fiche(p); } }, t('hub.profil')))));
+          grille.appendChild(carte);
+        });
+        L.motion.reveler(grille);
+        var ancre = location.hash && $(location.hash);
+        if (ancre) ancre.scrollIntoView({ block: 'center' });
+      });
+    }
+    puces();
+    charger();
+    document.addEventListener('lalla:langue', function () { puces(); charger(); });
+    var cta = $('[data-devenir-partenaire]');
+    if (cta) cta.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (!L.session) { L.ui.authentification('inscription', { role: 'partenaire' }); return; }
+      var aller = function () { location.href = 'compte.html?vue=partenaire'; };
+      if (L.profil && L.profil.est_partenaire) aller();
+      else L.sb.from('profils').update({ est_partenaire: true }).eq('id', L.session.user.id).then(aller);
+    });
+  };
+
+  function fiche(p) {
+    var contenu = h('div', { style: { display: 'grid', gap: '16px' } },
+      h('p', { class: 'surtitre', style: { margin: 0 } }, t('metier.' + p.metier) + ' · ' + p.ville),
+      p.bio ? h('p', { style: { whiteSpace: 'pre-line', margin: 0 } }, p.bio) : null,
+      (p.galerie || []).length ? h('div', { class: 'edl__photos' }, p.galerie.map(function (g) { return h('img', { src: L.img.url(g, 'partenaires'), alt: '', loading: 'lazy', style: { aspectRatio: '1', objectFit: 'cover', width: '100%' } }); })) : null,
+      h('p', { style: { margin: 0 } },
+        p.instagram ? h('a', { href: 'https://instagram.com/' + encodeURIComponent(p.instagram), target: '_blank', rel: 'noopener' }, '@' + p.instagram) : null,
+        p.instagram && p.site ? ' · ' : null,
+        p.site ? h('a', { href: p.site, target: '_blank', rel: 'noopener nofollow' }, p.site.replace(/^https:\/\//, '')) : null),
+      h('button', { class: 'bouton', type: 'button', onclick: function () { m.fermer(); setTimeout(function () { devis(p); }, 260); } }, t('hub.devis')));
+    var m = L.ui.modale(contenu, { titre: p.nom, large: true });
+  }
+
+  function devis(p) {
+    var retour = h('div');
+    var form = h('form', { class: 'formulaire', novalidate: true },
+      h('p', { class: 'texte' }, t('hub.devis_intro', { nom: p.nom })),
+      h('div', { class: 'grille-2' },
+        L.ui.champ('nom', 'auth.prenom', { required: true, minlength: 2, maxlength: 80, autocomplete: 'name', value: (L.profil && L.profil.nom_affiche) || '' }),
+        L.ui.champ('email', 'auth.email', { type: 'email', required: true, autocomplete: 'email', value: (L.session && L.session.user.email) || '' })),
+      h('div', { class: 'grille-2' },
+        L.ui.champ('telephone', 'profil.telephone', { type: 'tel', pattern: '[+0-9 ().-]{6,25}', autocomplete: 'tel' }),
+        L.ui.champ('date', 'tenue.date_evenement', { type: 'date', min: L.aujourdhui() })),
+      L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: [['', '—']].concat(C.villes.map(function (v) { return [v, v, v === p.ville]; })) }),
+      L.ui.champ('message', 'hub.message', { tag: 'textarea', required: true, minlength: 10, maxlength: 1500 }),
+      L.ui.honeypot(), retour,
+      h('button', { class: 'bouton bouton--plein', type: 'submit' }, t('hub.envoyer')),
+      h('p', { class: 'champ__aide' }, t('hub.rgpd')));
+    var m = L.ui.modale(form, { titre: t('hub.devis') });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      if (!L.ui.limiter('devis', 5, 3600000)) { L.vider(retour).appendChild(h('p', { class: 'message message--erreur' }, t('commun.trop_requetes'))); return; }
+      var b = form.querySelector('[type=submit]');
+      b.disabled = true;
+      L.api('lead-creer', { partenaire_id: p.id, nom: form.nom.value, email: form.email.value, telephone: form.telephone.value || null, date_evenement: form.date.value || null,
+        ville: form.ville.value || null, message: form.message.value, langue: I.langue, site_web: form.site_web.value })
+        .then(function () { L.vider(form).appendChild(h('p', { class: 'message message--succes' }, t('hub.envoye', { nom: p.nom }))); setTimeout(m.fermer, 2600); })
+        .catch(function (err) { b.disabled = false; L.vider(retour).appendChild(h('p', { class: 'message message--erreur', role: 'alert' }, L.messageErreur(err))); });
+    });
+  }
+
+  // ===========================================================================
   // Pages légales : sommaire
   // ===========================================================================
-  L.pages.legal = function () {};
+  L.pages.legal = function () {
+    // Les documents légaux ne sont rédigés qu'en français tant qu'ils ne sont pas validés.
+    function maj() { $$('[data-legal-nl]').forEach(function (x) { x.hidden = I.langue !== 'nl'; }); }
+    maj();
+    document.addEventListener('lalla:langue', maj);
+  };
 })();

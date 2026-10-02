@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr-BE">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title data-i18n="meta.hub.titre">Hub mariage : maquilleuses, photographes, hennayas et negafas à Bruxelles, Liège, Anvers — LALLA</title>
+  <meta name="description" data-i18n-attr="content:meta.hub.desc" content="Trouvez une maquilleuse, un photographe, une hennaya ou une negafa de confiance pour votre mariage en Belgique. Demande de devis gratuite.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://lalla.be/partenaires.html">
+  <link rel="alternate" hreflang="fr-BE" href="https://lalla.be/partenaires.html">
+  <link rel="alternate" hreflang="nl-BE" href="https://lalla.be/partenaires.html?lang=nl">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LALLA">
+  <meta property="og:locale" content="fr_BE">
+  <meta property="og:title" content="Hub mariage : maquilleuses, photographes, hennayas et negafas à Bruxelles, Liège, Anvers — LALLA">
+  <meta property="og:description" content="Trouvez une maquilleuse, un photographe, une hennaya ou une negafa de confiance pour votre mariage en Belgique. Demande de devis gratuite.">
+  <meta property="og:url" content="https://lalla.be/partenaires.html">
+  <meta property="og:image" content="https://lalla.be/assets/og-default.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#F4EEE3">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="partenaires">
+  <a class="lien-evitement" href="#contenu" data-i18n="nav.aller_contenu">Aller au contenu</a>
+  <header id="entete" class="entete"></header>
+
+  <main id="contenu">
+    <section class="page-entete">
+      <div class="conteneur duo">
+        <div>
+          <p class="surtitre" data-i18n="hub.surtitre">Hub mariage</p>
+          <h1 data-i18n="hub.titre">Les mains qui font le jour J</h1>
+          <p class="chapeau" data-i18n="hub.chapeau">Maquilleuses, photographes, hennayas et negafas prestataires sélectionnées à Bruxelles, Liège et Anvers. Un message suffit pour recevoir un devis.</p>
+        </div>
+        <div class="arche-cadre" style="max-width:320px;justify-self:center;width:100%">
+          <div class="arche"><img data-placeholder="placeholder:couronne:emeraude:face:4" alt=""></div>
+        </div>
+      </div>
+    </section>
+    <section class="section" style="padding-top:40px">
+      <div class="conteneur">
+        <div class="puces" data-filtres-partenaires aria-label="Filtres" style="margin-bottom:32px;align-items:center"></div>
+        <div class="partenaires-grille" data-partenaires></div>
+      </div>
+    </section>
+    <section class="section section--emeraude beaute" aria-labelledby="beaute-titre">
+      <div class="conteneur duo duo--inverse">
+        <div class="arche-cadre" style="max-width:360px;justify-self:center;width:100%" data-reveal>
+          <div class="arche"><img data-placeholder="placeholder:bijoux:rose:face:9" alt="" loading="lazy"></div>
+        </div>
+        <div>
+          <p class="surtitre" data-reveal data-i18n="hub.beaute_surtitre">Beauté de la mariée</p>
+          <h2 id="beaute-titre" data-reveal data-i18n="hub.beaute_titre">Prendre soin de soi avant le grand jour</h2>
+          <p class="chapeau" data-reveal data-i18n="hub.beaute_texte">Rituels, huiles, soins du visage et des cheveux : une sélection pensée pour les semaines qui précèdent le mariage, chez notre boutique partenaire.</p>
+          <a class="bouton bouton--or" data-beaute href="#" target="_blank" rel="noopener" data-reveal data-i18n="hub.beaute_cta">Découvrir la boutique</a>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="conteneur" style="text-align:center">
+        <p class="surtitre" data-i18n="hub.pro_surtitre">Vous êtes prestataire ?</p>
+        <h2 class="citation" style="margin:0 auto 24px" data-i18n="hub.pro_titre">Rejoignez l'annuaire et recevez des demandes qualifiées.</h2>
+        <a class="bouton" href="compte.html?vue=partenaire" data-devenir-partenaire data-i18n="hub.pro_cta">Référencer mon activité</a>
+      </div>
+    </section>
+  </main>
+
+  <footer id="pied" class="pied"></footer>
+
+  <script src="assets/config.js"></script>
+  <script src="/api/config"></script>
+  <script src="assets/i18n.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Flip.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+  <script defer src="assets/app.js"></script>
+  <script defer src="assets/pages.js"></script>
+</body>
+</html>

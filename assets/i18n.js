@@ -729,6 +729,11 @@
     'profil.autres_roles': 'Autres activités', 'profil.devenir_partenaire': 'Référencer mon activité au hub mariage'
   });
   ajouter('nl', {
+    'meta.mentions.titre': 'Wettelijke vermeldingen — {brand}', 'meta.mentions.desc': 'Wettelijke vermeldingen van het platform.',
+    'meta.conf.titre': 'Privacybeleid — {brand}', 'meta.conf.desc': 'Hoe {brand} uw persoonsgegevens beschermt (AVG).',
+    'meta.cgu.titre': 'Algemene voorwaarden en huurvoorwaarden — {brand}', 'meta.cgu.desc': 'Gebruiksvoorwaarden, huurvoorwaarden en annuleringsbeleid.',
+    'legal.nl': 'De Nederlandse versie van dit document volgt na juridische validatie. Tot dan is de Franse versie van toepassing.',
+    'meta.admin.titre': 'Back-office — {brand}', 'meta.admin.desc': 'Back-office.',
     'meta.compte.titre': 'Mijn ruimte — {brand}', 'meta.compte.desc': 'Reserveringen, advertenties, inkomsten en accountinstellingen.',
     'compte.connexion_texte': 'Log in om uw ruimte te openen.',
     'compte.navigation': 'Mijn ruimte', 'compte.bonjour': 'Dag {prenom}', 'compte.bienvenue': 'Welkom! Uw account is klaar.',
@@ -820,6 +825,34 @@
     'profil.supprimer_texte': 'Deze actie is definitief. Uw advertenties, afmetingen en gegevens worden verwijderd. De boekhoudkundige geschiedenis wordt anoniem bewaard.',
     'profil.supprimer_saisir': 'Typ SUPPRIMER om te bevestigen',
     'profil.autres_roles': 'Andere activiteiten', 'profil.devenir_partenaire': 'Mijn zaak vermelden in de huwelijkshub'
+  });
+
+  // ---------------------------------------------------------------------------
+  // Hub mariage
+  // ---------------------------------------------------------------------------
+  ajouter('fr', {
+    'hub.tous': 'Tous les métiers', 'hub.aucun': 'Aucun partenaire pour ces critères, pour le moment.',
+    'hub.devis': 'Demander un devis', 'hub.profil': 'Voir le profil',
+    'hub.devis_intro': 'Votre message est transmis directement à {nom}, qui vous répond par email ou téléphone.',
+    'hub.message': 'Votre projet (date, lieu, nombre de personnes…)', 'hub.envoyer': 'Envoyer la demande',
+    'hub.rgpd': 'Vos coordonnées sont transmises uniquement à ce partenaire pour répondre à votre demande.',
+    'hub.envoye': 'Demande envoyée à {nom}. Un email de confirmation vous a été adressé.'
+  });
+  ajouter('nl', {
+    'meta.hub.titre': 'Huwelijkshub: visagisten, fotografen, hennaya\'s en negafa\'s in Brussel, Luik, Antwerpen — {brand}',
+    'meta.hub.desc': 'Vind een betrouwbare visagiste, fotograaf, hennaya of negafa voor uw huwelijk in België. Gratis offerteaanvraag.',
+    'hub.surtitre': 'Huwelijkshub', 'hub.titre': 'De handen achter de grote dag',
+    'hub.chapeau': 'Geselecteerde visagisten, fotografen, hennaya\'s en negafa\'s in Brussel, Luik en Antwerpen. Eén bericht volstaat voor een offerte.',
+    'hub.beaute_surtitre': 'Schoonheid van de bruid', 'hub.beaute_titre': 'Zorg voor uzelf voor de grote dag',
+    'hub.beaute_texte': 'Rituelen, oliën, gezichts- en haarverzorging: een selectie voor de weken voor het huwelijk, bij onze partnerwinkel.',
+    'hub.beaute_cta': 'De winkel ontdekken',
+    'hub.pro_surtitre': 'Bent u dienstverlener?', 'hub.pro_titre': 'Sluit u aan bij de gids en ontvang gerichte aanvragen.', 'hub.pro_cta': 'Mijn zaak vermelden',
+    'hub.tous': 'Alle beroepen', 'hub.aucun': 'Momenteel geen partners voor deze criteria.',
+    'hub.devis': 'Offerte aanvragen', 'hub.profil': 'Profiel bekijken',
+    'hub.devis_intro': 'Uw bericht gaat rechtstreeks naar {nom}, die u per e-mail of telefoon antwoordt.',
+    'hub.message': 'Uw project (datum, plaats, aantal personen…)', 'hub.envoyer': 'Aanvraag versturen',
+    'hub.rgpd': 'Uw gegevens worden alleen aan deze partner bezorgd om op uw aanvraag te antwoorden.',
+    'hub.envoye': 'Aanvraag verzonden naar {nom}. U ontving een bevestigingsmail.'
   });
 
   // ---------------------------------------------------------------------------
