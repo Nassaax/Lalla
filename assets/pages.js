@@ -732,7 +732,7 @@
             L.auth.exiger('connexion').then(function () {
               b.disabled = true;
               return L.api('showroom-inscrire', { showroom_id: s.id, tenue_ids: tn ? [tn.id] : [], site_web: '' });
-            }).then(function () { m.fermer(); L.ui.toast(t('showroom.inscrite'), 'succes'); })
+            }).then(function (r) { if (r && r.url) { location.href = r.url; return; } m.fermer(); L.ui.toast(t('showroom.inscrite'), 'succes'); })
               .catch(function (err) { b.disabled = false; if (err.code !== 'non_connecte') L.ui.toast(L.messageErreur(err), 'erreur'); });
           } }, t('showroom.inscrire')))));
       });

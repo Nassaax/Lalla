@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /compte.html
+Disallow: /panier.html
+Disallow: /api/
+
+Sitemap: https://lalla.be/sitemap.xml
