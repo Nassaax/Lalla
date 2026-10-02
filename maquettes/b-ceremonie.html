@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="fr-BE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Maquette B, Cérémonie | LALLA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap">
+<style>
+  :root {
+    --ivoire: #FBF8F3; --champagne: #EFE4D2; --poudre: #F1E1DB; --encre: #3A2F2A; --gris: #8A7D74; --ligne: #E6DACB;
+    --or: #B59A6D;
+    --titre: 'Cormorant Garamond', Georgia, serif; --texte: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ivoire); color: var(--encre); font: 300 16px/1.75 var(--texte); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  .c { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+  .label { font: 400 11px/1 var(--texte); letter-spacing: .32em; text-transform: uppercase; color: var(--or); }
+  h1, h2, h3 { font-family: var(--titre); font-weight: 300; margin: 0; color: var(--encre); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; height: 50px; padding: 0 36px; font: 400 12px var(--texte); letter-spacing: .22em; text-transform: uppercase; border: 1px solid var(--encre); background: var(--encre); color: var(--ivoire); border-radius: 999px; transition: background .3s, color .3s; }
+  .btn:hover { background: transparent; color: var(--encre); }
+  .btn--clair { background: transparent; color: var(--encre); }
+  .btn--clair:hover { background: var(--encre); color: var(--ivoire); }
+  .filet { width: 1px; height: 56px; background: var(--or); margin: 0 auto; }
+
+  .photo { position: relative; overflow: hidden; margin: 0; background: linear-gradient(170deg, #F3E7DA 0%, #E6D3C1 50%, #D9C2AE 100%); }
+  .photo::after { content: ''; position: absolute; inset: 0; background: radial-gradient(90% 70% at 50% 25%, rgba(255,255,255,.5), transparent 65%); }
+  .photo figcaption { position: absolute; z-index: 1; left: 18px; right: 18px; bottom: 16px; font: 400 12px/1.5 var(--texte); color: #6F5D50; }
+  .photo figcaption b { display: block; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; font-size: 10px; margin-bottom: 2px; color: var(--or); }
+  .photo--rose { background: linear-gradient(170deg, #F6E6E1 0%, #EBD2CA 55%, #DDBDB3 100%); }
+  .photo--champagne { background: linear-gradient(170deg, #F1E6D2 0%, #E2CFAF 55%, #CDB58E 100%); }
+
+  header { text-align: center; padding: 26px 0 0; }
+  .logo { font-family: var(--titre); font-size: 34px; letter-spacing: .5em; margin-right: -.5em; font-weight: 400; }
+  .nav { display: flex; justify-content: center; gap: 34px; flex-wrap: wrap; padding: 18px 0 22px; font: 400 12px var(--texte); letter-spacing: .2em; text-transform: uppercase; border-bottom: 1px solid var(--ligne); margin-top: 18px; }
+
+  .hero { padding: 48px 0 0; text-align: center; }
+  .hero h1 { font-size: clamp(3rem, 7.5vw, 6.8rem); line-height: 1; margin: 22px auto 22px; max-width: 12ch; }
+  .hero h1 em { font-style: italic; }
+  .hero p { color: var(--gris); max-width: 44ch; margin: 0 auto 34px; font-size: 17px; }
+  .hero .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+  .hero__photos { display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 14px; align-items: end; }
+  .hero__photos .photo:nth-child(1), .hero__photos .photo:nth-child(3) { aspect-ratio: 3 / 4; }
+  .hero__photos .photo:nth-child(2) { aspect-ratio: 4 / 5; }
+  @media (max-width: 700px) { .hero__photos { grid-template-columns: 1fr; } .hero__photos .photo:nth-child(1), .hero__photos .photo:nth-child(3) { display: none; } }
+
+  .citation { text-align: center; padding: clamp(90px, 13vw, 160px) 24px; }
+  .citation p { font-family: var(--titre); font-style: italic; font-size: clamp(1.7rem, 3.4vw, 2.8rem); line-height: 1.35; max-width: 26ch; margin: 28px auto 0; }
+
+  .section { padding: 0 0 clamp(90px, 12vw, 150px); text-align: center; }
+  .section h2 { font-size: clamp(2.2rem, 4.4vw, 3.6rem); margin: 16px 0 48px; }
+  .collections { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; text-align: center; }
+  .collections .photo { aspect-ratio: 3 / 4; }
+  .collections h3 { font-size: 1.5rem; margin-top: 16px; }
+  .collections span { font-size: 13px; color: var(--gris); }
+  @media (min-width: 900px) { .collections { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
+
+  .jour { background: var(--champagne); padding: clamp(90px, 12vw, 150px) 0; text-align: center; }
+  .jour h2 { font-size: clamp(2.2rem, 4.4vw, 3.6rem); margin: 16px 0 60px; }
+  .etapes { display: grid; gap: 40px; }
+  .etape b { font: italic 300 2.6rem/1 var(--titre); color: var(--or); }
+  .etape h3 { font-size: 1.6rem; margin: 14px 0 8px; }
+  .etape p { color: var(--gris); max-width: 30ch; margin: 0 auto; }
+  @media (min-width: 900px) { .etapes { grid-template-columns: repeat(3, 1fr); gap: 56px; } }
+
+  .confiance { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--ligne); border-bottom: 1px solid var(--ligne); text-align: center; }
+  .confiance div { padding: 34px 12px; font-size: 14px; color: var(--gris); }
+  .confiance div strong { display: block; font: 400 1.35rem var(--titre); color: var(--encre); }
+  @media (min-width: 900px) { .confiance { grid-template-columns: repeat(4, 1fr); } .confiance div + div { border-left: 1px solid var(--ligne); } }
+
+  .fournisseuses { display: grid; gap: 0; background: var(--poudre); }
+  .fournisseuses .photo { min-height: 460px; }
+  .fournisseuses__texte { padding: clamp(56px, 8vw, 110px); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .fournisseuses__texte h2 { font-size: clamp(2.2rem, 4vw, 3.2rem); margin: 16px 0 18px; }
+  .fournisseuses__texte p { color: var(--gris); max-width: 40ch; margin: 0 0 32px; }
+  @media (min-width: 900px) { .fournisseuses { grid-template-columns: 1fr 1fr; } }
+
+  footer { text-align: center; padding: 70px 24px 44px; font-size: 13px; color: var(--gris); }
+  footer .logo { font-size: 24px; display: block; margin-bottom: 14px; color: var(--encre); }
+
+  .note-maquette { position: fixed; z-index: 20; right: 16px; bottom: 16px; background: var(--encre); color: #fff; font: 500 11px var(--texte); letter-spacing: .14em; text-transform: uppercase; padding: 10px 14px; border-radius: 999px; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="logo">LALLA</div>
+    <nav class="nav c"><a href="#">La mariée</a><a href="#">Takchitas</a><a href="#">Caftans</a><a href="#">Parures</a><a href="#">Mon compte</a></nav>
+  </header>
+
+  <section class="hero">
+    <div class="c">
+      <span class="label">Location de tenues de cérémonie · Belgique</span>
+      <h1>Pour vos plus <em>beaux jours</em></h1>
+      <p>Takchitas, caftans et tenues de mariée d'exception, prêtés par des femmes et des créatrices de confiance, partout en Belgique.</p>
+      <div class="actions"><a class="btn" href="#">Découvrir la collection</a><a class="btn btn--clair" href="#">Créer mon compte</a></div>
+      <div class="hero__photos">
+        <figure class="photo photo--rose"><figcaption><b>Photo à prévoir</b>Détail des broderies d'une manche.</figcaption></figure>
+        <figure class="photo"><figcaption><b>Photo à prévoir</b>Mariée en takchita ivoire et or, plan en pied, lumière naturelle.</figcaption></figure>
+        <figure class="photo photo--champagne"><figcaption><b>Photo à prévoir</b>Couronne et bijoux de mariée posés.</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="citation">
+    <div class="filet"></div>
+    <p>« La robe qu'on n'oublie pas, sans l'acheter pour une seule soirée. »</p>
+  </section>
+
+  <section class="section">
+    <div class="c">
+      <span class="label">Collections</span>
+      <h2>Une tenue pour chaque moment</h2>
+      <div class="collections">
+        <a href="#"><figure class="photo"><figcaption><b>Photo à prévoir</b>Tenue de mariée portée.</figcaption></figure><h3>La mariée</h3><span>Tenues d'apparat</span></a>
+        <a href="#"><figure class="photo photo--rose"><figcaption><b>Photo à prévoir</b>Takchita rose poudré.</figcaption></figure><h3>Fiançailles</h3><span>Takchitas et caftans</span></a>
+        <a href="#"><figure class="photo photo--champagne"><figcaption><b>Photo à prévoir</b>Caftan pour une invitée.</figcaption></figure><h3>Invitées</h3><span>Soirées, henné, Aïd</span></a>
+        <a href="#"><figure class="photo"><figcaption><b>Photo à prévoir</b>Mdamma et bijoux.</figcaption></figure><h3>Parures</h3><span>Ceintures et bijoux</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="confiance c">
+    <div><strong>Pièces vérifiées</strong>une par une</div>
+    <div><strong>Paiement sécurisé</strong>Bancontact ou carte</div>
+    <div><strong>Caution encadrée</strong>jamais débitée sans raison</div>
+    <div><strong>Pressing inclus</strong>rien à prévoir</div>
+  </section>
+
+  <section class="jour" style="margin-top:clamp(90px,12vw,150px)">
+    <div class="c">
+      <span class="label">Comment ça se passe</span>
+      <h2>Trois étapes, aucun souci</h2>
+      <div class="etapes">
+        <div class="etape"><b>01</b><h3>Choisissez</h3><p>Mesures exactes, photos des détails, disponibilité à vos dates.</p></div>
+        <div class="etape"><b>02</b><h3>Essayez si besoin</h3><p>Chez la fournisseuse ou lors d'un showroom, avant de confirmer.</p></div>
+        <div class="etape"><b>03</b><h3>Portez, rendez</h3><p>Remise près de chez vous, pressing inclus, caution libérée au retour.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="fournisseuses">
+    <figure class="photo photo--rose"><figcaption><b>Photo à prévoir</b>Housse ouverte sur un caftan brodé, ambiance chambre lumineuse.</figcaption></figure>
+    <div class="fournisseuses__texte">
+      <span class="label">Votre garde-robe</span>
+      <h2>Vos tenues méritent d'être portées</h2>
+      <p>Une takchita portée deux fois dort souvent dix ans dans une housse. Prêtez-la en toute sécurité et recevez un revenu à chaque location.</p>
+      <a class="btn" href="#">Proposer mes tenues</a>
+    </div>
+  </section>
+
+  <footer>
+    <span class="logo">LALLA</span>
+    Location de tenues marocaines, partout en Belgique<br>Conditions · Confidentialité · Contact
+  </footer>
+  <div class="note-maquette">Maquette B</div>
+</body>
+</html>
