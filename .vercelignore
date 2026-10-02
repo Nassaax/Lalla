@@ -1,0 +1,6 @@
+# Fichiers de développement inutiles en production (non servis, non déployés)
+tests/
+scripts/
+supabase/
+PLAN.md
+node_modules/
