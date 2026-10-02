@@ -91,9 +91,8 @@ for (const largeur of [375, 768, 1440]) {
   await page.goto(`${BASE}/index.html`, { waitUntil: 'networkidle' });
   assert.equal(await page.evaluate(() => document.documentElement.classList.contains('mouvement-reduit')), true);
   assert.equal(await page.evaluate(() => Boolean(window.Lalla.motion.lenis)), false);
-  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.s-hero__titre')).opacity), '1');
-  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.s-hero__scene')).opacity), '1');
-  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.s-promesse:last-child')).opacity), '1');
+  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.a-hero__titre')).opacity), '1');
+  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.a-hero__visuel')).opacity), '1');
   problemes.push(...ctx.erreurs);
   await ctx.close();
   console.log('✓ prefers-reduced-motion respecté');

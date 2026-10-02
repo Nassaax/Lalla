@@ -76,16 +76,14 @@
   // Accueil
   // ===========================================================================
   L.pages.index = function () {
-    remplirPlaceholders(document);
+    visuels(document);
     ouverture();
-    motsQuiSallument();
-    promesses();
     collections();
     apercu();
     boutiques();
-    commentCaMarche();
+    provinces();
+    parallaxe();
     simulateur();
-    belgique();
     $$('[data-devenir-fournisseuse]').forEach(function (b) {
       b.addEventListener('click', function () {
         if (L.session) location.href = 'compte.html?vue=annonces';
@@ -103,76 +101,48 @@
     });
   };
 
-  /**
-   * Ouverture : le titre apparaît ligne par ligne, puis, au défilement, la tenue
-   * grandit jusqu'à remplir l'écran pendant que le texte s'efface (section épinglée).
-   */
+  /** Photo réelle si elle est renseignée dans config.photos, sinon aplat de tissu. */
+  function photo(cle, sousCle) {
+    var p = C.photos || {};
+    var v = sousCle ? (p[cle] || {})[sousCle] : p[cle];
+    return v || '';
+  }
+  function visuels(racine) {
+    $$('img[data-placeholder]', racine).forEach(function (img) {
+      var reel = img.hasAttribute('data-visuel') ? photo(img.getAttribute('data-visuel')) : '';
+      img.src = reel || L.img.placeholder(img.getAttribute('data-placeholder'));
+    });
+  }
+
+  /** Ouverture discrète : le texte monte doucement, l'image se pose. */
   function ouverture() {
-    var titre = $('.s-hero__titre'), elements = $$('[data-hero-el]'), scene = $('.s-hero__scene');
+    var titre = $('.a-hero__titre'), elements = $$('.a-hero [data-hero-el]');
     if (!titre) return;
-    if (!window.gsap || !L.motion.actif) { if (window.gsap) gsap.set([titre].concat(elements), { opacity: 1 }); return; }
+    if (!window.gsap || !L.motion.actif) { if (window.gsap) gsap.set(elements.concat(titre), { opacity: 1 }); return; }
     var d = L.motion.duree;
-    var tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-    tl.fromTo(scene, { y: 120, opacity: 0, scale: 0.92 }, { y: 0, opacity: 1, scale: 1, duration: d(1.8) }, 0.1)
-      .fromTo('.s-hero__image', { scale: 1.25 }, { scale: 1, duration: d(2.2) }, 0.1)
-      .fromTo(elements, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: d(1.1), stagger: 0.12 }, 0.55);
-    L.motion.titreLignes(titre, 0.25);
-    if (!window.ScrollTrigger) return;
-    var collant = $('.s-hero__collant');
-    // L'arche grandit jusqu'à dépasser la hauteur de l'écran : on « entre » dans la pièce, la tenue reste entière.
-    var echelle = function () {
-      var r = scene.getBoundingClientRect();
-      return Math.max(window.innerHeight * 1.18 / r.height, Math.min(window.innerWidth / r.width, 1.6));
-    };
-    var decalage = function () {
-      var r = scene.getBoundingClientRect(), c = collant.getBoundingClientRect();
-      return (c.top + c.height / 2) - (r.top + r.height / 2);
-    };
-    var defil = gsap.timeline({
-      scrollTrigger: { trigger: '.s-hero', start: 'top top', end: '+=130%', pin: collant, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true }
-    });
-    defil.to('.s-hero__texte', { y: -140, opacity: 0, scale: 0.94, ease: 'power2.in', duration: 0.45 }, 0)
-      .to('.s-hero__defiler', { opacity: 0, duration: 0.1 }, 0)
-      .to(scene, { y: decalage, scale: echelle, ease: 'power2.inOut', duration: 1 }, 0)
-      .to('.s-hero__image', { scale: 1.12, ease: 'none', duration: 1 }, 0)
-      .fromTo('.s-hero__legende', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, 0.72);
+    L.motion.titreLignes(titre, 0.1);
+    gsap.fromTo(elements, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: d(1.1), ease: 'power3.out', stagger: 0.1, delay: 0.35 });
+    gsap.fromTo('.a-hero .a-cadre img', { scale: 1.08 }, { scale: 1, duration: d(1.8), ease: 'power3.out', delay: 0.2 });
   }
 
-  /** Découpe un texte en mots puis les allume un à un au fil du défilement. */
-  function motsQuiSallument() {
-    $$('[data-mots]').forEach(function (el) {
-      var anim = null;
-      function preparer() {
-        if (anim) { anim.scrollTrigger && anim.scrollTrigger.kill(); anim.kill(); anim = null; }
-        var texte = el.textContent;
-        L.vider(el);
-        texte.split(/(\s+)/).forEach(function (m) {
-          el.appendChild(/^\s+$/.test(m) ? document.createTextNode(m) : h('span', { class: 'mot' }, m));
-        });
-        if (!window.gsap || !window.ScrollTrigger || !L.motion.actif) { el.classList.add('mots--fixes'); return; }
-        anim = gsap.fromTo($$('.mot', el), { opacity: 0.16 }, {
-          opacity: 1, ease: 'none', stagger: 0.1,
-          scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 45%', scrub: true }
-        });
-      }
-      preparer();
-      document.addEventListener('lalla:langue', function () { I.appliquer(el.parentNode); preparer(); });
+  /** Léger décalage vertical des images au défilement (ordinateur uniquement). */
+  function parallaxe() {
+    if (!window.gsap || !window.ScrollTrigger || !L.motion.actif || L.motion.mobile()) return;
+    $$('[data-parallaxe] img').forEach(function (img) {
+      gsap.fromTo(img, { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: img.parentNode, start: 'top bottom', end: 'bottom top', scrub: true } });
     });
   }
 
-  /** Engagements : le visuel reste fixe, il change à chaque texte qui passe au centre de l'écran. */
-  function promesses() {
-    var items = $$('.s-promesse'), images = $$('.s-promesses__arche img');
-    if (!items.length) return;
-    function activer(i) {
-      items.forEach(function (it, j) { it.classList.toggle('est-actif', i === j); });
-      images.forEach(function (img, j) { img.classList.toggle('est-actif', i === j); });
+  function provinces() {
+    var liste = $('[data-provinces]');
+    if (!liste) return;
+    function remplir() {
+      L.vider(liste);
+      C.villes.forEach(function (v) { liste.appendChild(h('li', { 'data-reveal': '' }, L.zone(v))); });
+      L.motion.reveler(liste);
     }
-    if (!window.ScrollTrigger || !L.motion.actif) { items.forEach(function (it) { it.classList.add('est-actif'); }); return; }
-    items.forEach(function (it, i) {
-      ScrollTrigger.create({ trigger: it, start: 'top 60%', end: 'bottom 40%', onToggle: function (st) { if (st.isActive) activer(i); } });
-    });
-    gsap.fromTo('.s-promesses__arche', { scale: 0.9 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.s-promesses__grille', start: 'top bottom', end: 'top 30%', scrub: true } });
+    remplir();
+    document.addEventListener('lalla:langue', remplir);
   }
 
   // Exemples affichés tant qu'aucune tenue n'est publiée (illustrations générées, non réservables).
@@ -229,73 +199,30 @@
     });
   }
 
-  /** Bandeaux des provinces qui glissent en sens opposés pendant le défilement. */
-  function belgique() {
-    var bandes = $$('[data-bande]');
-    if (!bandes.length) return;
-    function remplir() {
-      var noms = C.villes.map(L.zone);
-      bandes.forEach(function (b, i) {
-        var liste = i ? noms.slice().reverse() : noms;
-        b.textContent = liste.concat(liste).join('  ·  ');
-      });
-    }
-    remplir();
-    document.addEventListener('lalla:langue', remplir);
-    if (!window.gsap || !window.ScrollTrigger || !L.motion.actif) return;
-    bandes.forEach(function (b) {
-      var sens = Number(b.getAttribute('data-sens') || 1);
-      gsap.fromTo(b, { xPercent: sens > 0 ? 0 : -40 }, { xPercent: sens > 0 ? -40 : 0, ease: 'none',
-        scrollTrigger: { trigger: '.s-belgique', start: 'top bottom', end: 'bottom top', scrub: true } });
-    });
-  }
-
   function collections() {
-    var piste = $('[data-collections]');
-    if (!piste) return;
+    var zone = $('[data-collections]');
+    if (!zone) return;
     var cats = [
-      { cle: 'caftan', couleur: 'bordeaux', vue: 'portee' },
-      { cle: 'takchita', couleur: 'emeraude', vue: 'face' },
-      { cle: 'mariee', couleur: 'ivoire', vue: 'portee' },
-      { cle: 'homme', couleur: 'bleu_nuit', vue: 'face' },
-      { cle: 'enfant', couleur: 'rose', vue: 'face' },
-      { cle: 'accessoire', couleur: 'or', vue: 'face', scat: 'mdamma' }
+      { cle: 'caftan', couleur: 'bordeaux' }, { cle: 'takchita', couleur: 'emeraude' }, { cle: 'mariee', couleur: 'ivoire' },
+      { cle: 'homme', couleur: 'bleu_nuit' }, { cle: 'enfant', couleur: 'rose' }, { cle: 'accessoire', couleur: 'or', scat: 'mdamma' }
     ];
     var comptes = {};
     cats.forEach(function (c, i) {
-      var nb = h('span', { class: 'collection__nb' });
+      var nb = h('span', { class: 'a-collection__nb' });
       comptes[c.cle] = nb;
-      piste.appendChild(h('a', { class: 'collection', href: 'catalogue.html?categorie=' + c.cle },
-        h('div', { class: 'arche-cadre collection__arche' }, h('div', { class: 'arche' },
-          L.img.element('placeholder:' + (c.scat || c.cle) + ':' + c.couleur + ':' + c.vue + ':' + (i * 7), t('cat.' + c.cle)))),
-        h('div', { class: 'collection__legende' }, h('h3', { class: 'collection__nom', 'data-i18n': 'cat.' + c.cle }, t('cat.' + c.cle)), nb)));
+      var src = photo('collections', c.cle) || L.img.placeholder('placeholder:' + (c.scat || c.cle) + ':' + c.couleur + ':face:' + (i * 7));
+      zone.appendChild(h('a', { class: 'a-collection', href: 'catalogue.html?categorie=' + c.cle, 'data-reveal': '' },
+        h('div', { class: 'a-cadre' }, h('img', { src: src, alt: '', loading: 'lazy' })),
+        h('div', { class: 'a-collection__legende' }, h('h3', { class: 'a-collection__nom', 'data-i18n': 'cat.' + c.cle }, t('cat.' + c.cle)), nb)));
     });
+    L.motion.reveler(zone);
     if (L.sb) {
       L.sb.from('tenues').select('categorie').eq('statut', 'validee').limit(2000).then(function (r) {
         var n = {};
         (r.data || []).forEach(function (x) { n[x.categorie] = (n[x.categorie] || 0) + 1; });
-        Object.keys(comptes).forEach(function (k) { comptes[k].textContent = n[k] ? String(n[k]).padStart(2, '0') : ''; });
+        Object.keys(comptes).forEach(function (k) { comptes[k].textContent = n[k] ? String(n[k]) : ''; });
       });
     }
-    // Défilement horizontal épinglé (desktop uniquement)
-    if (!window.gsap || !window.ScrollTrigger || !L.motion.actif) return;
-    var mm = gsap.matchMedia();
-    mm.add('(min-width: 900px)', function () {
-      var section = $('.collections');
-      section.classList.add('collections--epinglee');
-      var distance = function () { return Math.max(0, piste.scrollWidth - section.querySelector('.conteneur').clientWidth); };
-      var tween = gsap.to(piste, {
-        x: function () { return -distance(); }, ease: 'none',
-        scrollTrigger: { trigger: section, start: 'top top', end: function () { return '+=' + distance(); }, pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1 }
-      });
-      // Légère inclinaison selon la vitesse
-      var cartes = $$('.collection', piste);
-      var incliner = gsap.quickTo(cartes, 'rotate', { duration: 0.6, ease: 'power3' });
-      var st = tween.scrollTrigger;
-      var ticker = function () { incliner(gsap.utils.clamp(-2.5, 2.5, st.getVelocity() / -900)); };
-      gsap.ticker.add(ticker);
-      return function () { gsap.ticker.remove(ticker); section.classList.remove('collections--epinglee'); gsap.set(cartes, { clearProps: 'rotate' }); };
-    });
   }
 
   function boutiques() {
@@ -320,18 +247,6 @@
       h('div', { class: 'carte__infos' },
         h('h3', { class: 'carte__titre' }, p.boutique_nom || p.nom_affiche),
         h('p', { class: 'carte__meta' }, L.zone(p.ville), p.nb_avis ? [' · ', h('span', { class: 'note' }, '★ ' + Number(p.note_moyenne).toFixed(1))] : null)));
-  }
-
-  function commentCaMarche() {
-    if (!window.gsap || !window.ScrollTrigger || !L.motion.actif) return;
-    $$('[data-comment]').forEach(function (col, i) {
-      var etapes = $$('.comment__etape', col);
-      gsap.from(etapes, { opacity: 0, y: 30, duration: L.motion.duree(0.9), ease: 'power3.out', stagger: 0.12, delay: i * 0.15,
-        scrollTrigger: { trigger: col, start: 'top 80%', once: true } });
-      gsap.to($('.comment__progression span', col), { scaleY: 1, ease: 'none',
-        scrollTrigger: { trigger: col, start: 'top 70%', end: 'bottom 55%', scrub: true } });
-      gsap.from($('h3', col), { opacity: 0, x: -16, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: col, start: 'top 85%', once: true } });
-    });
   }
 
   function simulateur() {

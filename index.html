@@ -19,11 +19,11 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#121110">
+  <meta name="theme-color" content="#FAF9F7">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap">
   <link rel="stylesheet" href="assets/style.css">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Organization","name":"LALLA","url":"https://lalla.be/","areaServed":{"@type":"Country","name":"Belgique"},"slogan":"Portez l'exceptionnel, le temps d'une fête."}
@@ -34,76 +34,55 @@
   <header id="entete" class="entete"></header>
 
   <main id="contenu">
-    <!-- OUVERTURE : la tenue grandit jusqu'à remplir l'écran -->
-    <section class="s-hero" aria-labelledby="hero-titre">
-      <div class="s-hero__collant">
-        <div class="s-hero__texte">
-          <p class="s-hero__surtitre" data-hero-el data-i18n="index.hero.surtitre">Location de tenues marocaines en Belgique</p>
-          <h1 class="s-hero__titre" id="hero-titre" data-i18n-html="index.hero.titre">Portez l'exceptionnel.<br><em>Le temps d'une fête.</em></h1>
-          <div class="actions s-hero__actions" data-hero-el>
-            <a class="bouton bouton--clair" href="#apercu" data-i18n="index.hero.cta">Voir un aperçu</a>
-            <button class="bouton bouton--ligne-clair" type="button" data-inscription data-i18n="index.hero.cta2">Créer mon compte</button>
+    <!-- OUVERTURE -->
+    <section class="a-hero" aria-labelledby="hero-titre">
+      <div class="conteneur a-hero__grille">
+        <div class="a-hero__texte">
+          <p class="surtitre" data-hero-el data-i18n="index.hero.surtitre">Location de tenues marocaines en Belgique</p>
+          <h1 class="a-hero__titre" id="hero-titre" data-i18n="index.hero.titre">Portez l'exceptionnel, le temps d'une fête.</h1>
+          <p class="chapeau" data-hero-el data-i18n="index.hero.texte">Caftans, takchitas, tenues de mariée et parures, prêtés par des particulières, des negafas et des créatrices vérifiées.</p>
+          <div class="actions a-hero__actions" data-hero-el>
+            <a class="bouton" href="#apercu" data-i18n="index.hero.cta">Voir un aperçu</a>
+            <button class="bouton bouton--ligne" type="button" data-inscription data-i18n="index.hero.cta2">Créer mon compte</button>
           </div>
         </div>
-        <div class="s-hero__scene">
-          <div class="arche arche--45 s-hero__arche"><img class="s-hero__image" data-placeholder="placeholder:takchita:emeraude:face:5" alt="" width="600" height="800" fetchpriority="high"></div>
-        </div>
-        <p class="s-hero__legende" aria-hidden="true"><span data-i18n="index.hero.legende_titre">Takchita émeraude</span><small data-i18n="index.hero.legende_texte">Brodée main, ceinture mdamma incluse</small></p>
-        <span class="s-hero__defiler" aria-hidden="true"></span>
+        <figure class="a-hero__visuel" data-hero-el style="margin:0">
+          <div class="a-cadre" data-parallaxe><img data-visuel="accueil" data-placeholder="placeholder:takchita:emeraude:face:5" alt="" width="1200" height="1500" fetchpriority="high"></div>
+        </figure>
       </div>
     </section>
 
-    <!-- MANIFESTE : les mots s'allument au défilement -->
-    <section class="s-manifeste" aria-label="Manifeste">
-      <div class="conteneur">
-        <p class="s-manifeste__texte" data-mots data-i18n="index.manif.texte">Une takchita portée deux fois dort souvent dix ans dans une housse. Ici, elle revit. Partout en Belgique, des particulières, des negafas et des créatrices prêtent leurs plus belles pièces. Vous les portez le temps d'une fête.</p>
-      </div>
-    </section>
-
-    <!-- ENGAGEMENTS : visuel fixe, textes qui défilent -->
-    <section class="s-promesses" aria-labelledby="promesses-titre">
-      <div class="conteneur">
-        <p class="surtitre" data-reveal data-i18n="index.prom.surtitre">Nos engagements</p>
-        <h2 id="promesses-titre" class="s-titre-xl" data-reveal data-i18n="index.prom.titre">Pensé pour que tout se passe bien.</h2>
-        <div class="s-promesses__grille">
-          <div class="s-promesses__visuel" aria-hidden="true">
-            <div class="arche s-promesses__arche">
-              <img data-placeholder="placeholder:caftan:turquoise:broderie:3" alt="" loading="lazy" class="est-actif">
-              <img data-placeholder="placeholder:caftan:bordeaux:face:3" alt="" loading="lazy">
-              <img data-placeholder="placeholder:mdamma:or:face:1" alt="" loading="lazy">
-              <img data-placeholder="placeholder:mariee:ivoire:face:9" alt="" loading="lazy">
-            </div>
-          </div>
-          <ol class="s-promesses__liste">
-            <li class="s-promesse est-actif"><span class="s-promesse__num">01</span><h3 data-i18n="index.prom.1t">Vérifiée.</h3><p data-i18n="index.prom.1">Chaque annonce est relue par notre équipe avant d'être publiée. Mesures exactes, photos des broderies, état réel de la pièce.</p></li>
-            <li class="s-promesse"><span class="s-promesse__num">02</span><h3 data-i18n="index.prom.2t">Sécurisé.</h3><p data-i18n="index.prom.2">Vous payez en une fois, par Bancontact ou carte. La fournisseuse est payée seulement après le retour de la tenue.</p></li>
-            <li class="s-promesse"><span class="s-promesse__num">03</span><h3 data-i18n="index.prom.3t">Encadrée.</h3><p data-i18n="index.prom.3">La caution est une simple empreinte bancaire. Elle est libérée automatiquement quand tout s'est bien passé.</p></li>
-            <li class="s-promesse"><span class="s-promesse__num">04</span><h3 data-i18n="index.prom.4t">Inclus.</h3><p data-i18n="index.prom.4">Le pressing est compris. Rendez la tenue telle quelle, nous nous occupons du reste.</p></li>
-          </ol>
-        </div>
-      </div>
+    <!-- GARANTIES -->
+    <section class="a-garanties" aria-label="Garanties">
+      <ul class="conteneur a-garanties__liste">
+        <li class="a-garanties__item" data-reveal><strong data-i18n="index.conf.1t">Tenues vérifiées</strong><span data-i18n="index.conf.1">chaque annonce est relue</span></li>
+        <li class="a-garanties__item" data-reveal><strong data-i18n="index.conf.2t">Paiement sécurisé</strong><span data-i18n="index.conf.2">Bancontact ou carte</span></li>
+        <li class="a-garanties__item" data-reveal><strong data-i18n="index.conf.3t">Caution encadrée</strong><span data-i18n="index.conf.3">simple empreinte, jamais débitée</span></li>
+        <li class="a-garanties__item" data-reveal><strong data-i18n="index.conf.4t">Pressing inclus</strong><span data-i18n="index.conf.4">rendez la tenue telle quelle</span></li>
+      </ul>
     </section>
 
     <!-- COLLECTIONS -->
-    <section class="section section--sombre collections" id="collections" aria-labelledby="collections-titre">
+    <section class="section" id="collections" aria-labelledby="collections-titre">
       <div class="conteneur">
-        <div class="collections__entete">
+        <div class="a-entete">
           <div>
-            <p class="surtitre" data-i18n="index.coll.surtitre">Collections</p>
-            <h2 id="collections-titre" data-i18n="index.coll.titre">Une pièce pour chaque fête</h2>
+            <p class="surtitre" data-reveal data-i18n="index.coll.surtitre">Collections</p>
+            <h2 id="collections-titre" data-reveal data-i18n="index.coll.titre">Une pièce pour chaque fête</h2>
           </div>
+          <a class="lien-fleche" href="catalogue.html" data-i18n="commun.voir_tout">Voir tout</a>
         </div>
-        <div class="collections__piste" data-collections></div>
+        <div class="a-collections" data-collections></div>
       </div>
     </section>
 
-    <!-- APERÇU : quelques pièces, la suite après inscription -->
-    <section class="section section--claire s-apercu" id="apercu" aria-labelledby="apercu-titre">
+    <!-- APERÇU -->
+    <section class="section section--claire" id="apercu" aria-labelledby="apercu-titre">
       <div class="conteneur">
         <p class="surtitre" data-reveal data-i18n="index.ap.surtitre">Aperçu</p>
-        <h2 id="apercu-titre" class="s-titre-xl" data-reveal data-i18n="index.ap.titre">Un avant-goût de la collection.</h2>
-        <p class="chapeau" data-reveal data-apercu-note data-i18n="index.ap.note">Les premières pièces sont en cours de sélection. Voici des exemples de ce que vous trouverez bientôt.</p>
-        <div class="grille-cartes s-apercu__grille" data-apercu></div>
+        <h2 id="apercu-titre" data-reveal data-i18n="index.ap.titre">Un avant-goût de la collection.</h2>
+        <p class="chapeau" data-reveal data-apercu-note data-i18n="index.ap.note" style="margin-bottom:48px">Les premières pièces sont en cours de sélection. Voici des exemples de ce que vous trouverez bientôt.</p>
+        <div class="grille-cartes" data-apercu></div>
         <div class="s-apercu__mur" data-apercu-mur>
           <h3 data-i18n="index.ap.mur_titre">Envie de voir la suite ?</h3>
           <p data-i18n="index.ap.mur_texte">Créez votre compte gratuit pour accéder à toute la collection, garder vos coups de cœur et être prévenue dès qu'une pièce arrive près de chez vous.</p>
@@ -123,26 +102,24 @@
       <div class="conteneur">
         <p class="surtitre" data-reveal data-i18n="index.cmt.surtitre">Comment ça marche</p>
         <h2 id="comment-titre" data-reveal data-i18n="index.cmt.titre">Simple, encadré, entre nous</h2>
-        <p class="chapeau" data-reveal data-i18n="index.cmt.chapeau">La plateforme vérifie, encaisse, protège les deux parties et reverse le reste. Vous vous concentrez sur la fête.</p>
-        <div class="comment__grille">
-          <div class="comment__colonne" data-comment>
-            <div class="comment__progression"><span></span></div>
+        <p class="chapeau" data-reveal data-i18n="index.cmt.chapeau" style="margin-bottom:56px">La plateforme vérifie, encaisse, protège les deux parties et reverse le reste. Vous vous concentrez sur la fête.</p>
+        <div class="a-etapes">
+          <div data-reveal>
             <h3 data-i18n="index.cmt.clientes">Pour les clientes</h3>
-            <ol class="comment__etapes">
-              <li class="comment__etape"><h4 data-i18n="index.cmt.c1t">Choisissez</h4><p data-i18n="index.cmt.c1">Filtrez par occasion, taille, mesures, couleur et date. Les mesures exactes sont indiquées : aucune retouche n'est autorisée.</p></li>
-              <li class="comment__etape"><h4 data-i18n="index.cmt.c2t">Essayez si besoin</h4><p data-i18n="index.cmt.c2">Réservez un créneau chez la fournisseuse ou lors d'un showroom. Les frais sont déduits si vous louez.</p></li>
-              <li class="comment__etape"><h4 data-i18n="index.cmt.c3t">Payez en une fois</h4><p data-i18n="index.cmt.c3">Votre panier peut réunir plusieurs fournisseuses. Vous payez une fois que toutes ont accepté, par Bancontact ou carte.</p></li>
-              <li class="comment__etape"><h4 data-i18n="index.cmt.c4t">Portez, rendez</h4><p data-i18n="index.cmt.c4">État des lieux en quatre photos à la remise et au retour. La caution est une simple empreinte, libérée automatiquement.</p></li>
+            <ol>
+              <li><h4 data-i18n="index.cmt.c1t">Choisissez</h4><p data-i18n="index.cmt.c1">Filtrez par occasion, taille, mesures, couleur et date. Les mesures exactes sont indiquées : aucune retouche n'est autorisée.</p></li>
+              <li><h4 data-i18n="index.cmt.c2t">Essayez si besoin</h4><p data-i18n="index.cmt.c2">Réservez un créneau chez la fournisseuse ou lors d'un showroom. Les frais sont déduits si vous louez.</p></li>
+              <li><h4 data-i18n="index.cmt.c3t">Payez en une fois</h4><p data-i18n="index.cmt.c3">Votre panier peut réunir plusieurs fournisseuses. Vous payez une fois que toutes ont accepté, par Bancontact ou carte.</p></li>
+              <li><h4 data-i18n="index.cmt.c4t">Portez, rendez</h4><p data-i18n="index.cmt.c4">État des lieux en quatre photos à la remise et au retour. La caution est une simple empreinte, libérée automatiquement.</p></li>
             </ol>
           </div>
-          <div class="comment__colonne" data-comment>
-            <div class="comment__progression"><span></span></div>
+          <div data-reveal>
             <h3 data-i18n="index.cmt.fournisseuses">Pour les fournisseuses</h3>
-            <ol class="comment__etapes">
-              <li class="comment__etape"><h4 data-i18n="index.cmt.f1t">Publiez</h4><p data-i18n="index.cmt.f1">Quatre photos, les mesures, votre prix. Notre équipe relit chaque annonce avant sa mise en ligne.</p></li>
-              <li class="comment__etape"><h4 data-i18n="index.cmt.f2t">Acceptez sous 24 h</h4><p data-i18n="index.cmt.f2">Vous gardez la main sur chaque demande et sur votre calendrier. Deux jours sont bloqués autour de chaque location pour le pressing.</p></li>
-              <li class="comment__etape"><h4 data-i18n="index.cmt.f3t">Remettez en confiance</h4><p data-i18n="index.cmt.f3">Identité vérifiée pour les cautions élevées, empreinte bancaire et état des lieux horodaté.</p></li>
-              <li class="comment__etape"><h4 data-i18n="index.cmt.f4t">Recevez votre versement</h4><p data-i18n="index.cmt.f4">Le versement part 24 heures après le retour confirmé, directement sur votre compte.</p></li>
+            <ol>
+              <li><h4 data-i18n="index.cmt.f1t">Publiez</h4><p data-i18n="index.cmt.f1">Quatre photos, les mesures, votre prix. Notre équipe relit chaque annonce avant sa mise en ligne.</p></li>
+              <li><h4 data-i18n="index.cmt.f2t">Acceptez sous 24 h</h4><p data-i18n="index.cmt.f2">Vous gardez la main sur chaque demande et sur votre calendrier. Deux jours sont bloqués autour de chaque location pour le pressing.</p></li>
+              <li><h4 data-i18n="index.cmt.f3t">Remettez en confiance</h4><p data-i18n="index.cmt.f3">Identité vérifiée pour les cautions élevées, empreinte bancaire et état des lieux horodaté.</p></li>
+              <li><h4 data-i18n="index.cmt.f4t">Recevez votre versement</h4><p data-i18n="index.cmt.f4">Le versement part 24 heures après le retour confirmé, directement sur votre compte.</p></li>
             </ol>
           </div>
         </div>
@@ -150,7 +127,7 @@
     </section>
 
     <!-- SIMULATEUR -->
-    <section class="section section--emeraude" id="fournisseuses" aria-labelledby="simu-titre">
+    <section class="section section--sombre" id="fournisseuses" aria-labelledby="simu-titre">
       <div class="conteneur simulateur">
         <div>
           <p class="surtitre" data-reveal data-i18n="index.simu.surtitre">Particulières, negafas, créatrices</p>
@@ -161,7 +138,7 @@
             <li data-i18n="index.simu.p2">Caution et état des lieux à chaque location</li>
             <li data-i18n="index.simu.p3">Page boutique pour les negafas et créatrices</li>
           </ul>
-          <button class="bouton bouton--or" type="button" data-devenir-fournisseuse data-i18n="index.simu.cta">Proposer mes tenues</button>
+          <button class="bouton" type="button" data-devenir-fournisseuse data-i18n="index.simu.cta">Proposer mes tenues</button>
         </div>
         <div class="simulateur__panneau" data-reveal>
           <div class="simulateur__ligne">
@@ -182,15 +159,16 @@
     </section>
 
     <!-- PARTOUT EN BELGIQUE -->
-    <section class="s-belgique" aria-labelledby="belgique-titre">
+    <section class="section" aria-labelledby="belgique-titre">
       <div class="conteneur">
-        <p class="surtitre" data-reveal data-i18n="index.be.surtitre">Partout en Belgique</p>
-        <h2 id="belgique-titre" class="s-titre-xl" data-reveal data-i18n="index.be.titre">D'Ostende à Arlon, d'Anvers à Mons.</h2>
-        <p class="chapeau" data-reveal data-i18n="index.be.texte">Remise en main propre près de chez vous, ou envoi assuré dans tout le pays.</p>
-      </div>
-      <div class="s-belgique__bandes" aria-hidden="true">
-        <p class="s-belgique__bande" data-bande></p>
-        <p class="s-belgique__bande s-belgique__bande--contour" data-bande data-sens="-1"></p>
+        <div class="a-entete">
+          <div>
+            <p class="surtitre" data-reveal data-i18n="index.be.surtitre">Partout en Belgique</p>
+            <h2 id="belgique-titre" data-reveal data-i18n="index.be.titre">D'Ostende à Arlon, d'Anvers à Mons.</h2>
+          </div>
+          <p class="chapeau" data-reveal data-i18n="index.be.texte" style="margin:0">Remise en main propre près de chez vous, ou envoi assuré dans tout le pays.</p>
+        </div>
+        <ul class="a-provinces" data-provinces></ul>
       </div>
     </section>
 
@@ -211,25 +189,23 @@
     <!-- HUB MARIAGE -->
     <section class="section section--sombre" aria-labelledby="hub-titre">
       <div class="conteneur duo">
-        <div class="arche-cadre" data-reveal>
-          <div class="arche"><img data-placeholder="placeholder:couronne:or:face:2" alt="" loading="lazy"></div>
-        </div>
+        <div class="a-cadre" data-reveal data-parallaxe><img data-visuel="hub" data-placeholder="placeholder:couronne:or:face:2" alt="" loading="lazy"></div>
         <div>
           <p class="surtitre" data-reveal data-i18n="index.hub.surtitre">Hub mariage</p>
           <h2 id="hub-titre" data-reveal data-i18n="index.hub.titre">Tout le jour J, au même endroit</h2>
           <p class="chapeau" data-reveal data-i18n="index.hub.chapeau">Maquilleuses, photographes, hennayas et negafas prestataires de confiance, partout en Belgique. Demandez un devis en un message.</p>
           <div class="actions" data-reveal>
-            <a class="bouton bouton--clair" href="partenaires.html" data-i18n="index.hub.cta">Explorer le hub</a>
+            <a class="bouton bouton--ligne" href="partenaires.html" data-i18n="index.hub.cta">Explorer le hub</a>
           </div>
         </div>
       </div>
     </section>
 
     <!-- FIN -->
-    <section class="s-fin" aria-labelledby="fin-titre">
+    <section class="a-fin" aria-labelledby="fin-titre">
       <div class="conteneur">
-        <h2 id="fin-titre" class="s-fin__titre" data-mots data-i18n="index.fin.titre">Le caftan de vos rêves existe déjà. Quelqu'un vous le prête.</h2>
-        <div class="actions s-fin__actions" data-reveal>
+        <h2 id="fin-titre" data-reveal data-i18n="index.fin.titre">Le caftan de vos rêves existe déjà. Quelqu'un vous le prête.</h2>
+        <div class="actions" data-reveal>
           <button class="bouton" type="button" data-inscription data-i18n="index.fin.cta">Créer mon compte</button>
           <button class="bouton bouton--ligne" type="button" data-devenir-fournisseuse data-i18n="index.hero.cta3">Proposer mes tenues</button>
         </div>

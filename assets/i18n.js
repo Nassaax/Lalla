@@ -413,7 +413,7 @@
     'meta.boutique.titre': 'Boetiek | negafa en ontwerpster | {brand}',
     'meta.boutique.desc': 'Ontdek de collectie van een negafa of ontwerpster en huur haar stukken veilig.',
     'index.hero.surtitre': 'Verhuur van Marokkaanse kledij in België',
-    'index.hero.titre': 'Draag het uitzonderlijke.<br><em>De tijd van een feest.</em>',
+    'index.hero.titre': 'Draag het uitzonderlijke, de tijd van een feest.',
     'index.hero.cta': 'Bekijk een voorproefje',
     'index.hero.cta2': 'Account aanmaken',
     'index.hero.cta3': 'Mijn kledij aanbieden',

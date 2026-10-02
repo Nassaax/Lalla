@@ -412,10 +412,15 @@
       var adminLien = $('.nav__lien--admin', menu);
       if (profil && profil.est_admin && !adminLien) menu.appendChild(lienNav('admin.html', 'nav.admin', { class: 'nav__lien nav__lien--admin' }));
     });
-    var defile = false;
+    // L'en-tête s'efface quand on descend et revient dès qu'on remonte.
+    var defile = false, dernierY = window.scrollY;
     window.addEventListener('scroll', function () {
-      var d = window.scrollY > 24;
+      var y = window.scrollY, d = y > 24;
       if (d !== defile) { defile = d; zone.classList.toggle('est-defile', d); }
+      var cacher = y > 240 && y > dernierY + 4 && !document.documentElement.classList.contains('menu-ouvert');
+      if (cacher) zone.classList.add('est-cache');
+      else if (y < dernierY - 4 || y < 240) zone.classList.remove('est-cache');
+      dernierY = y;
     }, { passive: true });
   };
 

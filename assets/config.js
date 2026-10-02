@@ -22,6 +22,13 @@
       'Liège': 'Luik', 'Limbourg': 'Limburg', 'Luxembourg': 'Luxemburg', 'Namur': 'Namen'
     },
     langues: ['fr', 'nl'],
+    // Photos de l'accueil : déposez vos fichiers dans assets/photos/ et indiquez leur chemin ici
+    // (ex. 'assets/photos/accueil.jpg'). Tant qu'un chemin est vide, un aplat de tissu sobre est affiché.
+    photos: {
+      accueil: '',
+      hub: '',
+      collections: { caftan: '', takchita: '', mariee: '', homme: '', enfant: '', accessoire: '' }
+    },
     liens: {
       // Bloc « Beauté de la mariée » (hub mariage) : boutique externe
       beauteMariee: 'https://exemple.com/boutique-beaute'

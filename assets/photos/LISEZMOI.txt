@@ -1,0 +1,1 @@
+Déposez ici vos photos (JPG ou WebP, 1600 px de large conseillé), puis renseignez leur chemin dans assets/config.js → photos.
