@@ -122,7 +122,7 @@ export async function seed() {
     if (!existant.length) {
       verifier(await sb.from('partenaires').insert({
         user_id: id, nom: p.nom, metier: p.metier, ville: p.ville, bio: p.bio, instagram: p.instagram,
-        email_contact: `${p.cle}@${DOMAINE}`, valide: true, galerie: [1, 2, 3].map((n) => `placeholder:${n === 1 ? 'couronne' : n === 2 ? 'bijoux' : 'mdamma'}:${['or', 'emeraude', 'bordeaux'][n - 1]}:face:${n * 11}`)
+        email_contact: `${p.cle}@${DOMAINE}`, valide: true, galerie: [0, 1, 2].map((n) => { const k = (n + PARTENAIRES.indexOf(p)) % 3; return `placeholder:${['couronne', 'bijoux', 'mdamma'][k]}:${['or', 'emeraude', 'bordeaux'][k]}:face:${k * 11}`; })
       }), 'partenaire');
     }
   }
