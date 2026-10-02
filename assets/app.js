@@ -378,8 +378,8 @@
     } }, h('span', { 'data-i18n': 'nav.connexion' }, t('nav.connexion')));
     var menu = h('nav', { class: 'nav', id: 'menu-principal', 'aria-label': 'Navigation principale' },
       lienNav('catalogue.html', 'nav.catalogue'),
-      lienNav('index.html#collections', 'nav.collections'),
       lienNav('index.html#comment', 'nav.comment'),
+      lienNav('aide.html', 'nav.aide'),
       lienNav('partenaires.html', 'nav.partenaires'),
       lienNav('compte.html?vue=annonces', 'nav.proposer', { class: 'nav__lien nav__lien--accent' }));
     var burger = h('button', { type: 'button', class: 'burger', 'aria-expanded': 'false', 'aria-controls': 'menu-principal', onclick: function () {
@@ -392,6 +392,7 @@
       menu,
       h('div', { class: 'entete__outils' },
         basculeLangue(),
+        L.notifications.bouton(),
         boutonCompte,
         h('a', { href: 'panier.html', class: 'panier-lien', 'aria-label': t('nav.panier'), 'data-i18n-attr': 'aria-label:nav.panier' },
           L.ui.icone('<path d="M6 8h12l-1 12H7L6 8z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.4"/>'), compteur),
@@ -440,6 +441,7 @@
           h('li', null, h('a', { href: 'compte.html', 'data-i18n': 'nav.compte' }, t('nav.compte'))))),
       h('div', null, h('h2', { class: 'pied__titre', 'data-i18n': 'footer.aide' }, t('footer.aide')),
         h('ul', { class: 'pied__liens' },
+          h('li', null, h('a', { href: 'aide.html', 'data-i18n': 'footer.centre_aide' }, t('footer.centre_aide'))),
           h('li', null, h('a', { href: 'conditions.html', 'data-i18n': 'footer.conditions' }, t('footer.conditions'))),
           h('li', null, h('a', { href: 'mentions-legales.html', 'data-i18n': 'footer.mentions' }, t('footer.mentions'))),
           h('li', null, h('a', { href: 'confidentialite.html', 'data-i18n': 'footer.confidentialite' }, t('footer.confidentialite'))),
@@ -449,6 +451,159 @@
         h('span', { 'data-i18n': 'footer.villes' }, t('footer.villes')))));
     // l'année est une variable : on la réinjecte au changement de langue
     document.addEventListener('lalla:langue', function () { var s = $('[data-droits]', zone); if (s) s.textContent = t('footer.droits', { annee: annee }); });
+  };
+
+  // ---------------------------------------------------------------------------
+  // Notifications (cloche de l'en-tête)
+  // ---------------------------------------------------------------------------
+  L.notifications = (function () {
+    var bouton, compteur, panneau, minuterie;
+    function depuis(iso) {
+      var min = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+      if (min < 1) return t('notif.instant');
+      if (min < 60) return t('notif.minutes', { n: min });
+      if (min < 1440) return t('notif.heures', { n: Math.round(min / 60) });
+      return L.dateCourte(iso);
+    }
+    function compter() {
+      if (!L.sb || !L.session) { if (bouton) bouton.hidden = true; return; }
+      bouton.hidden = false;
+      L.sb.from('notifications').select('id', { count: 'exact', head: true }).is('lu_at', null).then(function (r) {
+        compteur.textContent = r.count ? String(Math.min(r.count, 99)) : '';
+      });
+    }
+    function fermer() { if (panneau) { panneau.remove(); panneau = null; bouton.setAttribute('aria-expanded', 'false'); document.removeEventListener('click', dehors, true); } }
+    function dehors(e) { if (panneau && !panneau.contains(e.target) && !bouton.contains(e.target)) fermer(); }
+    function ouvrir() {
+      if (panneau) { fermer(); return; }
+      var liste = h('div', null);
+      panneau = h('div', { class: 'notifs', role: 'dialog', 'aria-label': t('notif.titre') },
+        h('div', { class: 'notifs__tete' }, h('span', null, t('notif.titre')),
+          h('button', { class: 'lien-discret', type: 'button', onclick: function () {
+            L.sb.from('notifications').update({ lu_at: new Date().toISOString() }).is('lu_at', null).then(function () { compter(); fermer(); });
+          } }, t('notif.tout_lu'))),
+        liste);
+      $('#entete').appendChild(panneau);
+      bouton.setAttribute('aria-expanded', 'true');
+      setTimeout(function () { document.addEventListener('click', dehors, true); });
+      L.ui.chargement(liste);
+      L.sb.from('notifications').select('*').order('created_at', { ascending: false }).limit(30).then(function (r) {
+        L.vider(liste);
+        var lignes = r.data || [];
+        if (!lignes.length) { liste.appendChild(h('p', { class: 'texte', style: { padding: '12px' } }, t('notif.vide'))); return; }
+        lignes.forEach(function (n) {
+          liste.appendChild(h('a', { class: 'notif' + (n.lu_at ? '' : ' notif--nonlue'), href: n.lien || '#', onclick: function () {
+            if (!n.lu_at) L.sb.from('notifications').update({ lu_at: new Date().toISOString() }).eq('id', n.id).then(compter);
+          } }, n.titre, h('small', null, depuis(n.created_at))));
+        });
+      });
+    }
+    return {
+      bouton: function () {
+        compteur = h('span', { class: 'cloche__nb', 'aria-hidden': 'true' });
+        bouton = h('button', { type: 'button', class: 'cloche', hidden: true, 'aria-label': t('notif.titre'), 'aria-expanded': 'false', onclick: ouvrir },
+          L.ui.icone('<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 20a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.5"/>'), compteur);
+        L.auth.surChangement(function () {
+          compter();
+          clearInterval(minuterie);
+          if (L.session) minuterie = setInterval(function () { if (!document.hidden) compter(); }, 60000);
+        });
+        document.addEventListener('visibilitychange', function () { if (!document.hidden && L.session) compter(); });
+        return bouton;
+      },
+      rafraichir: function () { if (bouton) compter(); }
+    };
+  })();
+
+  // ---------------------------------------------------------------------------
+  // Favoris (cœur sur les annonces)
+  // ---------------------------------------------------------------------------
+  L.favoris = (function () {
+    var ids = null, attente = null;
+    function charger() {
+      if (attente) return attente;
+      attente = (L.auth.pret || Promise.resolve()).then(function () {
+        if (!L.sb || !L.session) { ids = new Set(); return ids; }
+        return L.sb.from('favoris').select('tenue_id').then(function (r) {
+          ids = new Set((r.data || []).map(function (x) { return x.tenue_id; }));
+          return ids;
+        });
+      });
+      return attente;
+    }
+    L.auth.surChangement(function () { attente = null; ids = null; });
+    function peindre(btn, actif) {
+      btn.classList.toggle('est-favori', actif);
+      btn.setAttribute('aria-pressed', String(actif));
+      btn.setAttribute('aria-label', t(actif ? 'favori.retirer' : 'favori.ajouter'));
+    }
+    return {
+      charger: charger,
+      /** Bouton cœur pour une annonce. */
+      bouton: function (tenueId) {
+        var btn = h('button', { type: 'button', class: 'carte__coeur', 'aria-pressed': 'false', 'aria-label': t('favori.ajouter') },
+          L.ui.icone('<path d="M12 21s-7-4.4-9.3-8.6C1 9.2 2.6 5.5 6.1 5.1c2-.2 3.4.9 5.9 3.3 2.5-2.4 3.9-3.5 5.9-3.3 3.5.4 5.1 4.1 3.4 7.3C19 16.6 12 21 12 21z" fill="rgba(0,0,0,.25)" stroke="currentColor" stroke-width="1.8"/>'));
+        charger().then(function (s) { peindre(btn, s.has(tenueId)); });
+        btn.addEventListener('click', function (e) {
+          e.preventDefault(); e.stopPropagation();
+          if (!L.session) { L.ui.authentification('inscription'); return; }
+          var actif = ids && ids.has(tenueId);
+          peindre(btn, !actif);
+          var req = actif ? L.sb.from('favoris').delete().eq('tenue_id', tenueId) : L.sb.from('favoris').insert({ tenue_id: tenueId });
+          req.then(function (r) {
+            if (r.error) { peindre(btn, actif); L.ui.toast(L.messageErreur(r.error), 'erreur'); return; }
+            if (actif) ids.delete(tenueId); else ids.add(tenueId);
+            L.ui.toast(t(actif ? 'favori.retire' : 'favori.ajoute'));
+          });
+        });
+        return btn;
+      }
+    };
+  })();
+
+  // ---------------------------------------------------------------------------
+  // Signalement (annonce, profil, conversation)
+  // ---------------------------------------------------------------------------
+  L.ui.signaler = function (type, id) {
+    if (!L.session) { L.ui.authentification('connexion'); return; }
+    var motifs = ['contrefacon', 'photos_trompeuses', 'arnaque', 'comportement', 'hors_plateforme', 'autre'];
+    var m;
+    var form = h('form', { class: 'formulaire', novalidate: true },
+      h('p', { class: 'texte' }, t('signal.intro')),
+      L.ui.champ('motif', 'signal.motif', { tag: 'select', options: motifs.map(function (x) { return [x, t('signal.m_' + x)]; }) }),
+      L.ui.champ('message', 'signal.message', { tag: 'textarea', maxlength: '1000' }),
+      h('button', { class: 'bouton bouton--plein', type: 'submit' }, t('signal.envoyer')));
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      L.sb.from('signalements').insert({ cible_type: type, cible_id: id, motif: form.motif.value, message: form.message.value || null }).then(function (r) {
+        if (r.error) { L.ui.toast(L.messageErreur(r.error), 'erreur'); return; }
+        m.fermer();
+        L.ui.toast(t('signal.merci'), 'succes');
+      });
+    });
+    m = L.ui.modale(form, { titre: t('signal.titre') });
+  };
+
+  /**
+   * Ouvre (ou crée) la conversation puis affiche la messagerie.
+   * Par défaut la personne connectée est la cliente ; clienteId permet à une fournisseuse d'écrire à sa cliente.
+   */
+  L.contacter = function (fournisseuseId, tenueId, clienteId) {
+    var cliente, fournisseuse;
+    return L.auth.exiger('inscription').then(function () {
+      cliente = clienteId || L.session.user.id;
+      fournisseuse = fournisseuseId || L.session.user.id;
+      if (cliente === fournisseuse) throw new Error(t('msg.soi_meme'));
+      return L.sb.from('conversations').select('id').eq('cliente_id', cliente).eq('fournisseuse_id', fournisseuse).maybeSingle();
+    }).then(function (r) {
+      if (r.data) return r.data.id;
+      return L.sb.from('conversations').insert({ cliente_id: cliente, fournisseuse_id: fournisseuse, tenue_id: tenueId || null }).select('id').single().then(function (x) {
+        if (x.error) throw x.error;
+        return x.data.id;
+      });
+    }).then(function (id) {
+      location.href = 'compte.html?vue=messages&c=' + id + (tenueId ? '&tenue=' + tenueId : '');
+    }).catch(function (e) { if (e.code !== 'non_connecte') L.ui.toast(L.messageErreur(e), 'erreur'); });
   };
 
   /** Fenêtre de connexion / inscription (email + mot de passe, ou lien magique). */
@@ -802,6 +957,10 @@
     }
     L.motion.reveler(document);
     if (L.param('connexion') === '1') L.auth.pret.then(function () { if (!L.session) L.ui.authentification('connexion'); });
+    // Application installable : service worker (HTTPS uniquement, hors tests locaux).
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () { /* facultatif */ }); });
+    }
   }
 
   // Les scripts « defer » s'exécutent avant DOMContentLoaded : on attend que compte.js / admin.js

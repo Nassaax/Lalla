@@ -16,7 +16,7 @@ const dossier = path.join(racine, '.tmp/captures');
 mkdirSync(dossier, { recursive: true });
 
 const PUBLIQUES = ['index.html', 'catalogue.html', `tenue.html?id=${tenue.id}`, `boutique.html?id=${boutique.id}`, 'panier.html', 'partenaires.html',
-  'conditions.html', 'mentions-legales.html', 'confidentialite.html', 'compte.html'];
+  'conditions.html', 'mentions-legales.html', 'confidentialite.html', 'compte.html', 'aide.html'];
 const CONNECTEES = [
   ['cliente1@demo.lalla.be', ['compte.html?vue=reservations', 'compte.html?vue=mensurations', 'compte.html?vue=profil']],
   ['negafa1@demo.lalla.be', ['compte.html?vue=demandes', 'compte.html?vue=annonces', 'compte.html?vue=calendrier', 'compte.html?vue=revenus', 'compte.html?vue=boutique']],
@@ -74,7 +74,7 @@ for (const largeur of [375, 768, 1440]) {
   await page.click('.langue__btn[lang=nl]');
   await page.waitForTimeout(300);
   assert.equal(await page.evaluate(() => window.__marqueur), 'sans-rechargement');
-  assert.match(await page.textContent('[data-i18n="index.hero.cta"]'), /Bekijk een voorproefje/);
+  assert.match(await page.textContent('[data-i18n="index.r.chercher"]'), /Zoeken/);
   assert.equal(await page.getAttribute('html', 'lang'), 'nl-BE');
   await page.goto(`${BASE}/catalogue.html`, { waitUntil: 'networkidle' });
   assert.match(await page.textContent('h1'), /De catalogus/);
@@ -91,8 +91,8 @@ for (const largeur of [375, 768, 1440]) {
   await page.goto(`${BASE}/index.html`, { waitUntil: 'networkidle' });
   assert.equal(await page.evaluate(() => document.documentElement.classList.contains('mouvement-reduit')), true);
   assert.equal(await page.evaluate(() => Boolean(window.Lalla.motion.lenis)), false);
-  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.a-hero__titre')).opacity), '1');
-  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.a-hero__visuel')).opacity), '1');
+  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('#hero-titre')).opacity), '1');
+  assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.recherche')).opacity), '1');
   problemes.push(...ctx.erreurs);
   await ctx.close();
   console.log('✓ prefers-reduced-motion respecté');

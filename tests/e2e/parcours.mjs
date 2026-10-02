@@ -110,6 +110,7 @@ try {
   for (const [c, v] of [['poitrine_cm', 94], ['taille_cm', 78], ['hanches_cm', 102], ['longueur_cm', 150], ['manche_cm', 60]]) await fPage.fill(`input[name=${c}]`, String(v));
   await fPage.fill('input[name=prix]', '140');
   await fPage.fill('input[name=valeur]', '1500');
+  await fPage.fill('input[name=code_postal]', '1000');
   await fPage.check('input[name=essayage]', { force: true });
   const depots = await fPage.$$('.depot-photos input[type=file]');
   for (const [i, nom] of ['face', 'dos', 'broderie', 'portee'].entries()) {

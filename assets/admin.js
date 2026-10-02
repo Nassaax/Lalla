@@ -8,7 +8,7 @@
 
   var ONGLETS = [
     ['tableau', 'Indicateurs'], ['annonces', 'Annonces'], ['comptes', 'Comptes'], ['reservations', 'Réservations'],
-    ['litiges', 'Litiges'], ['parametres', 'Paramètres'], ['showrooms', 'Showrooms'], ['leads', 'Leads'], ['export', 'Export comptable']
+    ['litiges', 'Litiges'], ['signalements', 'Signalements'], ['parametres', 'Paramètres'], ['showrooms', 'Showrooms'], ['leads', 'Leads'], ['export', 'Exports']
   ];
   var LIBELLES_PARAMS = {
     commission_taux: ['Commission plateforme', 'taux', 'Sur le prix de location, côté fournisseuse (0,15 = 15 %)'],
@@ -93,7 +93,7 @@
   };
 
   VUES.annonces = function (z, recharger) {
-    return sb(L.sb.from('tenues').select('*, tenue_photos(type, chemin, ordre), fournisseuse:profils(nom_affiche, boutique_nom, type_fournisseuse, compte_valide)').eq('statut', 'en_attente').order('soumise_at')).then(function (liste) {
+    return sb(L.sb.from('tenues').select('*, tenue_photos(type, chemin, ordre), fournisseuse:profils!tenues_fournisseuse_id_fkey(nom_affiche, boutique_nom, type_fournisseuse, compte_valide)').eq('statut', 'en_attente').order('soumise_at')).then(function (liste) {
       L.vider(z);
       if (!liste.length) { L.ui.etatVide(z, 'Aucune annonce en attente.'); return; }
       liste.forEach(function (tn) {
@@ -300,6 +300,54 @@
     });
   };
 
+  var MOTIFS = { contrefacon: 'Contrefaçon', photos_trompeuses: 'Photos trompeuses', arnaque: 'Arnaque', comportement: 'Comportement', hors_plateforme: 'Paiement hors plateforme', autre: 'Autre' };
+  VUES.signalements = function (z, recharger) {
+    return sb(L.sb.from('signalements').select('*, auteur:profils!signalements_auteur_id_fkey(nom_affiche)').order('created_at', { ascending: false }).limit(200)).then(function (liste) {
+      function lien(s) {
+        if (s.cible_type === 'tenue') return h('a', { href: 'tenue.html?id=' + s.cible_id, target: '_blank', rel: 'noopener' }, 'Annonce');
+        if (s.cible_type === 'profil') return h('a', { href: 'boutique.html?id=' + s.cible_id, target: '_blank', rel: 'noopener' }, 'Profil');
+        return h('button', { class: 'lien', type: 'button', onclick: function () { conversation(s.cible_id); } }, 'Conversation');
+      }
+      L.vider(z).appendChild(panneau('Signalements', liste.length ? tableau(['Date', 'Par', 'Cible', 'Motif', 'Message', 'Statut', ''], liste.map(function (s) {
+        var note = h('input', { class: 'champ__controle', value: s.note_admin || '', placeholder: 'Note interne', style: { minHeight: '34px', fontSize: '13px' }, 'aria-label': 'Note' });
+        return h('tr', null, h('td', null, L.dateCourte(s.created_at)), h('td', null, s.auteur ? s.auteur.nom_affiche : ''), h('td', null, lien(s)),
+          h('td', null, MOTIFS[s.motif] || s.motif), h('td', { style: { maxWidth: '280px' } }, s.message || ''), h('td', null, statut(s.statut)),
+          h('td', null, note, s.statut === 'ouvert' ? h('button', { class: 'bouton bouton--petit', type: 'button', style: { marginTop: '6px' }, onclick: function () {
+            sb(L.sb.from('signalements').update({ statut: 'traite', note_admin: note.value || null, traite_at: new Date().toISOString() }).eq('id', s.id)).then(function () { L.ui.toast('Signalement traité', 'succes'); recharger(); }).catch(function (e) { L.ui.toast(L.messageErreur(e), 'erreur'); });
+          } }, 'Marquer traité') : null));
+      })) : h('p', null, 'Aucun signalement.')));
+    });
+  };
+
+  /** Lecture d'une conversation signalée (accès réservé à l'administration). */
+  function conversation(id) {
+    var contenu = h('div');
+    L.ui.modale(contenu, { titre: 'Conversation signalée', large: true });
+    sb(L.sb.from('messages').select('auteur_id, contenu, masque, created_at, auteur:profils!messages_auteur_id_fkey(nom_affiche)').eq('conversation_id', id).order('created_at')).then(function (m) {
+      L.vider(contenu).appendChild(h('div', { class: 'discussion__messages', style: { maxHeight: '60vh' } }, m.map(function (x) {
+        return h('div', { class: 'bulle' }, h('strong', null, (x.auteur ? x.auteur.nom_affiche : '?') + ' : '), x.contenu, h('small', null, L.dateHeure(x.created_at) + (x.masque ? ' · coordonnées masquées' : '')));
+      })));
+    }).catch(function (e) { L.vider(contenu).appendChild(h('p', null, L.messageErreur(e))); });
+  }
+
+  function exportDac7() {
+    var annee = h('input', { class: 'champ__controle', type: 'number', min: '2024', max: '2100', value: String(new Date().getFullYear() - 1), 'aria-label': 'Année', style: { width: '120px' } });
+    var resume = h('div');
+    var bouton = h('button', { class: 'bouton', type: 'button', onclick: function () {
+      bouton.disabled = true;
+      L.api('admin-dac7', { annee: Number(annee.value) }).then(function (r) {
+        bouton.disabled = false;
+        var a = h('a', { href: URL.createObjectURL(new Blob([r.csv], { type: 'text/csv;charset=utf-8' })), download: r.nom });
+        document.body.appendChild(a); a.click(); a.remove();
+        L.vider(resume).appendChild(h('p', { class: r.incompletes ? 'message message--alerte' : 'message message--succes' },
+          r.fournisseuses + ' fournisseuse(s) déclarable(s)' + (r.incompletes ? ', dont ' + r.incompletes + ' sans informations fiscales : relancez-les depuis leur compte.' : '.')));
+      }).catch(function (e) { bouton.disabled = false; L.ui.toast(L.messageErreur(e), 'erreur'); });
+    } }, 'Télécharger la déclaration');
+    return panneau('Déclaration DAC7 (annuelle)', h('div', null,
+      h('p', { class: 'texte' }, 'Pour chaque fournisseuse payée dans l\'année : identité fiscale, nombre de locations et montants par trimestre. À transmettre au SPF Finances avant le 31 janvier de l\'année suivante (déclaration des opérateurs de plateforme).'),
+      h('div', { class: 'actions' }, annee, bouton), resume));
+  }
+
   VUES.export = function (z) {
     var d = new Date(); d.setMonth(d.getMonth() - 1);
     var mois = h('input', { class: 'champ__controle', type: 'month', value: d.toISOString().slice(0, 7), 'aria-label': 'Mois', style: { width: 'auto' } });
@@ -316,5 +364,6 @@
     L.vider(z).appendChild(panneau('Export comptable mensuel', h('div', null,
       h('p', { class: 'texte' }, 'Ventes (paiements), commissions et frais de service, transferts aux fournisseuses, remboursements, retenues sur caution et pénalités. Séparateur « ; », montants en euros, compatible Excel.'),
       h('div', { class: 'actions' }, mois, bouton), resume)));
+    z.appendChild(exportDac7());
   };
 })();

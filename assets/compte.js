@@ -36,9 +36,10 @@
 
   function vuesDisponibles() {
     var p = etat.profil, v = [];
-    if (p.est_cliente) v.push(['reservations', 'compte.v_reservations'], ['essayages', 'compte.v_essayages'], ['mensurations', 'compte.v_mensurations']);
+    v.push(['messages', 'compte.v_messages']);
+    if (p.est_cliente) v.push(['reservations', 'compte.v_reservations'], ['favoris', 'compte.v_favoris'], ['essayages', 'compte.v_essayages'], ['mensurations', 'compte.v_mensurations']);
     if (p.est_fournisseuse) v.push(['demandes', 'compte.v_demandes'], ['annonces', 'compte.v_annonces'], ['calendrier', 'compte.v_calendrier'], ['revenus', 'compte.v_revenus'], ['paiements', 'compte.v_paiements']);
-    if (p.est_fournisseuse && p.type_fournisseuse !== 'particuliere') v.push(['boutique', 'compte.v_boutique']);
+    if (p.est_fournisseuse) v.push(['boutique', 'compte.v_boutique'], ['fiscalite', 'compte.v_fiscalite']);
     if (p.est_partenaire) v.push(['partenaire', 'compte.v_partenaire'], ['leads', 'compte.v_leads']);
     if (!p.est_fournisseuse) v.push(['annonces', 'compte.v_devenir']);
     v.push(['profil', 'compte.v_profil']);
@@ -136,6 +137,10 @@
     if (['rendue', 'cloturee'].indexOf(r.statut) >= 0 && !aDejaAvis) actions.appendChild(h('button', { class: 'bouton bouton--or bouton--petit', type: 'button', onclick: function () { laisserAvis(r, role); } }, t('avis.laisser')));
     if (role === 'fournisseuse' && r.statut === 'rendue' && new Date(r.litige_deadline) > new Date()) actions.appendChild(h('button', { class: 'bouton bouton--danger bouton--petit', type: 'button', onclick: function () { ouvrirLitige(r); } }, t('litige.ouvrir')));
     if (role === 'fournisseuse' && r.mode_remise === 'envoi' && ['payee', 'remise'].indexOf(r.statut) >= 0) actions.appendChild(h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () { saisirSuivi(r); } }, t('compte.suivi')));
+    actions.appendChild(h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () {
+      if (role === 'cliente') L.contacter(r.fournisseuse_id); else L.contacter(null, null, r.cliente_id);
+    } }, t('msg.message')));
+    if (r.mode_remise === 'main_propre' && ['payee', 'remise'].indexOf(r.statut) >= 0) actions.appendChild(h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () { infosRemise(r, role); } }, t('remise.infos')));
     if (['demande', 'acceptee', 'payee'].indexOf(r.statut) >= 0) actions.appendChild(h('button', { class: 'lien', type: 'button', onclick: function () { annuler(r, role); } }, t('compte.annuler')));
     if (role === 'cliente' && ['payee', 'remise'].indexOf(r.statut) >= 0 && r.caution_statut === 'echec') actions.appendChild(h('a', { class: 'bouton bouton--danger bouton--petit', href: 'panier.html?commande=' + r.commande_id + '&etape=caution' }, t('panier.autoriser_caution')));
     var infos = [t('commun.du_au', { debut: L.date(r.date_debut), fin: L.date(r.date_fin) })];
@@ -147,7 +152,68 @@
         r.caution_cents ? statut(r.caution_statut, 'caution.') : null,
         r.numero_suivi ? h('span', { class: 'texte' }, ' · ' + t('compte.suivi') + ' : ' + r.numero_suivi) : null),
       r.statut === 'rendue' && role === 'fournisseuse' ? h('p', { class: 'champ__aide', style: { margin: 0 } }, t('litige.delai', { date: L.dateHeure(r.litige_deadline) })) : null,
+      blocCreneau(r, role),
       actions);
+  }
+
+  /** Créneau de remise : affichage, confirmation, nouvelle proposition. */
+  function blocCreneau(r, role) {
+    if (r.mode_remise !== 'main_propre' || ['demande', 'acceptee', 'payee'].indexOf(r.statut) < 0) return null;
+    var ligne = h('p', { style: { margin: 0, fontSize: '14px' } });
+    if (r.creneau_remise) {
+      ligne.appendChild(document.createTextNode(t('remise.creneau', { date: L.dateHeure(r.creneau_remise) }) + ' '));
+      ligne.appendChild(h('span', { class: 'statut ' + (r.creneau_confirme ? 'statut--confirme' : 'statut--en_attente') }, t(r.creneau_confirme ? 'remise.confirme' : 'remise.a_confirmer')));
+    } else {
+      ligne.appendChild(h('span', { class: 'texte' }, t('remise.aucun')));
+    }
+    var boutons = h('span', { style: { display: 'inline-flex', gap: '12px', marginLeft: '10px' } });
+    if (r.creneau_remise && !r.creneau_confirme && r.creneau_propose_par && r.creneau_propose_par !== role) {
+      boutons.appendChild(h('button', { class: 'lien', type: 'button', onclick: function () {
+        L.api('reservation-creneau', { reservation_id: r.id, confirmer: true }).then(function () { L.ui.toast(t('remise.confirme'), 'succes'); etat.aller(etat.vue); })
+          .catch(function (e) { L.ui.toast(L.messageErreur(e), 'erreur'); });
+      } }, t('remise.confirmer')));
+    }
+    boutons.appendChild(h('button', { class: 'lien', type: 'button', onclick: function () { proposerCreneau(r); } }, t(r.creneau_remise ? 'remise.autre' : 'remise.proposer')));
+    ligne.appendChild(boutons);
+    return ligne;
+  }
+
+  function proposerCreneau(r) {
+    var form = h('form', { class: 'formulaire' },
+      h('p', { class: 'texte' }, t('remise.proposer_aide', { date: L.date(r.date_debut) })),
+      L.ui.champ('creneau', 'panier.creneau', { type: 'datetime-local', required: true }),
+      h('div', { class: 'retour' }),
+      h('button', { class: 'bouton', type: 'submit' }, t('remise.envoyer')));
+    var m = L.ui.modale(form, { titre: t('remise.proposer') });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      L.api('reservation-creneau', { reservation_id: r.id, creneau: new Date(form.creneau.value).toISOString() }).then(function () {
+        m.fermer(); L.ui.toast(t('remise.envoye'), 'succes'); etat.aller(etat.vue);
+      }).catch(function (err) { erreur($('.retour', form), err); });
+    });
+  }
+
+  /** Après paiement : adresse, téléphone et consignes de l'autre partie (lecture protégée par la base). */
+  function infosRemise(r, role) {
+    var autre = role === 'cliente' ? r.fournisseuse_id : r.cliente_id;
+    var contenu = h('div');
+    L.ui.modale(contenu, { titre: t('remise.infos') });
+    L.ui.chargement(contenu);
+    L.sb.from('profils_prives').select('prenom, telephone, adresse, code_postal, instructions_remise').eq('id', autre).maybeSingle().then(function (res) {
+      L.vider(contenu);
+      var x = res.data;
+      if (!x) { contenu.appendChild(h('p', { class: 'texte' }, t('remise.indisponible'))); return; }
+      var lignes = [
+        [t('remise.contact'), x.prenom || ''],
+        [t('remise.telephone'), x.telephone || t('commun.non_precise')],
+        role === 'cliente' ? [t('remise.adresse'), [x.adresse, x.code_postal].filter(Boolean).join(', ') || t('commun.non_precise')] : null,
+        role === 'cliente' && x.instructions_remise ? [t('remise.instructions'), x.instructions_remise] : null,
+        r.creneau_remise ? [t('remise.quand'), L.dateHeure(r.creneau_remise)] : null
+      ].filter(Boolean);
+      contenu.appendChild(h('table', { class: 'mesures' }, h('tbody', null, lignes.map(function (l) { return h('tr', null, h('th', { scope: 'row' }, l[0]), h('td', { style: { whiteSpace: 'pre-line' } }, l[1])); }))));
+      contenu.appendChild(h('p', { class: 'champ__aide' }, t('remise.rappel_edl')));
+    });
   }
 
   function annuler(r, role) {
@@ -496,12 +562,12 @@
     var form = h('form', { class: 'formulaire' },
       h('p', { class: 'chapeau' }, t('devenir.intro')),
       h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'creatrice'].map(function (ty, i) { return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'type', value: ty, checked: i === 0 }), h('span', null, t('type.' + ty))); })),
-      L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: C.villes.map(function (v) { return [v, L.zone(v), v === etat.profil.ville]; }) }),
+      L.ui.champ('code_postal', 'profil.code_postal', { required: true, inputmode: 'numeric', maxlength: 4, pattern: '[0-9]{4}', autocomplete: 'postal-code', value: etat.profil.code_postal || '', aide: t('profil.code_postal_aide') }),
       h('div', { class: 'retour' }),
       h('button', { class: 'bouton', type: 'submit' }, t('devenir.activer')));
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      L.sb.from('profils').update({ est_fournisseuse: true, type_fournisseuse: form.type.value, ville: form.ville.value }).eq('id', etat.profil.id).then(function (r) {
+      L.sb.from('profils').update({ est_fournisseuse: true, type_fournisseuse: form.type.value, code_postal: form.code_postal.value }).eq('id', etat.profil.id).then(function (r) {
         if (r.error) { erreur($('.retour', form), r.error); return; }
         location.href = 'compte.html?vue=paiements';
       });
@@ -556,7 +622,7 @@
       h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('cat.f_occasion')), occasions),
       h('div', { class: 'grille-2' },
         L.ui.champ('taille_indicative', 'mes.taille_indicative', { tag: 'select', options: C.tailles.map(function (x) { return [x, x === 'unique' ? t('annonce.taille_unique') : x === 'enfant' ? t('cat.enfant') : x, v.taille_indicative === x]; }) }),
-        L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: C.villes.map(function (x) { return [x, L.zone(x), v.ville === x]; }) })),
+        L.ui.champ('code_postal', 'profil.code_postal', { required: true, inputmode: 'numeric', maxlength: 4, pattern: '[0-9]{4}', autocomplete: 'postal-code', value: v.code_postal || etat.profil.code_postal || '', aide: t('profil.code_postal_aide') })),
       h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('annonce.mesures')), h('p', { class: 'champ__aide', style: { margin: 0 } }, t('annonce.mesures_aide')), mesures),
       h('div', { class: 'grille-2' },
         L.ui.champ('prix', 'annonce.prix', { type: 'number', required: true, min: '5', max: '5000', step: '1', inputmode: 'numeric', value: v.prix_location_cents ? v.prix_location_cents / 100 : '' }),
@@ -568,6 +634,8 @@
         h('label', { class: 'case' }, h('input', { type: 'checkbox', name: 'main_propre', checked: v.remise_main_propre }), h('span', null, t('tenue.main_propre'))),
         h('label', { class: 'case' }, h('input', { type: 'checkbox', name: 'essayage', checked: v.essayage_possible }), h('span', null, t('tenue.essayage_possible'))),
         h('label', { class: 'case' }, h('input', { type: 'checkbox', name: 'envoi', checked: v.envoi_assure }), h('span', null, t('annonce.envoi'))),
+        h('label', { class: 'case' }, h('input', { type: 'checkbox', name: 'instantanee', checked: v.reservation_instantanee }), h('span', null, '⚡ ' + t('annonce.instantanee'))),
+        h('p', { class: 'champ__aide', style: { margin: '0 0 0 32px' } }, t('annonce.instantanee_aide')),
         L.ui.champ('frais_envoi', 'annonce.frais_envoi', { type: 'number', min: '0', max: '100', step: '0.5', value: v.frais_envoi_cents ? v.frais_envoi_cents / 100 : '' })),
       h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('annonce.photos')), h('p', { class: 'champ__aide', style: { margin: 0 } }, t('annonce.photos_aide')), depot),
       ensembleZone,
@@ -600,10 +668,10 @@
         titre: form.titre.value.trim(), description: form.description.value.trim(),
         couleurs: $$('[name=couleurs]:checked', form).map(function (x) { return x.value; }),
         occasions: $$('[name=occasions]:checked', form).map(function (x) { return x.value; }),
-        taille_indicative: form.taille_indicative.value, ville: form.ville.value,
+        taille_indicative: form.taille_indicative.value, code_postal: form.code_postal.value,
         prix_location_cents: Math.round(Number(form.prix.value) * 100), valeur_declaree_cents: Math.round(Number(form.valeur.value) * 100),
         duree_min_jours: Number(form.duree_min.value) || 1, duree_max_jours: Number(form.duree_max.value) || 4,
-        remise_main_propre: form.main_propre.checked, essayage_possible: form.essayage.checked, envoi_assure: form.envoi.checked,
+        remise_main_propre: form.main_propre.checked, essayage_possible: form.essayage.checked, envoi_assure: form.envoi.checked, reservation_instantanee: form.instantanee ? form.instantanee.checked : false,
         frais_envoi_cents: form.envoi.checked ? Math.round(Number(form.frais_envoi.value || 0) * 100) : 0
       };
       ['poitrine_cm', 'taille_cm', 'hanches_cm', 'longueur_cm', 'manche_cm'].forEach(function (c) { valeurs[c] = cat === 'accessoire' || !form[c].value ? null : Number(form[c].value); });
@@ -797,7 +865,9 @@
       h('div', { style: { display: 'flex', gap: '20px', alignItems: 'end', flexWrap: 'wrap' } }, h('div', { class: 'arche-cadre' }, avatar), h('label', { class: 'bouton bouton--ligne bouton--petit' }, t('boutique.photo'), fichier)),
       L.ui.champ('nom', 'boutique.nom', { maxlength: 80, value: p.boutique_nom || '' }),
       L.ui.champ('slug', 'boutique.slug', { maxlength: 40, pattern: '[a-z0-9-]{3,40}', value: p.boutique_slug || '', aide: t('boutique.slug_aide') }),
-      L.ui.champ('bio', 'boutique.bio', { tag: 'textarea', maxlength: 1200 }),
+      L.ui.champ('bio', 'boutique.bio', { tag: 'textarea', maxlength: 1200, aide: t('boutique.bio_aide') }),
+      h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('profil.langues_parlees')), h('div', { class: 'choix-pastilles' },
+        ['fr', 'nl', 'en', 'ar', 'darija', 'tamazight', 'es', 'tr'].map(function (l) { return h('label', { class: 'pastille' }, h('input', { type: 'checkbox', name: 'langues', value: l, checked: (p.langues || []).indexOf(l) >= 0 }), h('span', null, t('langue.' + l))); }))),
       retour,
       h('div', { class: 'actions' }, h('button', { class: 'bouton', type: 'submit' }, t('commun.enregistrer')), h('a', { class: 'bouton bouton--ligne', href: 'boutique.html?id=' + p.id }, t('boutique.voir'))),
       p.compte_valide ? null : h('p', { class: 'message message--alerte' }, t('boutique.en_validation')));
@@ -815,7 +885,7 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (!form.checkValidity()) { form.reportValidity(); return; }
-      L.sb.from('profils').update({ boutique_nom: form.nom.value || null, boutique_slug: form.slug.value || null, boutique_bio: form.bio.value || null }).eq('id', p.id).then(function (r) {
+      L.sb.from('profils').update({ boutique_nom: form.nom.value || null, boutique_slug: form.slug.value || null, boutique_bio: form.bio.value || null, langues: $$('[name=langues]:checked', form).map(function (x) { return x.value; }) }).eq('id', p.id).then(function (r) {
         if (r.error) erreur(retour, r.error.code === '23505' ? { message: t('boutique.slug_pris') } : r.error); else L.ui.toast(t('commun.enregistre'), 'succes');
       });
     });
@@ -890,22 +960,203 @@
   // ===========================================================================
   // Profil, identité, RGPD
   // ===========================================================================
+  // ===========================================================================
+  // Messagerie (cliente et fournisseuse)
+  // ===========================================================================
+  VUES.messages = function (contenu) {
+    var moi = etat.profil.id;
+    return sb(L.sb.from('conversations').select('*, cliente:profils!conversations_cliente_id_fkey(id, nom_affiche, avatar_chemin), fournisseuse:profils!conversations_fournisseuse_id_fkey(id, nom_affiche, boutique_nom, avatar_chemin), tenue:tenues(id, titre)')
+      .order('dernier_message_at', { ascending: false, nullsFirst: false }).limit(100)).then(function (convs) {
+      L.vider(contenu);
+      if (!convs.length) {
+        L.ui.etatVide(contenu, t('msg.aucune'), etat.profil.est_cliente ? h('a', { class: 'bouton', href: 'catalogue.html' }, t('index.hero.cta')) : null);
+        return;
+      }
+      var ids = convs.map(function (c) { return c.id; });
+      return sb(L.sb.from('messages').select('id, conversation_id, auteur_id, contenu, lu_at, created_at').in('conversation_id', ids).order('created_at', { ascending: false }).limit(400)).then(function (msgs) {
+        var dernier = {}, nonLus = {};
+        msgs.forEach(function (m) {
+          if (!dernier[m.conversation_id]) dernier[m.conversation_id] = m;
+          if (m.auteur_id !== moi && !m.lu_at) nonLus[m.conversation_id] = (nonLus[m.conversation_id] || 0) + 1;
+        });
+        var liste = h('div', { class: 'convs' });
+        var fil = h('div', { class: 'discussion' }, h('p', { class: 'discussion__vide' }, t('msg.choisir')));
+        contenu.appendChild(h('div', { class: 'messagerie' }, liste, fil));
+        function autreDe(c) { return c.cliente_id === moi ? c.fournisseuse : c.cliente; }
+        function nomDe(p) { return (p && (p.boutique_nom || p.nom_affiche)) || t('msg.utilisatrice'); }
+        convs.forEach(function (c) {
+          var autre = autreDe(c), dm = dernier[c.id];
+          var b = h('button', { type: 'button', class: 'conv' + (nonLus[c.id] ? ' conv--nonlue' : ''), 'data-conv': c.id, onclick: function () { ouvrir(c); } },
+            h('span', { class: 'avatar' }, autre && autre.avatar_chemin ? h('img', { src: L.img.url(autre.avatar_chemin, 'avatars'), alt: '' }) : (nomDe(autre)[0] || '·').toUpperCase()),
+            h('span', { style: { minWidth: 0 } },
+              h('span', { class: 'conv__nom' }, h('span', null, nomDe(autre)), dm ? h('small', null, L.dateCourte(dm.created_at)) : null),
+              h('span', { class: 'conv__extrait', style: { display: 'block' } }, dm ? (dm.auteur_id === moi ? t('msg.vous') + ' : ' : '') + dm.contenu : (c.tenue ? c.tenue.titre : t('msg.nouvelle')))));
+          liste.appendChild(b);
+        });
+        var minuterie = null;
+        function ouvrir(c) {
+          clearInterval(minuterie);
+          $$('.conv', liste).forEach(function (x) { x.classList.toggle('est-actif', x.dataset.conv === c.id); });
+          var u = new URL(location.href); u.searchParams.set('c', c.id); history.replaceState(null, '', u);
+          var autre = autreDe(c);
+          var zoneMsgs = h('div', { class: 'discussion__messages', 'aria-live': 'polite' });
+          var saisie = h('textarea', { name: 'contenu', maxlength: 2000, rows: 1, placeholder: t('msg.ecrire'), 'aria-label': t('msg.ecrire') });
+          var envoyer = h('button', { class: 'bouton', type: 'submit' }, t('msg.envoyer'));
+          var form = h('form', { class: 'discussion__saisie' }, saisie, envoyer);
+          var lienAutre = c.cliente_id === moi ? h('a', { href: 'boutique.html?id=' + c.fournisseuse_id }, nomDe(autre)) : h('strong', null, nomDe(autre));
+          L.vider(fil).appendChild(h('div', { class: 'discussion__tete' },
+            h('div', null, lienAutre, c.tenue ? h('small', { class: 'texte', style: { display: 'block' } }, h('a', { href: 'tenue.html?id=' + c.tenue.id }, c.tenue.titre)) : null),
+            h('button', { type: 'button', class: 'lien-discret', onclick: function () { L.ui.signaler('conversation', c.id); } }, t('signal.signaler'))));
+          fil.appendChild(zoneMsgs);
+          fil.appendChild(h('p', { class: 'avertissement-coordonnees' }, t('msg.securite')));
+          fil.appendChild(form);
+          var vus = {};
+          function charger(premier) {
+            return sb(L.sb.from('messages').select('*').eq('conversation_id', c.id).order('created_at', { ascending: true }).limit(500)).then(function (lignes) {
+              var nouveaux = lignes.filter(function (m) { return !vus[m.id]; });
+              if (premier && !lignes.length) zoneMsgs.appendChild(h('p', { class: 'discussion__vide' }, t('msg.premier', { nom: nomDe(autre) })));
+              nouveaux.forEach(function (m) {
+                vus[m.id] = true;
+                var vide = $('.discussion__vide', zoneMsgs); if (vide) vide.remove();
+                zoneMsgs.appendChild(h('div', { class: 'bulle' + (m.auteur_id === moi ? ' bulle--moi' : '') }, m.contenu,
+                  m.masque ? h('span', { class: 'bulle__masque' }, t('msg.masque')) : null,
+                  h('small', null, L.dateHeure(m.created_at))));
+              });
+              if (nouveaux.length) zoneMsgs.scrollTop = zoneMsgs.scrollHeight;
+              var aLire = lignes.filter(function (m) { return m.auteur_id !== moi && !m.lu_at; });
+              if (aLire.length) {
+                L.sb.from('messages').update({ lu_at: new Date().toISOString() }).eq('conversation_id', c.id).neq('auteur_id', moi).is('lu_at', null).then(function () {
+                  var b = $('[data-conv="' + c.id + '"]', liste); if (b) b.classList.remove('conv--nonlue');
+                  L.sb.from('notifications').update({ lu_at: new Date().toISOString() }).eq('lien', '/compte.html?vue=messages&c=' + c.id).is('lu_at', null).then(function () { L.notifications.rafraichir(); });
+                });
+              }
+            });
+          }
+          charger(true);
+          minuterie = setInterval(function () {
+            if (!document.body.contains(fil) || etat.vue !== 'messages') { clearInterval(minuterie); return; }
+            if (!document.hidden) charger(false);
+          }, 8000);
+          saisie.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
+          form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var texte = saisie.value.trim();
+            if (!texte) return;
+            envoyer.disabled = true;
+            L.sb.from('messages').insert({ conversation_id: c.id, auteur_id: moi, contenu: texte }).then(function (r) {
+              envoyer.disabled = false;
+              if (r.error) { L.ui.toast(L.messageErreur(r.error), 'erreur'); return; }
+              saisie.value = '';
+              charger(false);
+            });
+          });
+          if (window.matchMedia('(max-width: 899px)').matches) fil.scrollIntoView({ block: 'start' });
+          saisie.focus();
+        }
+        var demandee = L.param('c');
+        var c0 = convs.find(function (c) { return c.id === demandee; });
+        if (c0) ouvrir(c0);
+        else if (window.matchMedia('(min-width: 900px)').matches) ouvrir(convs[0]);
+      });
+    });
+  };
+
+  // ===========================================================================
+  // Favoris
+  // ===========================================================================
+  VUES.favoris = function (contenu) {
+    return sb(L.sb.from('favoris').select('created_at, tenue:tenues(id, titre, categorie, sous_categorie, prix_location_cents, ville, commune, couleurs, statut, reservation_instantanee, tenue_photos(chemin, type, ordre), fournisseuse:profils!tenues_fournisseuse_id_fkey(nom_affiche, boutique_nom, type_fournisseuse, note_moyenne, nb_avis, badge_confiance))')
+      .order('created_at', { ascending: false })).then(function (lignes) {
+      L.vider(contenu);
+      var tenues = lignes.map(function (l) { return l.tenue; }).filter(function (x) { return x && x.statut === 'validee'; });
+      if (!tenues.length) { L.ui.etatVide(contenu, t('favori.aucun'), h('a', { class: 'bouton', href: 'catalogue.html' }, t('index.hero.cta'))); return; }
+      var grille = h('div', { class: 'grille-cartes' });
+      tenues.forEach(function (tn) {
+        var f = tn.fournisseuse || {};
+        var face = (tn.tenue_photos || []).filter(function (p) { return p.type === 'face'; }).sort(function (a, b) { return a.ordre - b.ordre; })[0];
+        grille.appendChild(L.carteTenue(Object.assign({}, tn, {
+          photo: face && face.chemin, fournisseuse_nom: f.boutique_nom || f.nom_affiche, type_fournisseuse: f.type_fournisseuse,
+          note_moyenne: f.note_moyenne, nb_avis: f.nb_avis, badge_confiance: f.badge_confiance
+        })));
+      });
+      contenu.appendChild(panneau(t('compte.v_favoris'), grille));
+    });
+  };
+
+  // ===========================================================================
+  // Informations fiscales (DAC7)
+  // ===========================================================================
+  VUES.fiscalite = function (contenu) {
+    return sb(L.sb.from('infos_fiscales').select('*').eq('user_id', etat.profil.id).maybeSingle()).then(function (x) {
+      x = x || { statut_juridique: 'particulier', pays: 'BE' };
+      var retour = h('div');
+      var zoneP = h('div', { class: 'grille-2' },
+        L.ui.champ('date_naissance', 'fisc.date_naissance', { type: 'date', value: x.date_naissance || '' }),
+        L.ui.champ('numero_fiscal', 'fisc.numero_fiscal', { maxlength: 20, value: x.numero_fiscal || '', aide: t('fisc.numero_fiscal_aide') }));
+      var zoneE = h('div', { class: 'grille-2' },
+        L.ui.champ('numero_entreprise', 'fisc.numero_entreprise', { maxlength: 20, value: x.numero_entreprise || '' }),
+        L.ui.champ('numero_tva', 'fisc.numero_tva', { maxlength: 20, value: x.numero_tva || '', aide: t('commun.facultatif') }));
+      var form = h('form', { class: 'formulaire', novalidate: true },
+        h('p', { class: 'texte' }, t('fisc.intro')),
+        h('div', { class: 'choix-pastilles' }, ['particulier', 'entreprise'].map(function (v) {
+          return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'statut_juridique', value: v, checked: x.statut_juridique === v }), h('span', null, t('fisc.' + v)));
+        })),
+        L.ui.champ('nom_legal', 'fisc.nom_legal', { required: true, maxlength: 120, value: x.nom_legal || '' }),
+        zoneP, zoneE,
+        L.ui.champ('adresse', 'fisc.adresse', { required: true, maxlength: 200, value: x.adresse || '', autocomplete: 'street-address' }),
+        h('div', { class: 'grille-3' },
+          L.ui.champ('code_postal', 'profil.code_postal', { required: true, maxlength: 10, value: x.code_postal || '' }),
+          L.ui.champ('localite', 'fisc.localite', { required: true, maxlength: 80, value: x.localite || '' }),
+          L.ui.champ('pays', 'fisc.pays', { required: true, maxlength: 2, pattern: '[A-Za-z]{2}', value: x.pays || 'BE' })),
+        L.ui.champ('iban', 'fisc.iban', { maxlength: 34, value: x.iban || '', aide: t('fisc.iban_aide') }),
+        retour,
+        h('button', { class: 'bouton', type: 'submit' }, t('commun.enregistrer')));
+      function basculer() {
+        var ent = form.statut_juridique.value === 'entreprise';
+        zoneE.hidden = !ent; zoneP.hidden = ent;
+      }
+      $$('[name=statut_juridique]', form).forEach(function (r) { r.addEventListener('change', basculer); });
+      basculer();
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        var ent = form.statut_juridique.value === 'entreprise';
+        var d = {
+          user_id: etat.profil.id, statut_juridique: form.statut_juridique.value, nom_legal: form.nom_legal.value.trim(),
+          date_naissance: ent ? null : form.date_naissance.value || null, numero_fiscal: ent ? null : form.numero_fiscal.value.trim() || null,
+          numero_entreprise: ent ? form.numero_entreprise.value.trim() || null : null, numero_tva: ent ? form.numero_tva.value.trim().toUpperCase() || null : null,
+          adresse: form.adresse.value.trim(), code_postal: form.code_postal.value.trim(), localite: form.localite.value.trim(),
+          pays: form.pays.value.trim().toUpperCase(), iban: form.iban.value.replace(/\s+/g, '').toUpperCase() || null
+        };
+        if (!ent && (!d.date_naissance || !d.numero_fiscal)) { erreur(retour, { message: t('fisc.manquant_particulier') }); return; }
+        if (ent && !d.numero_entreprise) { erreur(retour, { message: t('fisc.manquant_entreprise') }); return; }
+        L.sb.from('infos_fiscales').upsert(d).then(function (r) {
+          if (r.error) erreur(retour, r.error); else { L.vider(retour); L.ui.toast(t('commun.enregistre'), 'succes'); }
+        });
+      });
+      L.vider(contenu).appendChild(panneau(t('compte.v_fiscalite'), form));
+    });
+  };
+
   VUES.profil = function (contenu) {
     var p = etat.profil, pr = etat.prive;
     var retour = h('div');
     var form = h('form', { class: 'formulaire' },
       h('div', { class: 'grille-2' }, L.ui.champ('prenom', 'auth.prenom', { maxlength: 60, value: pr.prenom || '' }), L.ui.champ('nom', 'auth.nom', { maxlength: 80, value: pr.nom || '' })),
       h('div', { class: 'grille-2' }, L.ui.champ('nom_affiche', 'profil.nom_affiche', { maxlength: 80, value: p.nom_affiche || '', aide: t('profil.nom_affiche_aide') }), L.ui.champ('telephone', 'profil.telephone', { type: 'tel', value: pr.telephone || '', pattern: '[+0-9 ().-]{6,25}', aide: t('profil.telephone_aide') })),
-      h('div', { class: 'grille-2' }, L.ui.champ('ville', 'cat.f_ville', { tag: 'select', options: [['', t('commun.non_precise')]].concat(C.villes.map(function (v) { return [v, L.zone(v), p.ville === v]; })) }),
+      h('div', { class: 'grille-2' }, L.ui.champ('code_postal', 'profil.code_postal', { inputmode: 'numeric', maxlength: 4, pattern: '[0-9]{4}', autocomplete: 'postal-code', value: p.code_postal || '', aide: p.commune ? p.commune + ', ' + L.zone(p.ville) : t('profil.code_postal_aide') }),
         L.ui.champ('langue', 'profil.langue', { tag: 'select', options: [['fr', 'Français', p.langue === 'fr'], ['nl', 'Nederlands', p.langue === 'nl']] })),
-      L.ui.champ('adresse', 'profil.adresse', { maxlength: 200, value: pr.adresse || '', autocomplete: 'street-address' }),
+      L.ui.champ('adresse', 'profil.adresse', { maxlength: 200, value: pr.adresse || '', autocomplete: 'street-address', aide: p.est_fournisseuse ? t('profil.adresse_aide_f') : null }),
+      p.est_fournisseuse ? L.ui.champ('instructions_remise', 'profil.instructions', { tag: 'textarea', maxlength: 500, aide: t('profil.instructions_aide') }) : null,
       retour, h('button', { class: 'bouton', type: 'submit' }, t('commun.enregistrer')));
+    if (form.instructions_remise) form.instructions_remise.value = pr.instructions_remise || '';
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (!form.checkValidity()) { form.reportValidity(); return; }
       Promise.all([
-        L.sb.from('profils').update({ nom_affiche: form.nom_affiche.value, ville: form.ville.value || null, langue: form.langue.value }).eq('id', p.id),
-        L.sb.from('profils_prives').update({ prenom: form.prenom.value || null, nom: form.nom.value || null, telephone: form.telephone.value || null, adresse: form.adresse.value || null }).eq('id', p.id)
+        L.sb.from('profils').update({ nom_affiche: form.nom_affiche.value, code_postal: form.code_postal.value || null, langue: form.langue.value }).eq('id', p.id),
+        L.sb.from('profils_prives').update(Object.assign({ prenom: form.prenom.value || null, nom: form.nom.value || null, telephone: form.telephone.value || null, adresse: form.adresse.value || null },
+          form.instructions_remise ? { instructions_remise: form.instructions_remise.value || null } : {})).eq('id', p.id)
       ]).then(function (r) {
         var err = r[0].error || r[1].error;
         if (err) erreur(retour, err); else { L.ui.toast(t('commun.enregistre'), 'succes'); I.changerLangue(form.langue.value); }

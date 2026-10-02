@@ -165,7 +165,11 @@ language plpgsql set search_path = public, extensions as $$
 begin
   if est_serveur() then return new; end if;
   perform exiger_frequence('conversation_creer', 20, 3600);
-  if new.cliente_id is distinct from auth.uid() then
+  -- La cliente ouvre la conversation ; la fournisseuse peut aussi l'ouvrir s'il existe déjà une réservation entre elles.
+  if new.cliente_id is distinct from auth.uid() and not (
+    new.fournisseuse_id = auth.uid()
+    and exists (select 1 from reservations r where r.cliente_id = new.cliente_id and r.fournisseuse_id = new.fournisseuse_id)
+  ) then
     raise exception 'Conversation : vous ne pouvez écrire qu''en votre nom.' using errcode = '42501';
   end if;
   if not exists (select 1 from profils p where p.id = new.fournisseuse_id and p.est_fournisseuse and p.statut_compte = 'actif') then
@@ -433,7 +437,7 @@ create policy notifications_lu on notifications for update to authenticated usin
 grant select, insert on conversations to authenticated;
 create policy conversations_lecture on conversations for select to authenticated
   using (auth.uid() in (cliente_id, fournisseuse_id) or est_admin());
-create policy conversations_creation on conversations for insert to authenticated with check (cliente_id = auth.uid());
+create policy conversations_creation on conversations for insert to authenticated with check (auth.uid() in (cliente_id, fournisseuse_id));
 
 grant select, insert on messages to authenticated;
 grant update (lu_at) on messages to authenticated;

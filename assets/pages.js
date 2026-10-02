@@ -37,19 +37,34 @@
   }
   L.placeholderPour = placeholderPour;
 
-  /** Carte tenue (catalogue, sélection, boutique, compléter le look). */
+  /** Ligne « Chez Samira, negafa à Liège · à 12 km ». */
+  function chezQui(tn) {
+    var lieu = tn.commune || L.zone(tn.ville);
+    var qui = tn.fournisseuse_nom ? t('carte.chez', { nom: tn.fournisseuse_nom, type: t('type.' + (tn.type_fournisseuse || 'particuliere')).toLowerCase(), lieu: lieu }) : lieu;
+    return qui + (tn.distance_km != null ? ' · ' + t('carte.km', { n: tn.distance_km }) : '');
+  }
+  L.chezQui = chezQui;
+
+  /** Note affichée : moyenne et nombre d'avis, ou « Nouveau ». */
+  function noteCourte(note, nb) {
+    return nb ? '★ ' + Number(note).toFixed(1).replace('.', ',') + ' (' + nb + ')' : '★ ' + t('carte.nouveau');
+  }
+  L.noteCourte = noteCourte;
+
+  /** Carte d'annonce (catalogue, accueil, profil, compléter le look). */
   L.carteTenue = function (tn, options) {
     options = options || {};
     var url = 'tenue.html?id=' + tn.id;
-    var img = L.img.element(tn.photo || placeholderPour(tn, 'face'), tn.titre, { width: 600, height: 800 });
-    var badge = tn.type_fournisseuse && tn.type_fournisseuse !== 'particuliere' ? h('span', { class: 'carte__badge' }, t('type.' + tn.type_fournisseuse)) : null;
+    var img = L.img.element(tn.photo || placeholderPour(tn, 'face'), tn.titre, { width: 600, height: 750 });
+    var badge = tn.badge_confiance ? h('span', { class: 'carte__badge' }, t('badge.confiance_court'))
+      : tn.type_fournisseuse && tn.type_fournisseuse !== 'particuliere' ? h('span', { class: 'carte__badge' }, t('type.' + tn.type_fournisseuse)) : null;
     var carte = h('a', { class: 'carte', href: url, 'data-flip-id': tn.id },
-      h('div', { class: 'carte__visuel' }, h('div', { class: 'arche' }, img), badge),
+      h('div', { class: 'carte__visuel' }, h('div', { class: 'arche' }, img), badge, options.sansFavori ? null : L.favoris.bouton(tn.id)),
       h('div', { class: 'carte__infos' },
-        h('h3', { class: 'carte__titre' }, tn.titre),
-        h('p', { class: 'carte__meta' }, h('span', null, libelleCategorie(tn)), h('span', null, '·'), h('span', null, L.zone(tn.ville)),
-          tn.taille_indicative ? [h('span', null, '·'), h('span', null, tn.taille_indicative === 'unique' ? 'TU' : tn.taille_indicative)] : null),
-        h('p', { class: 'carte__prix' }, L.euros(tn.prix_location_cents, true), ' ', h('small', null, t('commun.par_jour')))),
+        h('div', { class: 'carte__ligne1' }, h('h3', { class: 'carte__titre' }, tn.titre), h('span', { class: 'carte__note' }, noteCourte(tn.note_moyenne, tn.nb_avis))),
+        h('p', { class: 'carte__meta' }, chezQui(tn)),
+        h('p', { class: 'carte__prix' }, h('strong', null, L.euros(tn.prix_location_cents, true)), ' ', t('carte.la_location'),
+          tn.reservation_instantanee ? [' · ', h('span', { class: 'carte__eclair' }, '⚡ ' + t('carte.instantanee'))] : null)),
       options.extra || null);
     carte.addEventListener('click', function (e) {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0 || e.target.closest('button')) return;
@@ -76,13 +91,11 @@
   // Accueil
   // ===========================================================================
   L.pages.index = function () {
-    visuels(document);
-    ouverture();
-    collections();
+    photosAccueil();
+    rechercheAccueil();
+    categoriesAccueil();
     apercu();
-    boutiques();
-    provinces();
-    parallaxe();
+    hotes();
     simulateur();
     $$('[data-devenir-fournisseuse]').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -101,72 +114,113 @@
     });
   };
 
-  /** Photo réelle si elle est renseignée dans config.photos, sinon aplat de tissu. */
-  function photo(cle, sousCle) {
-    var p = C.photos || {};
-    var v = sousCle ? (p[cle] || {})[sousCle] : p[cle];
-    return v || '';
-  }
-  function visuels(racine) {
-    $$('img[data-placeholder]', racine).forEach(function (img) {
-      var reel = img.hasAttribute('data-visuel') ? photo(img.getAttribute('data-visuel')) : '';
-      img.src = reel || L.img.placeholder(img.getAttribute('data-placeholder'));
+  /** Photos réelles de l'accueil si elles sont renseignées dans config.photos. */
+  function photosAccueil() {
+    $$('img[data-visuel-photo]').forEach(function (img) {
+      var chemin = (C.photos || {})[img.getAttribute('data-visuel-photo')];
+      if (chemin) { img.src = chemin; img.hidden = false; }
     });
   }
 
-  /** Ouverture discrète : le texte monte doucement, l'image se pose. */
-  function ouverture() {
-    var titre = $('.a-hero__titre'), elements = $$('.a-hero [data-hero-el]');
-    if (!titre) return;
-    if (!window.gsap || !L.motion.actif) { if (window.gsap) gsap.set(elements.concat(titre), { opacity: 1 }); return; }
-    var d = L.motion.duree;
-    L.motion.titreLignes(titre, 0.1);
-    gsap.fromTo(elements, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: d(1.1), ease: 'power3.out', stagger: 0.1, delay: 0.35 });
-    gsap.fromTo('.a-hero .a-cadre img', { scale: 1.08 }, { scale: 1, duration: d(1.8), ease: 'power3.out', delay: 0.2 });
-  }
-
-  /** Léger décalage vertical des images au défilement (ordinateur uniquement). */
-  function parallaxe() {
-    if (!window.gsap || !window.ScrollTrigger || !L.motion.actif || L.motion.mobile()) return;
-    $$('[data-parallaxe] img').forEach(function (img) {
-      gsap.fromTo(img, { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: img.parentNode, start: 'top bottom', end: 'bottom top', scrub: true } });
+  /** Barre de recherche « Tenue / Où / Date » : mène au catalogue filtré. */
+  function rechercheAccueil() {
+    var form = $('[data-recherche]');
+    if (!form) return;
+    var sel = form.categorie;
+    function options() {
+      var v = sel.value;
+      L.vider(sel).appendChild(h('option', { value: '' }, t('index.r.toutes')));
+      C.categories.forEach(function (c) { sel.appendChild(h('option', { value: c, selected: c === v }, t('cat.' + c))); });
+    }
+    options();
+    document.addEventListener('lalla:langue', options);
+    form.date.min = L.aujourdhui();
+    try { var cp = L.stockage.lire('lalla.cp', ''); if (cp) form.cp.value = cp; } catch (e) { /* ignoré */ }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var q = new URLSearchParams();
+      if (sel.value) q.set('categorie', sel.value);
+      var cp = form.cp.value.trim();
+      if (/^[0-9]{4}$/.test(cp)) { q.set('cp', cp); q.set('tri', 'distance'); L.stockage.ecrire('lalla.cp', cp); }
+      if (form.date.value) { q.set('debut', form.date.value); q.set('fin', form.date.value); }
+      location.href = 'catalogue.html' + (q.toString() ? '?' + q.toString() : '');
     });
   }
 
-  function provinces() {
-    var liste = $('[data-provinces]');
-    if (!liste) return;
+  var OCCASIONS_ACCUEIL = [['mariee', 'categorie'], ['takchita', 'categorie'], ['caftan', 'categorie'], ['henne', 'occasion'], ['fiancailles', 'occasion'], ['aid', 'occasion'], ['homme', 'categorie'], ['enfant', 'categorie'], ['accessoire', 'categorie']];
+  function categoriesAccueil() {
+    var zone = $('[data-categories]');
+    if (!zone) return;
     function remplir() {
-      L.vider(liste);
-      C.villes.forEach(function (v) { liste.appendChild(h('li', { 'data-reveal': '' }, L.zone(v))); });
-      L.motion.reveler(liste);
+      L.vider(zone).appendChild(h('a', { class: 'puce est-actif', href: 'catalogue.html' }, t('cat.toutes')));
+      OCCASIONS_ACCUEIL.forEach(function (c) {
+        zone.appendChild(h('a', { class: 'puce', href: 'catalogue.html?' + c[1] + '=' + c[0] }, t((c[1] === 'categorie' ? 'cat.' : 'occ.') + c[0])));
+      });
     }
     remplir();
     document.addEventListener('lalla:langue', remplir);
   }
 
+  // Fournisseuses d'exemple tant qu'aucune n'est validée.
+  var HOTES_EXEMPLES = [
+    { nom: 'Samira', type: 'negafa', commune: 'Bruxelles', couleur: 'rose' },
+    { nom: 'Maison Yasmine', type: 'creatrice', commune: 'Gand', couleur: 'or' },
+    { nom: 'Nadia', type: 'particuliere', commune: 'Liège', couleur: 'bordeaux' },
+    { nom: 'Imane', type: 'particuliere', commune: 'Charleroi', couleur: 'emeraude' }
+  ];
+
+  /** Carte d'une fournisseuse (accueil). */
+  function carteHote(p, exemple) {
+    var photo = p.avatar_chemin ? L.img.url(p.avatar_chemin, 'avatars') : L.img.placeholder('placeholder:caftan:' + (p.couleur || 'rose') + ':face:' + (p.nom || '').length);
+    var badges = [];
+    if (p.badge_confiance) badges.push(h('span', { class: 'badge badge--or' }, t('badge.confiance_court')));
+    else if (exemple || p.identite_verifiee || p.compte_valide) badges.push(h('span', { class: 'badge' }, t(exemple ? 'index.ap.exemple' : 'badge.verifiee')));
+    return h(exemple ? 'div' : 'a', { class: 'hote', href: exemple ? null : 'boutique.html?id=' + p.id },
+      h('div', { class: 'hote__photo' }, h('img', { src: photo, alt: '', loading: 'lazy' })),
+      h('b', null, p.boutique_nom || p.nom_affiche || p.nom),
+      h('span', null, t('type.' + (p.type_fournisseuse || p.type || 'particuliere')) + ' · ' + (p.commune || L.zone(p.ville) || '')),
+      p.nb_avis ? h('span', null, noteCourte(p.note_moyenne, p.nb_avis)) : null,
+      badges);
+  }
+
+  function hotes() {
+    var zone = $('[data-hotes]');
+    if (!zone) return;
+    function exemples() { L.vider(zone); HOTES_EXEMPLES.forEach(function (x) { zone.appendChild(carteHote(x, true)); }); }
+    if (!L.sb) { exemples(); return; }
+    L.sb.from('profils').select('id, nom_affiche, boutique_nom, type_fournisseuse, ville, commune, note_moyenne, nb_avis, avatar_chemin, badge_confiance, identite_verifiee, compte_valide')
+      .eq('est_fournisseuse', true).eq('compte_valide', true).eq('statut_compte', 'actif')
+      .order('badge_confiance', { ascending: false }).order('score_visibilite', { ascending: false }).limit(4)
+      .then(function (r) {
+        var liste = r.data || [];
+        if (!liste.length) { exemples(); return; }
+        L.vider(zone);
+        liste.forEach(function (p) { zone.appendChild(carteHote(p, false)); });
+      }, exemples);
+  }
+
   // Exemples affichés tant qu'aucune tenue n'est publiée (illustrations générées, non réservables).
   var EXEMPLES = [
-    { cle: 'index.ex.1', categorie: 'takchita', couleurs: ['emeraude'], prix_location_cents: 9500, ville: 'Bruxelles', graine: 5 },
-    { cle: 'index.ex.2', categorie: 'caftan', couleurs: ['bordeaux'], prix_location_cents: 7000, ville: 'Liège', graine: 3 },
-    { cle: 'index.ex.3', categorie: 'mariee', couleurs: ['ivoire'], prix_location_cents: 22000, ville: 'Flandre orientale', graine: 9 },
-    { cle: 'index.ex.4', categorie: 'homme', couleurs: ['bleu_nuit'], prix_location_cents: 4500, ville: 'Hainaut', graine: 2 },
-    { cle: 'index.ex.5', categorie: 'accessoire', sous_categorie: 'mdamma', couleurs: ['or'], prix_location_cents: 3500, ville: 'Namur', graine: 1 },
-    { cle: 'index.ex.6', categorie: 'enfant', couleurs: ['rose'], prix_location_cents: 3000, ville: 'Anvers', graine: 4 }
+    { cle: 'index.ex.1', categorie: 'takchita', couleurs: ['emeraude'], prix_location_cents: 9500, nom: 'Samira', type: 'negafa', commune: 'Bruxelles', graine: 5 },
+    { cle: 'index.ex.2', categorie: 'caftan', couleurs: ['bordeaux'], prix_location_cents: 7000, nom: 'Nadia', type: 'particuliere', commune: 'Liège', graine: 3 },
+    { cle: 'index.ex.3', categorie: 'mariee', couleurs: ['ivoire'], prix_location_cents: 22000, nom: 'Maison Yasmine', type: 'creatrice', commune: 'Gand', graine: 9 },
+    { cle: 'index.ex.4', categorie: 'homme', couleurs: ['bleu_nuit'], prix_location_cents: 4500, nom: 'Karima', type: 'particuliere', commune: 'Charleroi', graine: 2 },
+    { cle: 'index.ex.5', categorie: 'accessoire', sous_categorie: 'mdamma', couleurs: ['or'], prix_location_cents: 3500, nom: 'Hanane', type: 'negafa', commune: 'Namur', graine: 1 },
+    { cle: 'index.ex.6', categorie: 'enfant', couleurs: ['rose'], prix_location_cents: 3000, nom: 'Imane', type: 'particuliere', commune: 'Anvers', graine: 4 }
   ];
   L.exemples = EXEMPLES;
 
   /** Carte d'exemple : même allure qu'une vraie carte, marquée « Exemple », ouvre l'inscription. */
   L.carteExemple = function (ex) {
     var cat = ex.categorie === 'accessoire' ? ex.sous_categorie : ex.categorie;
-    var titre = h('h3', { class: 'carte__titre', 'data-i18n': ex.cle }, t(ex.cle));
     var carte = h('button', { type: 'button', class: 'carte carte--exemple' },
       h('div', { class: 'carte__visuel' },
-        h('div', { class: 'arche' }, h('img', { src: L.img.placeholder('placeholder:' + cat + ':' + ex.couleurs[0] + ':face:' + ex.graine), alt: '', loading: 'lazy', width: 600, height: 800 })),
+        h('div', { class: 'arche' }, h('img', { src: L.img.placeholder('placeholder:' + cat + ':' + ex.couleurs[0] + ':face:' + ex.graine), alt: '', loading: 'lazy', width: 600, height: 750 })),
         h('span', { class: 'carte__badge carte__badge--exemple', 'data-i18n': 'index.ap.exemple' }, t('index.ap.exemple'))),
-      h('div', { class: 'carte__infos' }, titre,
-        h('p', { class: 'carte__meta' }, h('span', { 'data-i18n': ex.categorie === 'accessoire' ? 'scat.' + ex.sous_categorie : 'cat.' + ex.categorie }, libelleCategorie(ex)), h('span', null, '·'), h('span', null, L.zone(ex.ville))),
-        h('p', { class: 'carte__prix' }, L.euros(ex.prix_location_cents, true), ' ', h('small', null, t('commun.par_jour')))));
+      h('div', { class: 'carte__infos' },
+        h('div', { class: 'carte__ligne1' }, h('h3', { class: 'carte__titre', 'data-i18n': ex.cle }, t(ex.cle)), h('span', { class: 'carte__note' }, noteCourte(null, 0))),
+        h('p', { class: 'carte__meta' }, chezQui({ fournisseuse_nom: ex.nom, type_fournisseuse: ex.type, commune: ex.commune })),
+        h('p', { class: 'carte__prix' }, h('strong', null, L.euros(ex.prix_location_cents, true)), ' ', t('carte.la_location'))));
     carte.addEventListener('click', function () {
       if (L.session) location.href = 'catalogue.html';
       else L.ui.authentification('inscription');
@@ -197,56 +251,6 @@
         zone.classList.toggle('s-apercu__grille--voilee', !avecCompte);
       });
     });
-  }
-
-  function collections() {
-    var zone = $('[data-collections]');
-    if (!zone) return;
-    var cats = [
-      { cle: 'caftan', couleur: 'bordeaux' }, { cle: 'takchita', couleur: 'emeraude' }, { cle: 'mariee', couleur: 'ivoire' },
-      { cle: 'homme', couleur: 'bleu_nuit' }, { cle: 'enfant', couleur: 'rose' }, { cle: 'accessoire', couleur: 'or', scat: 'mdamma' }
-    ];
-    var comptes = {};
-    cats.forEach(function (c, i) {
-      var nb = h('span', { class: 'a-collection__nb' });
-      comptes[c.cle] = nb;
-      var src = photo('collections', c.cle) || L.img.placeholder('placeholder:' + (c.scat || c.cle) + ':' + c.couleur + ':face:' + (i * 7));
-      zone.appendChild(h('a', { class: 'a-collection', href: 'catalogue.html?categorie=' + c.cle, 'data-reveal': '' },
-        h('div', { class: 'a-cadre' }, h('img', { src: src, alt: '', loading: 'lazy' })),
-        h('div', { class: 'a-collection__legende' }, h('h3', { class: 'a-collection__nom', 'data-i18n': 'cat.' + c.cle }, t('cat.' + c.cle)), nb)));
-    });
-    L.motion.reveler(zone);
-    if (L.sb) {
-      L.sb.from('tenues').select('categorie').eq('statut', 'validee').limit(2000).then(function (r) {
-        var n = {};
-        (r.data || []).forEach(function (x) { n[x.categorie] = (n[x.categorie] || 0) + 1; });
-        Object.keys(comptes).forEach(function (k) { comptes[k].textContent = n[k] ? String(n[k]) : ''; });
-      });
-    }
-  }
-
-  function boutiques() {
-    var zone = $('[data-boutiques]');
-    if (!zone || !L.sb) return;
-    L.sb.from('profils').select('id, nom_affiche, boutique_nom, type_fournisseuse, ville, note_moyenne, nb_avis, avatar_chemin')
-      .eq('est_fournisseuse', true).eq('compte_valide', true).in('type_fournisseuse', ['negafa', 'creatrice'])
-      .order('score_visibilite', { ascending: false }).limit(4)
-      .then(function (r) {
-        var liste = r.data || [];
-        if (!liste.length) { zone.closest('section').hidden = true; return; }
-        liste.forEach(function (p, i) { var c = carteBoutique(p, i); c.setAttribute('data-reveal', ''); zone.appendChild(c); });
-        L.motion.reveler(zone);
-      });
-  }
-
-  function carteBoutique(p, i) {
-    var img = p.avatar_chemin ? L.img.url(p.avatar_chemin, 'avatars') : L.img.placeholder('placeholder:' + (i % 2 ? 'caftan' : 'takchita') + ':' + ['noir', 'bordeaux', 'emeraude', 'bleu_nuit'][i % 4] + ':portee:' + (i * 13));
-    return h('a', { class: 'carte', href: 'boutique.html?id=' + p.id },
-      h('div', { class: 'carte__visuel' }, h('div', { class: 'arche' }, h('img', { src: img, alt: '', loading: 'lazy' })),
-        h('span', { class: 'carte__badge' }, t('type.' + p.type_fournisseuse))),
-      h('div', { class: 'carte__infos' },
-        h('h3', { class: 'carte__titre' }, p.boutique_nom || p.nom_affiche),
-        h('p', { class: 'carte__meta' }, L.zone(p.ville), p.nb_avis ? [' · ', h('span', { class: 'note' }, '★ ' + Number(p.note_moyenne).toFixed(1))] : null)));
   }
 
   function simulateur() {
@@ -354,7 +358,9 @@
         p_couleur: etat.couleur || null, p_prix_max: etat.prix_max ? Number(etat.prix_max) * 100 : null, p_ville: etat.ville || null,
         p_debut: etat.debut || null, p_fin: etat.fin || etat.debut || null, p_recherche: etat.q || null,
         p_type_fournisseuse: etat.boutique || null,
-        p_tri: etat.tri || 'pertinence', p_limite: PAR_PAGE, p_decalage: page * PAR_PAGE
+        p_tri: etat.tri === 'distance' && !/^[0-9]{4}$/.test(etat.cp || '') ? 'pertinence' : (etat.tri || 'pertinence'), p_limite: PAR_PAGE, p_decalage: page * PAR_PAGE,
+        p_code_postal: /^[0-9]{4}$/.test(etat.cp || '') ? etat.cp : null, p_rayon_km: etat.rayon && /^[0-9]{4}$/.test(etat.cp || '') ? Number(etat.rayon) : null,
+        p_instantanee: etat.instant === '1' ? true : null
       };
       var etatFlip = ajout || !window.Flip || !L.motion.actif ? null : window.Flip.getState($$('.carte', grille));
       Promise.all([rechercher(p), L.auth.pret]).then(function (res) {
@@ -404,7 +410,7 @@
 
   function num(v) { var n = Number(v); return v === '' || v == null || !isFinite(n) || n <= 0 ? null : n; }
 
-  var CLES_FILTRES = ['categorie', 'occasion', 'taille', 'couleur', 'prix_max', 'ville', 'debut', 'fin', 'poitrine', 'tour_taille', 'hanches', 'longueur', 'q', 'tri', 'boutique'];
+  var CLES_FILTRES = ['categorie', 'occasion', 'taille', 'couleur', 'prix_max', 'ville', 'debut', 'fin', 'poitrine', 'tour_taille', 'hanches', 'longueur', 'q', 'tri', 'boutique', 'cp', 'rayon', 'instant'];
 
   function lireFiltresUrl() {
     var s = new URLSearchParams(location.search), e = {};
@@ -443,6 +449,13 @@
     form.appendChild(groupe('cat.f_date', h('div', { class: 'grille-2' },
       h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-debut' }, t('cat.du')), h('input', { id: 'f-debut', name: 'debut', type: 'date', class: 'champ__controle', min: L.aujourdhui(), value: etat.debut || '' })),
       h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-fin' }, t('cat.au')), h('input', { id: 'f-fin', name: 'fin', type: 'date', class: 'champ__controle', min: L.aujourdhui(), value: etat.fin || '' })))));
+    form.appendChild(groupe('cat.f_pres', h('div', { class: 'grille-2' },
+      h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-cp' }, t('cat.code_postal')),
+        h('input', { id: 'f-cp', name: 'cp', inputmode: 'numeric', maxlength: '4', pattern: '[0-9]{4}', class: 'champ__controle', value: etat.cp || '', placeholder: '1000' })),
+      h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-rayon' }, t('cat.rayon')),
+        h('select', { id: 'f-rayon', name: 'rayon', class: 'champ__controle' },
+          [['', t('cat.rayon_tous')], ['10', '10 km'], ['25', '25 km'], ['50', '50 km'], ['100', '100 km']].map(function (o) { return h('option', { value: o[0], selected: (etat.rayon || '') === o[0] }, o[1]); }))))));
+    form.appendChild(h('label', { class: 'case' }, h('input', { type: 'checkbox', name: 'instant', value: '1', checked: etat.instant === '1' }), h('span', null, '⚡ ' + t('cat.instantanee'))));
     form.appendChild(groupe('cat.f_ville', h('div', { class: 'choix-pastilles' },
       [['', t('cat.toutes_villes')]].concat(C.villes.map(function (v) { return [v, L.zone(v)]; })).map(function (v) {
         return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'ville', value: v[0], checked: (etat.ville || '') === v[0] }), h('span', null, v[1]));
@@ -502,7 +515,7 @@
     if (!L.sb) { L.ui.etatVide(zone, t('commun.erreur')); return; }
     L.ui.chargement(zone);
     Promise.all([
-      L.sb.from('tenues').select('*, tenue_photos(id, type, chemin, ordre), fournisseuse:profils(id, nom_affiche, boutique_nom, type_fournisseuse, note_moyenne, nb_avis, avatar_chemin, ville, compte_valide)').eq('id', id).maybeSingle(),
+      L.sb.from('tenues').select('*, tenue_photos(id, type, chemin, ordre), fournisseuse:profils!tenues_fournisseuse_id_fkey(id, nom_affiche, boutique_nom, type_fournisseuse, note_moyenne, nb_avis, avatar_chemin, ville, commune, compte_valide, badge_confiance, identite_verifiee, taux_reponse, delai_reponse_h, created_at)').eq('id', id).maybeSingle(),
       L.parametres(),
       L.auth.pret
     ]).then(function (res) {
@@ -556,11 +569,12 @@
 
     // --- Informations
     var nomBoutique = f.boutique_nom || f.nom_affiche || '';
-    var lienBoutique = h(f.type_fournisseuse && f.type_fournisseuse !== 'particuliere' ? 'a' : 'div', { class: 'fiche__fournisseuse', href: 'boutique.html?id=' + f.id },
-      h('span', { class: 'avatar' }, f.avatar_chemin ? h('img', { src: L.img.url(f.avatar_chemin, 'avatars'), alt: '' }) : (nomBoutique[0] || '·').toUpperCase()),
-      h('span', null, h('strong', null, nomBoutique), h('br'),
-        h('small', { class: 'texte' }, t('type.' + (f.type_fournisseuse || 'particuliere')), ' · ', L.zone(tn.ville),
-          f.nb_avis ? [' · ', h('span', { class: 'note' }, '★ ' + Number(f.note_moyenne).toFixed(1) + ' (' + f.nb_avis + ')')] : null)));
+    var lienBoutique = carteFournisseuse(f, tn);
+    var lieu = h('span', null, (tn.commune ? tn.commune + ', ' : '') + L.zone(tn.ville));
+    var cp = L.stockage.lire('lalla.cp', '');
+    if (/^[0-9]{4}$/.test(cp) && tn.code_postal) {
+      L.sb.rpc('distance_cp', { a: cp, b: tn.code_postal }).then(function (r) { if (r.data != null) lieu.textContent += ' · ' + t('carte.km', { n: r.data }); });
+    }
 
     var mesures = tn.categorie === 'accessoire' ? null : h('table', { class: 'mesures' },
       h('caption', { class: 'sr' }, t('tenue.mesures')),
@@ -583,8 +597,11 @@
 
     var infos = h('div', { class: 'fiche__infos' },
       h('nav', { class: 'fil', 'aria-label': t('tenue.fil') }, h('a', { href: 'catalogue.html' }, t('nav.catalogue')), h('span', null, h('a', { href: 'catalogue.html?categorie=' + tn.categorie }, libelleCategorie(tn)))),
-      h('div', null, h('p', { class: 'surtitre' }, libelleCategorie(tn) + ' · ' + L.zone(tn.ville)), h('h1', { class: 'fiche__titre' }, tn.titre)),
+      h('div', { style: { position: 'relative' } }, h('p', { class: 'surtitre' }, libelleCategorie(tn)), h('h1', { class: 'fiche__titre', style: { paddingRight: '48px' } }, tn.titre),
+        h('div', { style: { position: 'absolute', top: '0', right: '0', color: 'var(--encre)' } }, L.favoris.bouton(tn.id)),
+        h('p', { class: 'texte', style: { margin: '8px 0 0' } }, noteCourte(f.note_moyenne, f.nb_avis), ' · ', lieu)),
       h('p', { class: 'fiche__prix' }, h('strong', null, L.euros(tn.prix_location_cents, true)), h('span', { class: 'texte' }, t('tenue.par_location', { min: tn.duree_min_jours, max: tn.duree_max_jours }))),
+      tn.reservation_instantanee ? h('p', { class: 'eclair', style: { margin: 0 } }, '⚡ ' + t('tenue.instantanee')) : null,
       modes,
       lienBoutique,
       tn.description ? h('div', { class: 'texte', style: { whiteSpace: 'pre-line' } }, tn.description) : null,
@@ -592,7 +609,8 @@
       mesures,
       h('p', { class: 'mention-retouche' }, h('span', null, h('strong', null, t('tenue.retouche_titre')), ' ', t('tenue.retouche_texte'))),
       boite,
-      h('div', { class: 'actions' }, partage));
+      h('div', { class: 'actions' }, partage),
+      h('button', { type: 'button', class: 'lien-discret', onclick: function () { L.ui.signaler('tenue', tn.id); } }, t('signal.annonce')));
 
     L.vider(zone).appendChild(h('div', { class: 'fiche' }, galerie, infos));
 
@@ -611,6 +629,33 @@
     completerLook(tn);
     avisFournisseuse(f.id);
   }
+
+  /** Bloc « Proposée par » : photo, type, commune, note, badges, réactivité, contact. */
+  function carteFournisseuse(f, tn) {
+    var nom = f.boutique_nom || f.nom_affiche || '';
+    var badges = [];
+    if (f.badge_confiance) badges.push(h('span', { class: 'badge badge--or' }, t('badge.confiance')));
+    if (f.identite_verifiee) badges.push(h('span', { class: 'badge' }, t('badge.identite')));
+    var reactivite = f.taux_reponse != null ? t('profil.reponse', { taux: f.taux_reponse, delai: delaiLisible(f.delai_reponse_h) }) : null;
+    return h('div', { class: 'hote-carte' },
+      h('a', { class: 'hote-carte__photo', href: 'boutique.html?id=' + f.id, 'aria-label': nom }, f.avatar_chemin ? h('img', { src: L.img.url(f.avatar_chemin, 'avatars'), alt: '' }) : (nom[0] || '·').toUpperCase()),
+      h('div', null, h('b', null, t('tenue.proposee_par', { nom: nom })),
+        h('small', null, t('type.' + (f.type_fournisseuse || 'particuliere')) + ' · ' + (f.commune || L.zone(f.ville) || '') + (f.created_at ? ' · ' + t('profil.depuis', { annee: new Date(f.created_at).getFullYear() }) : '')),
+        reactivite ? h('small', null, reactivite) : null,
+        badges.length ? h('div', null, badges) : null),
+      h('div', { class: 'hote-carte__actions' },
+        h('button', { class: 'bouton bouton--sombre bouton--petit', type: 'button', onclick: function () { L.contacter(f.id, tn && tn.id); } }, t('msg.contacter')),
+        h('a', { class: 'bouton bouton--ligne bouton--petit', href: 'boutique.html?id=' + f.id }, t('profil.voir'))));
+  }
+  L.carteFournisseuse = carteFournisseuse;
+
+  function delaiLisible(heures) {
+    if (heures == null) return t('profil.delai_inconnu');
+    if (heures < 1) return t('profil.delai_heure');
+    if (heures < 24) return t('profil.delai_heures', { n: Math.max(1, Math.round(heures)) });
+    return t('profil.delai_jour');
+  }
+  L.delaiLisible = delaiLisible;
 
   function iconeWhatsapp() {
     var s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -677,7 +722,7 @@
     var mode = h('select', { name: 'mode', class: 'champ__controle', id: 'r-mode' },
       tn.remise_main_propre ? h('option', { value: 'main_propre' }, t('tenue.main_propre')) : null,
       tn.envoi_assure ? h('option', { value: 'envoi' }, t('tenue.envoi', { prix: L.euros(tn.frais_envoi_cents) })) : null);
-    var bouton = h('button', { class: 'bouton bouton--plein', type: 'submit' }, t('tenue.ajouter_panier'));
+    var bouton = h('button', { class: 'bouton bouton--plein', type: 'submit' }, t(tn.reservation_instantanee ? 'tenue.ajouter_instantane' : 'tenue.ajouter_panier'));
     var dejaDansPanier = L.panier.contient(tn.id);
     if (dejaDansPanier) bouton.textContent = t('tenue.deja_panier');
     var form = h('form', { class: 'reservation-boite', novalidate: true },
@@ -883,7 +928,7 @@
     if (!L.estUuid(id) || !L.sb) { L.ui.etatVide(zone, t('boutique.introuvable')); return; }
     L.ui.chargement(zone);
     Promise.all([
-      L.sb.from('profils').select('id, nom_affiche, boutique_nom, boutique_bio, type_fournisseuse, ville, note_moyenne, nb_avis, avatar_chemin, est_fournisseuse, compte_valide, created_at').eq('id', id).maybeSingle(),
+      L.sb.from('profils').select('id, nom_affiche, boutique_nom, boutique_bio, type_fournisseuse, ville, commune, note_moyenne, nb_avis, avatar_chemin, est_fournisseuse, compte_valide, created_at, badge_confiance, identite_verifiee, taux_reponse, delai_reponse_h, langues').eq('id', id).maybeSingle(),
       rechercher({ p_fournisseuse: id, p_limite: 60 }),
       L.sb.from('avis').select('note, commentaire, created_at').eq('cible_id', id).eq('sens', 'cliente_vers_fournisseuse').order('created_at', { ascending: false }).limit(10)
     ]).then(function (res) {
@@ -896,25 +941,37 @@
       var ld = { '@context': 'https://schema.org', '@type': 'Store', name: nom, address: { '@type': 'PostalAddress', addressLocality: p.ville || '', addressCountry: 'BE' } };
       if (p.nb_avis) ld.aggregateRating = { '@type': 'AggregateRating', ratingValue: p.note_moyenne, reviewCount: p.nb_avis };
       document.head.appendChild(h('script', { type: 'application/ld+json', text: JSON.stringify(ld) }));
-      var nbLocations = 0;
-      var visuel = p.avatar_chemin ? L.img.url(p.avatar_chemin, 'avatars') : L.img.placeholder('placeholder:takchita:' + (p.type_fournisseuse === 'negafa' ? 'bordeaux' : 'emeraude') + ':portee:5');
       var grille = h('div', { class: 'grille-cartes' });
       tenues.forEach(function (tn) { var c = L.carteTenue(tn); c.setAttribute('data-reveal', ''); grille.appendChild(c); });
+      var initiale = (nom[0] || '·').toUpperCase();
+      var langues = (p.langues || []).map(function (l) { return t('langue.' + l); }).join(', ');
+      var faits = [
+        p.commune || p.ville ? '📍 ' + (p.commune ? p.commune + ', ' : '') + L.zone(p.ville) : null,
+        p.taux_reponse != null ? '💬 ' + t('profil.reponse', { taux: p.taux_reponse, delai: L.delaiLisible(p.delai_reponse_h) }) : null,
+        langues ? '🗣 ' + t('profil.langues', { langues: langues }) : null,
+        p.identite_verifiee ? '✓ ' + t('badge.identite') : null
+      ].filter(Boolean);
       L.vider(zone).appendChild(h('div', null,
-        h('header', { class: 'boutique-entete' },
-          h('div', { class: 'arche-cadre boutique-entete__avatar' }, h('div', { class: 'arche' }, h('img', { src: visuel, alt: '' }))),
+        h('header', { class: 'profil-entete' },
+          h('div', { class: 'profil-carte' },
+            h('div', { class: 'profil-carte__photo' }, p.avatar_chemin ? h('img', { src: L.img.url(p.avatar_chemin, 'avatars'), alt: '' }) : initiale),
+            h('h1', null, nom),
+            h('p', { class: 'texte', style: { margin: '4px 0 0' } }, t('type.' + p.type_fournisseuse)),
+            p.badge_confiance ? h('span', { class: 'badge badge--or' }, t('badge.confiance')) : null,
+            h('div', { class: 'profil-chiffres' },
+              h('div', null, h('strong', null, String(p.nb_avis || 0)), h('span', null, t('profil.avis'))),
+              h('div', null, h('strong', null, p.nb_avis ? Number(p.note_moyenne).toFixed(1).replace('.', ',') + '★' : '·'), h('span', null, t('profil.note'))),
+              h('div', null, h('strong', null, String(new Date().getFullYear() - new Date(p.created_at).getFullYear() || 1)), h('span', null, t('profil.annees'))))),
           h('div', null,
-            h('p', { class: 'surtitre' }, t('type.' + p.type_fournisseuse) + (p.ville ? ' · ' + L.zone(p.ville) : '')),
-            h('h1', { style: { marginBottom: '12px' } }, nom),
-            p.boutique_bio ? h('p', { class: 'chapeau', style: { whiteSpace: 'pre-line' } }, p.boutique_bio) : null,
-            h('div', { class: 'boutique-entete__chiffres' },
-              h('div', null, h('strong', null, String(tenues.length ? Number(tenues[0].total) : 0)), t('boutique.pieces')),
-              p.nb_avis ? h('div', null, h('strong', null, '★ ' + Number(p.note_moyenne).toFixed(1)), t('boutique.avis', { n: p.nb_avis })) : null,
-              h('div', null, h('strong', null, String(new Date(p.created_at).getFullYear())), t('boutique.depuis'))))),
-        h('section', { class: 'section', style: { paddingTop: '48px' } }, h('h2', { style: { fontSize: '2rem' } }, t('boutique.collection')),
+            h('h2', { style: { marginTop: 0 } }, t('profil.a_propos', { nom: nom })),
+            h('ul', { class: 'profil-faits' }, faits.map(function (x) { return h('li', null, x); })),
+            p.boutique_bio ? h('p', { class: 'chapeau', style: { whiteSpace: 'pre-line' } }, p.boutique_bio) : h('p', { class: 'texte' }, t('profil.bio_vide')),
+            h('div', { class: 'actions' },
+              h('button', { class: 'bouton', type: 'button', onclick: function () { L.contacter(p.id); } }, t('msg.contacter_nom', { nom: nom })),
+              h('button', { class: 'lien-discret', type: 'button', onclick: function () { L.ui.signaler('profil', p.id); } }, t('signal.profil'))))),
+        h('section', { class: 'section', style: { paddingTop: '48px' } }, h('h2', null, t('profil.annonces', { nom: nom })),
           tenues.length ? grille : h('p', { class: 'texte' }, t('boutique.vide'))),
-        avis.length ? h('section', { class: 'section', style: { paddingTop: 0 } }, h('h2', { style: { fontSize: '2rem' } }, t('boutique.avis_titre')), h('div', { class: 'avis-liste' }, avis.map(rendreAvis))) : null));
-      void nbLocations;
+        avis.length ? h('section', { class: 'section', style: { paddingTop: 0 } }, h('h2', null, t('boutique.avis_titre')), h('div', { class: 'avis-liste' }, avis.map(rendreAvis))) : null));
       L.motion.reveler(zone);
       if (window.gsap && L.motion.actif) L.motion.titreLignes($('h1', zone), 0.1);
     }).catch(function (e) { console.error(e); L.ui.etatVide(zone, t('commun.erreur')); });
@@ -978,6 +1035,7 @@
           L.ui.champ('debut', 'tenue.date_debut', { type: 'date', required: true, value: dates.debut || '', min: L.ajouterJours(L.aujourdhui(), 1) }),
           L.ui.champ('fin', 'tenue.date_fin', { type: 'date', required: true, value: dates.fin || '', min: L.ajouterJours(L.aujourdhui(), 2) })),
         aEnvoi ? L.ui.champ('adresse', 'panier.adresse', { tag: 'textarea', required: true, maxlength: 300, autocomplete: 'street-address' }) : null,
+        pan.articles.some(function (a) { return a.mode_remise !== 'envoi'; }) ? L.ui.champ('creneau', 'panier.creneau', { type: 'datetime-local', aide: t('panier.creneau_aide') }) : null,
         L.ui.champ('message', 'panier.message', { tag: 'textarea', maxlength: 1000, aide: t('commun.facultatif') }),
         h('div', { 'data-mensurations': '' }),
         L.ui.honeypot(), retour,
@@ -1004,7 +1062,8 @@
           return L.api('commande-creer', {
             articles: L.panier.lire().articles.map(function (a) { return { tenue_id: a.tenue_id, mode_remise: a.mode_remise }; }),
             evenement: form.evenement.value, debut: form.debut.value, fin: form.fin.value,
-            adresse_envoi: form.adresse ? form.adresse.value : null, message: form.message.value, site_web: form.site_web.value
+            adresse_envoi: form.adresse ? form.adresse.value : null, message: form.message.value, site_web: form.site_web.value,
+            creneau: form.creneau && form.creneau.value ? new Date(form.creneau.value).toISOString() : null
           }).then(function (r) {
             L.panier.vider();
             location.href = 'panier.html?commande=' + r.commande_id + '&envoye=1';

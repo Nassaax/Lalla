@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   let tn = null;
   if (/^[0-9a-f-]{36}$/i.test(id)) {
     const { data } = await db().from('tenues')
-      .select('id, titre, description, categorie, ville, prix_location_cents, statut, tenue_photos(type, chemin, ordre), fournisseuse:profils(nom_affiche, boutique_nom)')
+      .select('id, titre, description, categorie, ville, prix_location_cents, statut, tenue_photos(type, chemin, ordre), fournisseuse:profils!tenues_fournisseuse_id_fkey(nom_affiche, boutique_nom)')
       .eq('id', id).eq('statut', 'validee').maybeSingle();
     tn = data;
   }
