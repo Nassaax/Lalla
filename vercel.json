@@ -2,6 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": false,
   "trailingSlash": false,
+  "regions": [
+    "fra1"
+  ],
   "redirects": [
     {
       "source": "/lib/:path*",

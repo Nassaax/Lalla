@@ -1,0 +1,31 @@
+# Lance la tâche horaire de LALLA (le plan Hobby de Vercel n'autorise que des crons quotidiens).
+# À configurer une fois dans GitHub → Settings → Secrets and variables → Actions :
+#   - secret   CRON_SECRET : la même valeur que sur Vercel
+#   - variable SITE_URL    : l'adresse du site, sans « / » final (ex. https://lalla.vercel.app)
+# Sans ces deux réglages, le workflow s'arrête sans erreur.
+name: Cron horaire
+
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  horaire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Appeler /api/cron/horaire
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$CRON_SECRET" ] || [ -z "$SITE_URL" ]; then
+            echo "CRON_SECRET ou SITE_URL non configuré : rien à faire."
+            exit 0
+          fi
+          curl --fail-with-body -sS -m 60 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$SITE_URL/api/cron/horaire"

@@ -171,14 +171,16 @@ Elles sont déclarées dans `vercel.json` et créées automatiquement par Vercel
 
 | Adresse | Fréquence | Ce qu'elle fait |
 |---|---|---|
-| `/api/cron/horaire` | toutes les heures | annule les demandes sans réponse après 24 h ; crée les empreintes de caution 2 jours avant la remise ; libère les cautions 48 h après le retour sans litige ; verse les fournisseuses 24 h après le retour ; clôture les locations et invite aux avis |
+| `/api/cron/horaire` | toutes les heures (via GitHub Actions) + une fois par jour à 5 h (UTC) par Vercel | annule les demandes sans réponse après 24 h ; crée les empreintes de caution 2 jours avant la remise ; libère les cautions 48 h après le retour sans litige ; verse les fournisseuses 24 h après le retour ; clôture les locations et invite aux avis |
 | `/api/cron/quotidien` | chaque jour à 6 h 30 (UTC) | renouvelle les empreintes de plus de 6 jours (une autorisation bancaire expire au bout de 7 jours) ; envoie les rappels de remise et de retour ; nettoie l'anti-spam |
 
 Vercel envoie automatiquement l'en-tête `Authorization: Bearer <CRON_SECRET>`. Sans ce secret, les adresses répondent `401`.
 
-> **Plan Hobby (gratuit)** : Vercel n'autorise qu'un passage par jour. Deux solutions :
-> - passer au **plan Pro** (recommandé dès les premières vraies réservations) ;
-> - ou utiliser un service gratuit comme **cron-job.org**. Créez une tâche toutes les heures vers `https://votre-domaine.be/api/cron/horaire`, avec l'en-tête `Authorization: Bearer <CRON_SECRET>`.
+> **Plan Hobby (gratuit)** : Vercel n'autorise qu'un passage par jour. Le passage horaire est donc assuré par **GitHub Actions** (gratuit), via `.github/workflows/cron-horaire.yml`. À régler une seule fois dans GitHub → *Settings* → *Secrets and variables* → *Actions* :
+> - onglet **Secrets** : `CRON_SECRET` = la même valeur que sur Vercel ;
+> - onglet **Variables** : `SITE_URL` = l'adresse du site (ex. `https://lalla-pearl.vercel.app`, sans « / » final).
+>
+> Tant que ces deux réglages manquent, le workflow ne fait rien. Avec le **plan Pro** de Vercel, vous pouvez remettre `"0 * * * *"` pour `/api/cron/horaire` dans `vercel.json` et supprimer le workflow.
 
 Vous pouvez aussi lancer une seule tâche à la main : `/api/cron/expirer-demandes`, `/empreintes`, `/liberer-cautions`, `/versements`, `/cloturer`, `/renouveler-empreintes`, `/rappels`, `/purger`.
 
