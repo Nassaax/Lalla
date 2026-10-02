@@ -303,4 +303,58 @@ select t_erreur($$select verifier_frequence('test:autre', 1, 60)$$, 'fréquence 
 select t_erreur($$select * from limites_frequence$$, 'fréquence : table interne inaccessible');
 rollback;
 
+-- ---------------------------------------------------------------------------
+-- 12. Plateforme : messagerie, favoris, notifications, signalements, fiscalité
+-- ---------------------------------------------------------------------------
+begin;
+select t_comme('00000000-0000-0000-0000-0000000000b1');
+set local role authenticated;
+insert into conversations (id, cliente_id, fournisseuse_id) values ('50000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-0000000000b1', '00000000-0000-0000-0000-0000000000f1');
+insert into messages (conversation_id, auteur_id, contenu) values ('50000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-0000000000b1', 'Bonjour, appelez-moi au 0470 12 34 56 ou b@exemple.be');
+select t_ok((select masque and contenu not like '%0470%' and contenu not like '%@%' from messages limit 1), 'messages : coordonnées masquées avant paiement');
+select t_erreur($$insert into conversations (cliente_id, fournisseuse_id) values ('00000000-0000-0000-0000-0000000000a1', '00000000-0000-0000-0000-0000000000f1')$$, 'conversations : impossible d''écrire au nom d''une autre');
+insert into messages (conversation_id, auteur_id, contenu) values ('50000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-0000000000f1', 'usurpation');
+select t_ok((select auteur_id = '00000000-0000-0000-0000-0000000000b1' from messages where contenu = 'usurpation'), 'messages : l''autrice est toujours la personne connectée');
+insert into favoris (tenue_id) values ('10000000-0000-0000-0000-000000000001');
+select t_ok(t_lignes('select * from favoris') = 1, 'favoris : ajout pour soi');
+insert into signalements (cible_type, cible_id, motif) values ('tenue', '10000000-0000-0000-0000-000000000001', 'photos_trompeuses');
+update signalements set statut = 'traite';
+select t_ok((select statut = 'ouvert' from signalements limit 1), 'signalements : traitement réservé à l''équipe');
+reset role;
+select t_comme('00000000-0000-0000-0000-0000000000f1');
+set local role authenticated;
+select t_ok(t_lignes('select * from messages') = 2, 'messages : la fournisseuse lit la conversation');
+select t_ok(t_lignes($q$select * from notifications where type = 'message'$q$) = 1, 'notifications : nouveau message signalé à la destinataire');
+update messages set lu_at = now();
+select t_ok((select bool_and(lu_at is not null) from messages), 'messages : la destinataire marque comme lu');
+select t_ok(t_lignes('select * from favoris') = 0, 'favoris : invisibles pour les autres');
+reset role;
+select t_comme('00000000-0000-0000-0000-0000000000a1');
+set local role authenticated;
+select t_ok(t_lignes('select * from messages') = 0, 'messages : conversation invisible pour une tierce personne');
+select t_ok(t_lignes('select * from signalements') = 0, 'signalements : invisibles pour une tierce personne');
+insert into conversations (id, cliente_id, fournisseuse_id) values ('50000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-0000000000a1', '00000000-0000-0000-0000-0000000000f1');
+insert into messages (conversation_id, auteur_id, contenu) values ('50000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-0000000000a1', 'Mon numéro : 0470 12 34 56');
+select t_ok((select not masque from messages where conversation_id = '50000000-0000-0000-0000-000000000002'), 'messages : coordonnées visibles après paiement');
+insert into infos_fiscales (statut_juridique, nom_legal, date_naissance, adresse, code_postal, localite, numero_fiscal) values ('particulier', 'Amina Test', '1990-01-01', 'Rue de test 1', '1000', 'Bruxelles', '90010112345');
+reset role;
+select t_comme('00000000-0000-0000-0000-0000000000b1');
+set local role authenticated;
+select t_ok(t_lignes('select * from infos_fiscales') = 0, 'fiscalité : données d''une autre invisibles');
+reset role;
+select t_comme('00000000-0000-0000-0000-0000000000ad');
+set local role authenticated;
+select t_ok(t_lignes('select * from infos_fiscales') = 1, 'fiscalité : lisibles par l''administration');
+select t_ok(t_lignes('select * from signalements') = 1, 'signalements : lisibles par l''administration');
+rollback;
+
+begin;
+select t_comme('00000000-0000-0000-0000-0000000000f1');
+set local role authenticated;
+update tenues set code_postal = '4000' where id = '10000000-0000-0000-0000-000000000001';
+select t_ok((select ville = 'Liège' and commune is not null from tenues where id = '10000000-0000-0000-0000-000000000001'), 'localisation : le code postal fixe commune et province');
+select t_erreur($$update tenues set code_postal = '0000' where id = '10000000-0000-0000-0000-000000000001'$$, 'localisation : code postal inconnu refusé');
+select t_erreur($$update profils set badge_confiance = true where id = '00000000-0000-0000-0000-0000000000f1'$$, 'badge : non modifiable par la fournisseuse');
+rollback;
+
 select 'TOUS LES TESTS RLS SONT PASSÉS' as resultat;
