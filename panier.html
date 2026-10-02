@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr-BE">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title data-i18n="meta.panier.titre">Mon panier — LALLA</title>
+  <meta name="description" data-i18n-attr="content:meta.panier.desc" content="Vos demandes de location, le paiement et la caution.">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="canonical" href="https://lalla.be/panier.html">
+  <link rel="alternate" hreflang="fr-BE" href="https://lalla.be/panier.html">
+  <link rel="alternate" hreflang="nl-BE" href="https://lalla.be/panier.html?lang=nl">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LALLA">
+  <meta property="og:locale" content="fr_BE">
+  <meta property="og:title" content="Mon panier — LALLA">
+  <meta property="og:description" content="Vos demandes de location, le paiement et la caution.">
+  <meta property="og:url" content="https://lalla.be/panier.html">
+  <meta property="og:image" content="https://lalla.be/assets/og-default.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#F4EEE3">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="panier">
+  <a class="lien-evitement" href="#contenu" data-i18n="nav.aller_contenu">Aller au contenu</a>
+  <header id="entete" class="entete"></header>
+
+  <main id="contenu">
+    <section class="page-entete">
+      <div class="conteneur">
+        <p class="surtitre" data-i18n="panier.surtitre">Votre sélection</p>
+        <h1 data-i18n="panier.titre">Panier</h1>
+      </div>
+    </section>
+    <div class="conteneur" data-panier></div>
+  </main>
+
+  <footer id="pied" class="pied"></footer>
+
+  <script src="assets/config.js"></script>
+  <script src="/api/config"></script>
+  <script src="assets/i18n.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Flip.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+  <script defer src="assets/app.js"></script>
+  <script defer src="assets/pages.js"></script>
+</body>
+</html>

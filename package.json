@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "node scripts/dev-server.mjs",
-    "test": "node --test tests/unit/",
+    "test": "node --test tests/unit/*.test.mjs",
     "test:rls": "bash supabase/tests/run-rls-tests.sh",
     "test:e2e": "node tests/e2e/run.mjs",
     "seed": "node scripts/seed-demo.mjs",

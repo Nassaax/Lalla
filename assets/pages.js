@@ -861,6 +861,250 @@
   };
 
   // ===========================================================================
+  // Panier, demandes, paiement, identité, caution
+  // ===========================================================================
+  L.pages.panier = function () {
+    var zone = $('[data-panier]');
+    var id = L.param('commande');
+    if (L.estUuid(id)) suiviCommande(zone, id);
+    else panierLocal(zone);
+  };
+
+  function etapes(actif) {
+    var noms = ['panier.e_demandes', 'panier.e_paiement', 'panier.e_caution', 'panier.e_remise'];
+    return h('ol', { class: 'etapes', 'aria-label': t('panier.progression') }, noms.map(function (n, i) {
+      return h('li', { class: i < actif ? 'est-fait' : i === actif ? 'est-actif' : '', 'aria-current': i === actif ? 'step' : null }, t(n));
+    }));
+  }
+
+  function panierLocal(zone) {
+    var pan = L.panier.lire();
+    L.vider(zone);
+    if (!pan.articles.length) {
+      L.ui.etatVide(zone, t('panier.vide'), h('a', { class: 'bouton', href: 'catalogue.html' }, t('index.hero.cta')));
+      return;
+    }
+    L.parametres().then(function (p) { rendre(p); });
+
+    function rendre(p) {
+      pan = L.panier.lire();
+      L.vider(zone);
+      if (!pan.articles.length) { panierLocal(zone); return; }
+      var groupes = {};
+      pan.articles.forEach(function (a) { (groupes[a.fournisseuse_id] = groupes[a.fournisseuse_id] || []).push(a); });
+      var liste = h('div');
+      var totalLocation = 0, pressing = 0;
+      Object.keys(groupes).forEach(function (fid) {
+        var arts = groupes[fid];
+        liste.appendChild(h('section', { class: 'groupe-fournisseuse' },
+          h('div', { class: 'groupe-fournisseuse__tete' }, h('strong', null, arts[0].fournisseuse_nom || t('role.fournisseuse')), h('span', { class: 'texte' }, t('panier.une_demande'))),
+          arts.map(function (a) {
+            totalLocation += a.prix_location_cents;
+            if (a.categorie !== 'accessoire') pressing += Number(p.frais_pressing_cents);
+            return h('div', { class: 'article' },
+              h('a', { class: 'article__visuel', href: 'tenue.html?id=' + a.tenue_id }, h('div', { class: 'arche' }, L.img.element(a.photo || L.placeholderPour({ id: a.tenue_id, categorie: a.categorie, sous_categorie: a.sous_categorie, couleurs: a.couleurs }, 'face'), ''))),
+              h('div', null, h('p', { class: 'article__titre' }, a.titre), h('p', { class: 'article__meta' }, L.libelleCategorie(a) + ' · ' + L.euros(a.prix_location_cents) + ' · ' + t(a.mode_remise === 'envoi' ? 'panier.envoi' : 'tenue.main_propre'))),
+              h('button', { class: 'lien', type: 'button', 'aria-label': t('panier.retirer') + ' ' + a.titre, onclick: function () { L.panier.retirer(a.tenue_id); rendre(p); } }, t('panier.retirer')));
+          })));
+      });
+      var service = Math.round(totalLocation * Number(p.frais_service_taux));
+      var dates = pan.dates || {};
+      var aEnvoi = pan.articles.some(function (a) { return a.mode_remise === 'envoi'; });
+      var retour = h('div');
+      var form = h('form', { class: 'formulaire panneau', novalidate: true },
+        h('h2', { class: 'panneau__titre' }, t('panier.vos_dates')),
+        h('div', { class: 'grille-3' },
+          L.ui.champ('evenement', 'tenue.date_evenement', { type: 'date', required: true, value: dates.evenement || '', min: L.ajouterJours(L.aujourdhui(), 2) }),
+          L.ui.champ('debut', 'tenue.date_debut', { type: 'date', required: true, value: dates.debut || '', min: L.ajouterJours(L.aujourdhui(), 1) }),
+          L.ui.champ('fin', 'tenue.date_fin', { type: 'date', required: true, value: dates.fin || '', min: L.ajouterJours(L.aujourdhui(), 2) })),
+        aEnvoi ? L.ui.champ('adresse', 'panier.adresse', { tag: 'textarea', required: true, maxlength: 300, autocomplete: 'street-address' }) : null,
+        L.ui.champ('message', 'panier.message', { tag: 'textarea', maxlength: 1000, aide: t('commun.facultatif') }),
+        h('div', { 'data-mensurations': '' }),
+        L.ui.honeypot(), retour,
+        h('button', { class: 'bouton bouton--plein', type: 'submit' }, t('panier.envoyer')),
+        h('p', { class: 'champ__aide', style: { textAlign: 'center' } }, t('panier.envoyer_aide')));
+      var resume = h('aside', { class: 'panier__resume panneau' },
+        h('h2', { class: 'panneau__titre' }, t('panier.resume')),
+        h('div', { class: 'recap' },
+          ligneRecap('tenue.r_location', totalLocation), ligneRecap('tenue.r_pressing', pressing), ligneRecap('tenue.r_service', service),
+          h('div', { class: 'recap__ligne recap__ligne--total' }, h('span', null, t('tenue.r_total')), h('span', null, L.euros(totalLocation + pressing + service))),
+          h('p', { class: 'recap__ligne--note' }, t('panier.resume_note'))));
+      zone.appendChild(etapes(0));
+      zone.appendChild(h('div', { class: 'panier' }, h('div', null, liste, form), resume));
+      blocMensurations($('[data-mensurations]', form));
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        if (L.ui.estRobot(form)) return;
+        L.auth.exiger('inscription').then(function () {
+          var b = form.querySelector('[type=submit]');
+          b.disabled = true;
+          L.panier.definirDates({ evenement: form.evenement.value, debut: form.debut.value, fin: form.fin.value });
+          return L.api('commande-creer', {
+            articles: L.panier.lire().articles.map(function (a) { return { tenue_id: a.tenue_id, mode_remise: a.mode_remise }; }),
+            evenement: form.evenement.value, debut: form.debut.value, fin: form.fin.value,
+            adresse_envoi: form.adresse ? form.adresse.value : null, message: form.message.value, site_web: form.site_web.value
+          }).then(function (r) {
+            L.panier.vider();
+            location.href = 'panier.html?commande=' + r.commande_id + '&envoye=1';
+          }).catch(function (err) {
+            b.disabled = false;
+            L.vider(retour).appendChild(h('p', { class: 'message message--erreur', role: 'alert' }, L.messageErreur(err)));
+          });
+        }).catch(function () {});
+      });
+    }
+  }
+
+  function ligneRecap(cle, montant) {
+    return h('div', { class: 'recap__ligne' }, h('span', null, t(cle)), h('span', null, L.euros(montant)));
+  }
+
+  /** Mensurations : visibles uniquement par les fournisseuses qui reçoivent une demande. */
+  function blocMensurations(zone) {
+    L.auth.pret.then(function () {
+      if (!L.session) { zone.appendChild(h('p', { class: 'message' }, t('panier.mensurations_connexion'))); return; }
+      L.sb.from('mensurations').select('*').eq('user_id', L.session.user.id).maybeSingle().then(function (r) {
+        var m = r.data || {};
+        var champs = [['poitrine_cm', 'mes.poitrine'], ['taille_cm', 'mes.taille'], ['hanches_cm', 'mes.hanches'], ['longueur_cm', 'mes.longueur'], ['manche_cm', 'mes.manche'], ['hauteur_cm', 'mes.hauteur']];
+        var etat = h('span', { class: 'champ__aide' });
+        var details = h('details', { class: 'panneau', style: { margin: 0, padding: '16px' }, open: !r.data || null },
+          h('summary', { style: { cursor: 'pointer', fontWeight: 600 } }, t('panier.mensurations_titre')),
+          h('p', { class: 'champ__aide' }, t('panier.mensurations_aide')),
+          h('div', { class: 'grille-3' }, champs.map(function (c) {
+            return L.ui.champ(c[0], t(c[1]) + ' (cm)', { type: 'number', inputmode: 'decimal', step: '0.5', min: '10', max: '230', value: m[c[0]] || '' });
+          })),
+          h('div', { class: 'actions' }, h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () {
+            var o = { user_id: L.session.user.id };
+            champs.forEach(function (c) { var v = details.querySelector('[name=' + c[0] + ']').value; o[c[0]] = v ? Number(v) : null; });
+            L.sb.from('mensurations').upsert(o).then(function (res) {
+              etat.textContent = res.error ? L.messageErreur(res.error) : t('commun.enregistre');
+            });
+          } }, t('panier.mensurations_enregistrer')), etat));
+        zone.appendChild(details);
+      });
+    });
+  }
+
+  function suiviCommande(zone, id) {
+    L.ui.chargement(zone);
+    var tentatives = 0;
+    L.auth.exiger('connexion').then(charger).catch(function () { L.ui.etatVide(zone, t('commun.connexion_requise')); });
+
+    function charger() {
+      return Promise.all([
+        L.sb.from('commandes').select('*').eq('id', id).maybeSingle(),
+        L.sb.from('reservations').select('*, reservation_lignes(titre_snapshot, prix_location_cents, caution_cents, tenue_id), fournisseuse:profils!reservations_fournisseuse_id_fkey(nom_affiche, boutique_nom)').eq('commande_id', id).order('created_at')
+      ]).then(function (res) {
+        var c = res[0].data, resas = res[1].data || [];
+        if (!c) { L.ui.etatVide(zone, t('panier.commande_introuvable')); return; }
+        // Retour de Stripe : le webhook peut avoir quelques secondes de retard
+        var attendPaiement = L.param('paiement') === 'ok' && c.statut === 'a_payer';
+        var attendCarte = L.param('caution') === 'ok' && resas.some(function (r) { return ['a_enregistrer', 'echec'].indexOf(r.caution_statut) >= 0; });
+        if ((attendPaiement || attendCarte) && tentatives++ < 15) {
+          L.vider(zone).appendChild(h('div', { class: 'vide' }, h('span', { class: 'chargement__arche' }), h('p', null, t(attendPaiement ? 'panier.confirmation_paiement' : 'panier.confirmation_carte'))));
+          setTimeout(charger, 2000);
+          return;
+        }
+        rendreCommande(zone, c, resas, charger);
+      });
+    }
+  }
+
+  function rendreCommande(zone, c, resas, recharger) {
+    L.vider(zone);
+    var actives = resas.filter(function (r) { return r.statut !== 'annulee'; });
+    var refusees = resas.filter(function (r) { return r.statut === 'annulee'; });
+    var etape = c.statut === 'en_attente_reponses' ? 0 : c.statut === 'a_payer' ? 1 : c.statut === 'annulee' ? 0 :
+      actives.some(function (r) { return ['a_enregistrer', 'echec'].indexOf(r.caution_statut) >= 0; }) ? 2 : 3;
+    zone.appendChild(etapes(etape));
+    var retour = h('div', { 'aria-live': 'polite' });
+    var colonne = h('div');
+    var resume = h('aside', { class: 'panier__resume panneau' });
+    zone.appendChild(h('div', { class: 'panier' }, colonne, resume));
+
+    if (L.param('envoye') === '1' && c.statut === 'en_attente_reponses') colonne.appendChild(h('p', { class: 'message message--succes' }, t('panier.demandes_envoyees')));
+    if (L.param('paiement') === 'annule') colonne.appendChild(h('p', { class: 'message message--alerte' }, t('panier.paiement_annule')));
+
+    resas.forEach(function (r) {
+      var f = r.fournisseuse || {};
+      var lignes = r.reservation_lignes || [];
+      colonne.appendChild(h('section', { class: 'groupe-fournisseuse' },
+        h('div', { class: 'groupe-fournisseuse__tete' }, h('strong', null, f.boutique_nom || f.nom_affiche || ''), h('span', { class: 'statut statut--' + r.statut }, t('statut.' + r.statut))),
+        lignes.map(function (l) {
+          return h('div', { class: 'article', style: { gridTemplateColumns: '1fr auto' } }, h('div', null, h('p', { class: 'article__titre' }, l.titre_snapshot), h('p', { class: 'article__meta' }, t('commun.du_au', { debut: L.dateCourte(r.date_debut), fin: L.dateCourte(r.date_fin) }))), h('span', null, L.euros(l.prix_location_cents)));
+        }),
+        r.statut === 'demande' ? h('p', { class: 'texte', style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, t('panier.attente_reponse', { heure: L.dateHeure(r.expire_at) })) : null,
+        r.statut === 'annulee' && r.motif_annulation ? h('p', { class: 'texte', style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, r.motif_annulation) : null,
+        ['payee', 'remise'].indexOf(r.statut) >= 0 && r.caution_cents ? h('p', { style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, t('panier.caution') + ' ' + L.euros(r.caution_cents) + ' — ', h('span', { class: 'statut statut--' + r.caution_statut }, t('caution.' + r.caution_statut)),
+          r.caution_statut === 'echec' ? h('button', { class: 'lien', type: 'button', style: { marginLeft: '10px' }, onclick: function (e) { rediriger(e.currentTarget, 'caution-reessayer', { reservation_id: r.id }); } }, t('panier.autoriser_caution')) : null) : null));
+    });
+
+    var totaux = actives.reduce(function (o, r) {
+      if (['acceptee', 'demande'].indexOf(r.statut) >= 0 || c.statut === 'payee' || c.statut === 'terminee') {
+        o.location += r.montant_location_cents; o.pressing += r.frais_pressing_cents + r.frais_envoi_cents; o.service += r.frais_service_cents; o.deduction += r.deduction_essayage_cents; o.caution += r.caution_cents;
+      }
+      return o;
+    }, { location: 0, pressing: 0, service: 0, deduction: 0, caution: 0 });
+    resume.appendChild(h('h2', { class: 'panneau__titre' }, t('panier.resume')));
+    resume.appendChild(h('div', { class: 'recap' },
+      ligneRecap('tenue.r_location', totaux.location), ligneRecap('panier.pressing_envoi', totaux.pressing), ligneRecap('tenue.r_service', totaux.service),
+      totaux.deduction ? ligneRecap('panier.deduction', -totaux.deduction) : null,
+      h('div', { class: 'recap__ligne recap__ligne--total' }, h('span', null, t('panier.total')), h('span', null, L.euros(totaux.location + totaux.pressing + totaux.service - totaux.deduction))),
+      h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t('tenue.r_caution')), h('span', null, L.euros(totaux.caution))),
+      h('p', { class: 'recap__ligne--note' }, t('panier.evenement', { date: L.date(c.date_evenement) }))));
+    resume.appendChild(retour);
+
+    function rediriger(bouton, action, corps) {
+      bouton.disabled = true;
+      L.api(action, corps).then(function (r) {
+        if (r.url) { location.href = r.url; return; }
+        if (r.identite_requise) { bouton.disabled = false; identite(); return; }
+        recharger();
+      }).catch(function (err) {
+        bouton.disabled = false;
+        L.vider(retour).appendChild(h('p', { class: 'message message--erreur', role: 'alert' }, L.messageErreur(err)));
+      });
+    }
+    function identite() {
+      L.vider(retour).appendChild(h('div', { class: 'message message--alerte' },
+        h('p', null, t('panier.identite_texte')),
+        h('button', { class: 'bouton bouton--petit', type: 'button', onclick: function (e) { rediriger(e.currentTarget, 'identite-session', { commande_id: c.id }); } }, t('panier.identite_bouton'))));
+    }
+    var annuler = h('button', { class: 'bouton bouton--ligne bouton--plein', type: 'button', onclick: function (e) {
+      var b = e.currentTarget;
+      L.ui.confirmer(t('panier.annuler_confirmer'), t('panier.tout_annuler')).then(function (ok) {
+        if (ok) { b.disabled = true; L.api('commande-annuler', { commande_id: c.id }).then(recharger).catch(function (err) { b.disabled = false; L.ui.toast(L.messageErreur(err), 'erreur'); }); }
+      });
+    } }, t('panier.tout_annuler'));
+
+    if (c.statut === 'en_attente_reponses') {
+      resume.appendChild(h('p', { class: 'message' }, t('panier.attente')));
+      resume.appendChild(h('div', { class: 'actions' }, annuler));
+    } else if (c.statut === 'a_payer') {
+      if (refusees.length) resume.appendChild(h('p', { class: 'message message--alerte' }, t('panier.partiel')));
+      if (c.identite_requise && !(L.profil && L.profil.identite_verifiee)) identite();
+      if (L.param('identite') === 'retour') resume.appendChild(h('p', { class: 'message' }, t('panier.identite_retour')));
+      resume.appendChild(h('div', { class: 'actions' },
+        h('button', { class: 'bouton bouton--plein', type: 'button', onclick: function (e) { rediriger(e.currentTarget, 'checkout-creer', { commande_id: c.id }); } }, t('panier.payer')),
+        annuler,
+        h('p', { class: 'champ__aide', style: { width: '100%', textAlign: 'center', margin: 0 } }, t('panier.moyens'))));
+    } else if (c.statut === 'payee' || c.statut === 'terminee') {
+      var aEnregistrer = actives.some(function (r) { return ['payee', 'remise'].indexOf(r.statut) >= 0 && ['a_enregistrer', 'echec'].indexOf(r.caution_statut) >= 0; });
+      if (aEnregistrer) {
+        resume.appendChild(h('div', { class: 'message message--alerte' }, h('p', null, t('panier.carte_texte')),
+          h('button', { class: 'bouton', type: 'button', onclick: function (e) { rediriger(e.currentTarget, 'caution-setup', { commande_id: c.id }); } }, t('panier.carte_bouton'))));
+      } else {
+        resume.appendChild(h('p', { class: 'message message--succes' }, t('panier.pret')));
+        resume.appendChild(h('div', { class: 'actions' }, h('a', { class: 'bouton bouton--plein', href: 'compte.html?vue=reservations' }, t('panier.voir_espace'))));
+      }
+    } else if (c.statut === 'annulee') {
+      resume.appendChild(h('p', { class: 'message' }, t('panier.annulee')));
+    }
+  }
+
+  // ===========================================================================
   // Pages légales : sommaire
   // ===========================================================================
   L.pages.legal = function () {};
