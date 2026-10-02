@@ -66,6 +66,10 @@
         Promise.resolve(VUES[o](contenu, function () { aller(o); })).catch(function (e) { console.error(e); L.ui.etatVide(contenu, L.messageErreur(e)); });
       }
       aller(courant);
+      window.addEventListener('hashchange', function () {
+        var o = location.hash.slice(1);
+        if (o !== courant && ONGLETS.some(function (x) { return x[0] === o; })) aller(o);
+      });
     });
   };
 

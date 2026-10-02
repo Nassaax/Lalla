@@ -168,11 +168,15 @@ p { margin: 0 0 1em; }
 @media (min-width: 1024px) {
   .burger { display: none; }
   .nav { display: flex; gap: 28px; margin-left: 40px; }
-  .nav__lien { font-size: 13px; font-weight: 600; letter-spacing: .04em; text-decoration: none; position: relative; padding: 6px 0; }
+  .nav__lien { font-size: 13px; font-weight: 600; letter-spacing: .04em; text-decoration: none; position: relative; padding: 6px 0; white-space: nowrap; }
   .nav__lien::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--or); transform: scaleX(0); transform-origin: right; transition: transform .45s var(--ease); }
   .nav__lien:hover::after, .nav__lien.est-actif::after { transform: scaleX(1); transform-origin: left; }
   .nav__lien--accent { color: var(--emeraude); }
   .nav__compte { display: inline-block; }
+}
+@media (min-width: 1024px) and (max-width: 1299px) {
+  .nav { gap: 20px; margin-left: 28px; }
+  .nav__lien[href$="#collections"], .nav__lien[href$="#comment"] { display: none; }
 }
 @media (min-width: 600px) { .nav__compte { display: inline-block; } }
 
@@ -580,7 +584,7 @@ select.champ__controle { appearance: none; -webkit-appearance: none; padding-rig
 .num { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* Calendrier */
-.calendrier { display: grid; gap: 10px; }
+.calendrier { display: grid; gap: 10px; max-width: 520px; }
 .calendrier__tete { display: flex; justify-content: space-between; align-items: center; }
 .calendrier__grille { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 .calendrier__jour-nom { font-size: 11px; text-align: center; color: var(--gris); text-transform: uppercase; padding: 4px 0; }

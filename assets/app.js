@@ -434,10 +434,10 @@
           h('li', null, h('a', { href: 'confidentialite.html', 'data-i18n': 'footer.confidentialite' }, t('footer.confidentialite'))),
           h('li', null, h('a', { href: 'mailto:' + C.brand.email }, C.brand.email)))),
       h('div', { class: 'pied__bas' },
-        h('span', { 'data-i18n': 'footer.droits' }, t('footer.droits', { annee: annee })),
+        h('span', { 'data-droits': '' }, t('footer.droits', { annee: annee })),
         h('span', { 'data-i18n': 'footer.villes' }, t('footer.villes')))));
     // l'année est une variable : on la réinjecte au changement de langue
-    document.addEventListener('lalla:langue', function () { var s = $('[data-i18n="footer.droits"]', zone); if (s) s.textContent = t('footer.droits', { annee: annee }); });
+    document.addEventListener('lalla:langue', function () { var s = $('[data-droits]', zone); if (s) s.textContent = t('footer.droits', { annee: annee }); });
   };
 
   /** Fenêtre de connexion / inscription (email + mot de passe, ou lien magique). */

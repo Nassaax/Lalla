@@ -117,8 +117,8 @@ async function stockage(req, res, url) {
       const bucket = m[1], nom = decodeURIComponent(m[2]);
       if (req.method === 'POST') {
         const vu = await avecRole(req, (c) => c.query('select 1 from storage.objects where bucket_id=$1 and name=$2', [bucket, nom]));
-        if (!vu.rowCount) return json(400, { statusCode: '404', error: 'not_found', message: 'Object not found' });
-        return json(200, { signedURL: `/object/sign/${bucket}/${encodeURIComponent(nom)}?token=local` });
+        if (!vu.rowCount) { if (process.env.DEBUG_STOCKAGE) console.error('[stockage] introuvable', bucket, nom); return json(400, { statusCode: '404', error: 'not_found', message: 'Object not found' }); }
+        return json(200, { signedURL: `/object/sign/${bucket}/${nom.split('/').map(encodeURIComponent).join('/')}?token=local` });
       }
       const fichier = path.join(dossier, bucket, nom);
       res.setHeader('Content-Type', TYPES[path.extname(fichier)] || 'image/webp');
@@ -156,6 +156,7 @@ async function stockage(req, res, url) {
     }
     return json(404, { message: 'Route de stockage non émulée' });
   } catch (e) {
+    if (process.env.DEBUG_STOCKAGE) console.error('[stockage]', req.method, url.pathname, e.message);
     const rls = /row-level security|permission denied/.test(e.message);
     return json(rls ? 403 : 400, { statusCode: rls ? '403' : '400', error: rls ? 'Unauthorized' : 'Error', message: e.message });
   }

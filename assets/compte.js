@@ -72,6 +72,8 @@
     }
     etat.aller = aller;
     afficher(contenu);
+    var actif = $('.onglet.est-actif', nav);
+    if (actif && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = actif.offsetLeft - 16;
     badges(nav);
   }
 

@@ -314,7 +314,7 @@ Sur le plan Hobby de Vercel, un cron ne peut s'exécuter qu'une fois par jour. P
 | admin.html | Back-office |
 | conditions, mentions-legales, confidentialite | Documents légaux en brouillon |
 
-Fichiers partagés : `assets/config.js` (marque et liens), `assets/i18n.js` (dictionnaire FR/NL et bascule sans rechargement), `assets/app.js` (Supabase, session, UI, motion), `assets/admin.js`, `assets/style.css`.
+Fichiers partagés : `assets/config.js` (marque et liens), `assets/i18n.js` (dictionnaire FR/NL et bascule sans rechargement), `assets/app.js` (Supabase, session, UI, motion), `assets/admin.js`, `assets/style.css`. Contrôleurs par page : `assets/pages.js` (pages publiques, panier, hub) et `assets/compte.js` (espace personnel).
 
 ---
 
