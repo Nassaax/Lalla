@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>LALLAT, carrousels Instagram</title>
+<link rel="stylesheet" href="../commun.css">
+<style>
+  body { background: #ccc; display: grid; gap: 40px; padding: 40px; }
+  .s { position: relative; width: 1080px; height: 1350px; overflow: hidden; background: var(--i); color: var(--e); }
+  .s.bx { background: var(--b); color: var(--i); }
+  .s.cr { background: var(--i2); }
+  .pad { position: absolute; inset: 0; padding: 110px 96px 150px; display: flex; flex-direction: column; }
+  .pied { position: absolute; left: 96px; right: 96px; bottom: 64px; display: flex; justify-content: space-between; align-items: center; font-size: 24px; letter-spacing: .2em; text-transform: uppercase; }
+  .pied .mot { font-size: 26px; color: var(--b); letter-spacing: .3em; }
+  .bx .pied .mot, .photo-s .pied .mot { color: var(--i); }
+  .pied .n { color: var(--g); font-size: 22px; } .bx .pied .n, .photo-s .pied .n { color: #E8D3BF; }
+  .sur { font-size: 26px; color: var(--b); margin-bottom: 34px; }
+  .bx .sur, .photo-s .sur { color: var(--o); }
+  h1, h2 { font-family: Bodoni; font-weight: 500; line-height: 1.04; }
+  h1 { font-size: 112px; } h2 { font-size: 88px; }
+  h1 em, h2 em { font-style: italic; color: var(--b); }
+  .bx h1 em, .bx h2 em, .photo-s h1 em { color: #F4DFC2; }
+  p.txt { font-size: 40px; line-height: 1.45; color: var(--g); margin-top: 44px; max-width: 860px; }
+  .bx p.txt { color: #FFF1E2; }
+  .bas { margin-top: auto; }
+  .photo-s { color: var(--i); }
+  .photo-s > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .photo-s::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(30,12,12,.92) 0%, rgba(30,12,12,.7) 34%, rgba(30,12,12,.15) 60%, rgba(30,12,12,0) 72%); }
+  .photo-s .sur { color: #F4DFC2; }
+  .photo-s .pad, .photo-s .pied { z-index: 2; }
+  .glisser { display: inline-flex; align-items: center; gap: 16px; font-size: 28px; color: #FFF1E2; margin-top: 40px; }
+  .glisser i { display: inline-block; width: 70px; height: 2px; background: var(--o); position: relative; }
+  .glisser i::after { content: ''; position: absolute; right: 0; top: -7px; width: 14px; height: 14px; border-top: 2px solid var(--o); border-right: 2px solid var(--o); transform: rotate(45deg); }
+  .grand-chiffre { font-family: Bodoni; font-size: 220px; white-space: nowrap; line-height: 1; color: var(--b); }
+  .bx .grand-chiffre { color: var(--i); }
+  .etapes { display: grid; gap: 34px; margin-top: 60px; }
+  .etape { display: grid; grid-template-columns: 110px 1fr; gap: 30px; align-items: start; background: #fff; border-radius: 34px; padding: 40px 44px; }
+  .etape i { font-family: Bodoni; font-style: italic; font-size: 92px; line-height: .9; color: var(--b); }
+  .etape b { display: block; font-size: 40px; font-weight: 500; }
+  .etape span { display: block; font-size: 30px; color: var(--g); line-height: 1.4; margin-top: 8px; }
+  .liste { display: grid; gap: 26px; margin-top: 60px; }
+  .ligne { display: flex; gap: 32px; align-items: center; padding: 30px 0; border-bottom: 1px solid rgba(36,27,23,.12); }
+  .bx .ligne { border-color: rgba(255,249,240,.18); }
+  .ligne svg { width: 70px; height: 70px; flex-shrink: 0; color: var(--b); }
+  .bx .ligne svg { color: var(--o); }
+  .ligne b { display: block; font-size: 38px; font-weight: 500; }
+  .ligne span { display: block; font-size: 29px; color: var(--g); margin-top: 6px; line-height: 1.35; }
+  .bx .ligne span { color: #E8D3BF; }
+  .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 60px; }
+  .trio figure { position: relative; border-radius: 28px; overflow: hidden; aspect-ratio: 3 / 4.6; }
+  .trio img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; }
+  .trio figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 60px 22px 24px; background: linear-gradient(to top, rgba(30,12,12,.8), transparent); color: var(--i); font-family: Bodoni; font-size: 40px; }
+  .calc { margin-top: 64px; background: rgba(255,249,240,.08); border: 1px solid rgba(255,249,240,.2); border-radius: 36px; padding: 50px 54px; }
+  .calc .l { display: flex; justify-content: space-between; font-size: 36px; padding: 16px 0; color: #FFF1E2; }
+  .calc .tot { border-top: 1px solid rgba(255,249,240,.25); margin-top: 18px; padding-top: 30px; display: flex; justify-content: space-between; align-items: baseline; }
+  .calc .tot span { font-size: 30px; color: #F4DFC2; text-transform: uppercase; letter-spacing: .15em; }
+  .calc .tot b { font-family: Bodoni; font-weight: 500; font-size: 120px; }
+  .note { font-size: 24px; color: #E8D3BF; margin-top: 26px; line-height: 1.4; }
+  .filigrane { position: absolute; right: -90px; bottom: -40px; width: 560px; height: 740px; opacity: .07; pointer-events: none; }
+  .bx .filigrane { opacity: .12; }
+  .pad { z-index: 1; }
+  .qr h2 { font-size: 104px; } .qr p.txt { font-size: 46px; color: var(--e); opacity: .82; }
+  .q { font-family: Bodoni; font-style: italic; font-size: 30px; color: var(--b); margin-bottom: 26px; }
+  .cta { display: inline-block; margin-top: 56px; background: var(--i); color: var(--b); font-size: 42px; font-weight: 500; padding: 30px 62px; border-radius: 999px; }
+  .s:not(.bx) .cta { background: var(--b); color: var(--i); }
+  .logo { display: flex; flex-direction: column; align-items: center; text-align: center; margin: auto 0; }
+  .logo svg { width: 190px; height: 250px; }
+  .logo .L { font-family: Bodoni; font-size: 160px; line-height: 1; margin-top: -190px; margin-bottom: 70px; color: var(--i); }
+  .logo .mot { font-size: 96px; margin-top: 10px; }
+  .actions { display: flex; gap: 40px; justify-content: center; margin-top: 70px; font-size: 28px; color: #F4DFC2; }
+  .actions span { display: flex; align-items: center; gap: 12px; }
+  .pastilles { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 50px; }
+  .pastilles span { font-size: 30px; padding: 16px 30px; border-radius: 999px; background: #fff; color: var(--b); }
+  .bx .pastilles span { background: rgba(255,249,240,.1); color: var(--i); border: 1px solid rgba(255,249,240,.25); }
+</style>
+</head>
+<body>
+
+<!-- =========================== CARROUSEL 1 : LE CONCEPT =========================== -->
+<section class="s photo-s" data-nom="1-concept/01">
+  <img src="../../assets/photos/occasion-soiree.webp" alt="" style="object-position:50% 12%">
+  <div class="pad"><div class="bas">
+    <p class="sur surtitre">Nouveau en Belgique</p>
+    <h1>Votre tenue de fête, <em>sans l'acheter.</em></h1>
+    <span class="glisser">Découvrez comment <i></i></span>
+  </div></div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">1 / 7</span></div>
+</section>
+
+<section class="s" data-nom="1-concept/02">
+  <div class="pad">
+    <p class="sur surtitre">Le constat</p>
+    <div class="grand-chiffre">1 000 €</div>
+    <h2 style="margin-top:30px">C'est souvent le prix d'une belle takchita… <em>portée une seule soirée.</em></h2>
+    <p class="txt">Mariages, fiançailles, henné, Aïd&nbsp;: chaque fête demande une tenue. Et les plus belles dorment ensuite dans une housse.</p>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">2 / 7</span></div>
+</section>
+
+<section class="s bx" data-nom="1-concept/03">
+  <div class="pad">
+    <p class="sur surtitre">L'idée</p>
+    <h1>Et si on se <em>prêtait</em> nos tenues&nbsp;?</h1>
+    <p class="txt">LALLAT réunit celles qui ont des tenues et celles qui en cherchent. Particulières, negafas et créatrices louent leurs pièces, près de chez vous, partout en Belgique.</p>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">3 / 7</span></div>
+</section>
+
+<section class="s cr" data-nom="1-concept/04">
+  <div class="pad">
+    <p class="sur surtitre">Comment ça marche</p>
+    <h2>Aussi simple <em>qu'une réservation.</em></h2>
+    <div class="etapes">
+      <div class="etape"><i>1</i><div><b>Cherchez</b><span>Par tenue, code postal et date. Les mesures exactes sont indiquées.</span></div></div>
+      <div class="etape"><i>2</i><div><b>Réservez</b><span>Posez vos questions par message, puis payez en Bancontact ou par carte.</span></div></div>
+      <div class="etape"><i>3</i><div><b>Portez, rendez</b><span>Remise près de chez vous au créneau convenu. Rendez la tenue telle quelle.</span></div></div>
+    </div>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">4 / 7</span></div>
+</section>
+
+<section class="s" data-nom="1-concept/05">
+  <div class="pad">
+    <p class="sur surtitre">Les occasions</p>
+    <h2>Une tenue <em>pour chaque fête.</em></h2>
+    <div class="trio">
+      <figure><img src="../../assets/photos/occasion-fiancailles.webp" alt=""><figcaption>Fiançailles</figcaption></figure>
+      <figure><img src="../../assets/photos/occasion-aid.webp" alt=""><figcaption>Aïd</figcaption></figure>
+      <figure><img src="../../assets/photos/occasion-soiree.webp" alt=""><figcaption>Soirée</figcaption></figure>
+    </div>
+    <div class="pastilles"><span>Caftans</span><span>Takchitas</span><span>Tenues de mariée</span><span>Jabadors</span><span>Enfants</span><span>Accessoires</span></div>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">5 / 7</span></div>
+</section>
+
+<section class="s bx" data-nom="1-concept/06">
+  <div class="pad">
+    <p class="sur surtitre">Protection LALLAT</p>
+    <h2>Chaque location <em>est protégée.</em></h2>
+    <div class="liste">
+      <div class="ligne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3l7 3v6c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><div><b>Fournisseuses vérifiées</b><span>Chaque annonce est relue avant publication.</span></div></div>
+      <div class="ligne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg><div><b>Paiement sécurisé</b><span>La fournisseuse n'est payée qu'après le retour.</span></div></div>
+      <div class="ligne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>Caution encadrée</b><span>Une simple empreinte bancaire, libérée au retour.</span></div></div>
+      <div class="ligne" style="border:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 7h16l-1.5 12h-13z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><div><b>Pressing compris</b><span>Rendez la tenue telle quelle, le nettoyage est prévu.</span></div></div>
+    </div>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">6 / 7</span></div>
+</section>
+
+<section class="s bx" data-nom="1-concept/07">
+  <div class="pad">
+    <div class="logo">
+      <svg viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#C9A66B" stroke-width="7"/></svg>
+      <div class="L">L</div>
+      <div class="mot">LALLAT</div>
+      <p class="txt" style="text-align:center;font-family:Bodoni;font-style:italic;color:#F4DFC2;font-size:44px">La tenue de vos rêves, prêtée près de chez vous.</p>
+      <span class="cta">Inscription gratuite sur lallat.be</span>
+      <div class="actions"><span>♡ Enregistrez</span><span>↗ Partagez à votre sœur</span></div>
+    </div>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">7 / 7</span></div>
+</section>
+
+<!-- =========================== CARROUSEL 2 : DEVENIR FOURNISSEUSE =========================== -->
+<section class="s photo-s" data-nom="2-fournisseuse/01">
+  <img src="../../assets/photos/devenir.webp" alt="" style="object-position:50% 20%">
+  <div class="pad"><div class="bas">
+    <p class="sur surtitre">Vous avez des tenues&nbsp;?</p>
+    <h1>Votre takchita dort dans une housse&nbsp;?</h1>
+    <span class="glisser">Faites-la voyager <i></i></span>
+  </div></div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">1 / 6</span></div>
+</section>
+
+<section class="s bx" data-nom="2-fournisseuse/02">
+  <div class="pad">
+    <p class="sur surtitre">Ce que ça peut rapporter</p>
+    <h2>Une tenue qui dort, <em>c'est un revenu qui attend.</em></h2>
+    <div class="calc">
+      <div class="l"><span>Prix de location</span><span>90 €</span></div>
+      <div class="l"><span>Locations par mois</span><span>× 3</span></div>
+      <div class="l"><span>Commission LALLAT</span><span>15 %</span></div>
+      <div class="tot"><span>Par mois</span><b>≈ 230 €</b></div>
+    </div>
+    <p class="note">Exemple indicatif. Vous fixez votre prix. Le pressing vous est reversé en plus.</p>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">2 / 6</span></div>
+</section>
+
+<section class="s" data-nom="2-fournisseuse/03">
+  <div class="pad">
+    <p class="sur surtitre">Vous gardez la main</p>
+    <h2>Vos tenues, <em>vos règles.</em></h2>
+    <div class="liste">
+      <div class="ligne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 12h16M12 4v16"/></svg><div><b>Votre prix</b><span>Vous choisissez le tarif de chaque pièce.</span></div></div>
+      <div class="ligne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><div><b>Vos dates</b><span>Bloquez votre calendrier quand vous le voulez.</span></div></div>
+      <div class="ligne"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><div><b>Votre remise</b><span>En main propre au créneau convenu, ou envoi assuré.</span></div></div>
+      <div class="ligne" style="border:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg><div><b>Réservation instantanée</b><span>En option&nbsp;: acceptez automatiquement les demandes.</span></div></div>
+    </div>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">3 / 6</span></div>
+</section>
+
+<section class="s cr" data-nom="2-fournisseuse/04">
+  <div class="pad">
+    <p class="sur surtitre">On s'occupe du reste</p>
+    <h2>Vous prêtez. <em>Nous gérons.</em></h2>
+    <div class="etapes">
+      <div class="etape"><i>✓</i><div><b>Le paiement</b><span>Encaissé à la réservation, versé 24 h après le retour confirmé.</span></div></div>
+      <div class="etape"><i>✓</i><div><b>La caution</b><span>Une empreinte bancaire de la cliente, et un état des lieux en photos.</span></div></div>
+      <div class="etape"><i>✓</i><div><b>Le pressing</b><span>Payé par la cliente et reversé à vous, en plus de la location.</span></div></div>
+    </div>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">4 / 6</span></div>
+</section>
+
+<section class="s" data-nom="2-fournisseuse/05">
+  <div class="pad">
+    <p class="sur surtitre">Pour qui&nbsp;?</p>
+    <h2>Pour toutes celles <em>qui ont de belles pièces.</em></h2>
+    <div class="liste">
+      <div class="ligne"><div><b>Particulières</b><span>Vos tenues de mariage, de fiançailles ou de fête qui ne servent plus.</span></div></div>
+      <div class="ligne"><div><b>Negafas</b><span>Une vitrine de plus pour vos collections, avec paiement et caution gérés.</span></div></div>
+      <div class="ligne" style="border:0"><div><b>Créatrices</b><span>Faites découvrir vos créations à des clientes partout en Belgique.</span></div></div>
+    </div>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">5 / 6</span></div>
+</section>
+
+<section class="s bx" data-nom="2-fournisseuse/06">
+  <div class="pad">
+    <div class="logo">
+      <svg viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#C9A66B" stroke-width="7"/></svg>
+      <div class="L">L</div>
+      <div class="mot">LALLAT</div>
+      <p class="txt" style="text-align:center;font-size:42px">Publiez votre première tenue en quelques minutes. C'est gratuit.</p>
+      <span class="cta">lallat.be</span>
+      <div class="actions"><span>♡ Enregistrez</span><span>↗ Envoyez à une negafa</span></div>
+    </div>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">6 / 6</span></div>
+</section>
+
+<!-- =========================== CARROUSEL 3 : VOS QUESTIONS =========================== -->
+<section class="s photo-s" data-nom="3-questions/01">
+  <img src="../../assets/photos/occasion-fiancailles.webp" alt="" style="object-position:50% 10%">
+  <div class="pad"><div class="bas">
+    <p class="sur surtitre">Louer une tenue</p>
+    <h1>5 questions <em>qu'on nous pose.</em></h1>
+    <span class="glisser">Les réponses <i></i></span>
+  </div></div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">1 / 7</span></div>
+</section>
+
+<section class="s qr" data-nom="3-questions/02">
+  <div class="pad">
+    <p class="q">Question 1</p>
+    <h2>Et si la taille <em>ne me va pas&nbsp;?</em></h2>
+    <p class="txt">Chaque annonce indique les mesures exactes&nbsp;: poitrine, taille, hanches, longueur. Vous filtrez avec les vôtres.</p>
+    <p class="txt">Quand l'annonce le propose, vous pouvez aussi réserver un essayage. Son prix est déduit si vous louez ensuite.</p>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">2 / 7</span></div>
+</section>
+
+<section class="s cr qr" data-nom="3-questions/03">
+  <div class="pad">
+    <p class="q">Question 2</p>
+    <h2>La caution, <em>c'est combien&nbsp;?</em></h2>
+    <p class="txt">Ce n'est pas un débit. C'est une simple empreinte bancaire, posée peu avant la remise.</p>
+    <p class="txt">Elle est libérée automatiquement au retour de la tenue, quand tout va bien.</p>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">3 / 7</span></div>
+</section>
+
+<section class="s qr" data-nom="3-questions/04">
+  <div class="pad">
+    <p class="q">Question 3</p>
+    <h2>Je dois la laver <em>avant de la rendre&nbsp;?</em></h2>
+    <p class="txt">Non. Le pressing est compris. Rendez la tenue telle quelle, à la date convenue. Le nettoyage est déjà prévu.</p>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">4 / 7</span></div>
+</section>
+
+<section class="s cr qr" data-nom="3-questions/05">
+  <div class="pad">
+    <p class="q">Question 4</p>
+    <h2>Comment je <em>la récupère&nbsp;?</em></h2>
+    <p class="txt">Vous choisissez un créneau avec la fournisseuse, directement sur le site. Son adresse s'affiche après le paiement.</p>
+    <p class="txt">Certaines proposent aussi l'envoi assuré à domicile.</p>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">5 / 7</span></div>
+</section>
+
+<section class="s qr" data-nom="3-questions/06">
+  <div class="pad">
+    <p class="q">Question 5</p>
+    <h2>Et si je l'abîme <em>sans faire exprès&nbsp;?</em></h2>
+    <p class="txt">Un état des lieux en photos est fait à la remise et au retour. En cas de dommage, la fournisseuse a 48 heures pour le signaler.</p><p class="txt">Notre équipe examine les photos et décide de façon juste&nbsp;: tout ou partie de la caution peut être retenu.</p>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">6 / 7</span></div>
+</section>
+
+<section class="s bx" data-nom="3-questions/07">
+  <div class="pad">
+    <div class="logo">
+      <svg viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#C9A66B" stroke-width="7"/></svg>
+      <div class="L">L</div>
+      <div class="mot">LALLAT</div>
+      <p class="txt" style="text-align:center;font-size:42px">Une autre question ? Écrivez-nous en message privé, ou consultez l'aide sur lallat.be.</p>
+      <span class="cta">lallat.be</span>
+      <div class="actions"><span>♡ Enregistrez pour plus tard</span></div>
+    </div>
+  </div>
+  <div class="pied"><span class="mot">LALLAT</span><span class="n">7 / 7</span></div>
+</section>
+
+<script>
+  // Arche en filigrane sur les diapositives de texte
+  document.querySelectorAll('section.s:not(.photo-s)').forEach(function (s) {
+    if (s.querySelector('.logo')) return;
+    var c = s.classList.contains('bx') ? '#C9A66B'&nbsp;: '#5E1D27';
+    s.insertAdjacentHTML('afterbegin', '<svg class="filigrane" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="' + c + '" stroke-width="6"/><path d="M60 524 V246 C60 146 114 80 200 42 C286 80 340 146 340 246 V524" fill="none" stroke="' + c + '" stroke-width="2"/></svg>');
+  });
+</script>
+</body>
+</html>

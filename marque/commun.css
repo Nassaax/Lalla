@@ -1,0 +1,12 @@
+/* LALLAT, styles communs des supports réseaux sociaux (vidéo, carrousels). */
+@font-face { font-family: Bodoni; src: url(polices/bodoni-moda-latin-500-normal.woff2); font-weight: 500; }
+@font-face { font-family: Bodoni; font-style: italic; src: url(polices/bodoni-moda-latin-500-italic.woff2); font-weight: 500; }
+@font-face { font-family: Jost; src: url(polices/jost-latin-400-normal.woff2); font-weight: 400; }
+@font-face { font-family: Jost; src: url(polices/jost-latin-500-normal.woff2); font-weight: 500; }
+:root { --b: #5E1D27; --b2: #7A3640; --i: #FAF6F0; --i2: #F1E8DA; --o: #C9A66B; --e: #241B17; --g: #54483F; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; font-family: Jost, sans-serif; -webkit-font-smoothing: antialiased; }
+.serif { font-family: Bodoni, serif; font-weight: 500; }
+.serif em, em.serif { font-style: italic; }
+.mot { font-family: Bodoni, serif; font-weight: 500; letter-spacing: .3em; margin-right: -.3em; line-height: 1; }
+.surtitre { font-family: Jost; font-weight: 500; text-transform: uppercase; letter-spacing: .3em; }

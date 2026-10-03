@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>LALLAT, vidéo explicative</title>
+<link rel="stylesheet" href="../commun.css">
+<style>
+  #scene { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--i); }
+  .plan { position: absolute; inset: 0; opacity: 0; }
+  .centre { display: grid; place-items: center; text-align: center; }
+  .photo { position: absolute; object-fit: cover; }
+
+  /* 1. Ouverture */
+  #p1 { background: var(--b); }
+  #p1 .arche { position: absolute; left: 340px; top: 520px; width: 400px; height: 528px; }
+  #p1 .arche path { fill: none; stroke: var(--o); }
+  #p1 .L { position: absolute; left: 0; right: 0; top: 700px; text-align: center; font-size: 330px; color: var(--i); line-height: 1; }
+  #p1 .nom { position: absolute; left: 0; right: 0; top: 1170px; display: flex; justify-content: center; font-size: 128px; color: var(--i); }
+  #p1 .nom span { display: inline-block; }
+  #p1 .slogan { position: absolute; left: 0; right: 0; top: 1360px; text-align: center; font-size: 30px; color: var(--o); }
+
+  /* 2. Le constat */
+  #p2 .cadre { position: absolute; left: 90px; top: 150px; width: 900px; height: 1080px; border-radius: 40px; overflow: hidden; }
+  #p2 .cadre img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+  #p2 .t1 { position: absolute; left: 90px; right: 90px; top: 1300px; font-size: 82px; line-height: 1.08; color: var(--e); }
+  #p2 .t1 em { color: var(--b); }
+  #p2 .t2 { position: absolute; left: 90px; right: 90px; top: 1560px; font-size: 40px; line-height: 1.35; color: var(--g); }
+  #p2 .prix { position: absolute; right: 130px; top: 200px; background: var(--i); color: var(--b); border-radius: 999px; padding: 22px 38px; font-size: 44px; font-weight: 500; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+
+  /* 3. L'idée */
+  #p3 { background: var(--b); color: var(--i); }
+  #p3 .q { position: absolute; left: 90px; right: 90px; top: 640px; font-size: 120px; line-height: 1.04; }
+  #p3 .q em { color: #F4DFC2; }
+  #p3 .r { position: absolute; left: 90px; right: 90px; top: 1060px; font-size: 44px; line-height: 1.4; color: #FFF1E2; }
+  #p3 .ligne { position: absolute; left: 90px; top: 590px; height: 3px; width: 140px; background: var(--o); transform-origin: left; }
+
+  /* 4. Le parcours dans le site */
+  #p4 { background: var(--i2); }
+  #p4 .etapes { position: absolute; top: 96px; left: 0; right: 0; display: flex; justify-content: center; gap: 22px; }
+  #p4 .etape { font-size: 30px; padding: 16px 30px; border-radius: 999px; background: #fff; color: var(--g); border: 2px solid transparent; }
+  #p4 .etape.on { background: var(--b); color: var(--i); }
+  #p4 .legende { position: absolute; left: 80px; right: 80px; top: 196px; text-align: center; font-size: 54px; line-height: 1.1; color: var(--e); }
+  #p4 .legende em { color: var(--b); }
+  .tel { position: absolute; left: 175px; top: 330px; width: 730px; height: 1500px; border-radius: 96px; background: #15100E; padding: 22px; box-shadow: 0 60px 120px rgba(36,27,23,.35); }
+  .ecran { position: relative; width: 100%; height: 100%; border-radius: 76px; overflow: hidden; background: var(--i); }
+  .barre { height: 120px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 44px 22px; border-bottom: 1px solid #E6DCCB; background: var(--i); position: relative; z-index: 3; }
+  .barre .mot { font-size: 30px; color: var(--b); }
+  .barre .rond { width: 46px; height: 46px; border-radius: 50%; border: 2px solid #CDBFA9; }
+  .vue { position: absolute; left: 0; right: 0; top: 120px; bottom: 0; opacity: 0; }
+  /* vue recherche */
+  .v-recherche { background: linear-gradient(180deg, #3E1219 0%, #5E1D27 100%); padding: 70px 44px; color: var(--i); }
+  .v-recherche h3 { font-family: Bodoni; font-weight: 500; font-size: 64px; line-height: 1.05; margin-bottom: 40px; }
+  .v-recherche h3 em { color: #F4DFC2; }
+  .form { background: #fff; border-radius: 34px; color: var(--e); overflow: hidden; }
+  .champ { padding: 26px 34px; border-bottom: 1px solid #E9E0D2; }
+  .champ b { display: block; font-size: 24px; font-weight: 500; margin-bottom: 6px; }
+  .champ span { font-size: 32px; color: var(--g); }
+  .champ span.rempli { color: var(--e); }
+  .bouton { margin: 22px; border-radius: 999px; background: var(--b); color: var(--i); text-align: center; font-size: 32px; padding: 26px; font-weight: 500; }
+  .curseur { display: inline-block; width: 3px; height: 34px; background: var(--b); vertical-align: -6px; margin-left: 3px; }
+  /* vue résultats */
+  .v-resultats { padding: 34px 34px; background: var(--i); }
+  .v-resultats .compte { font-size: 28px; color: var(--g); margin-bottom: 24px; }
+  .v-resultats .compte b { color: var(--e); font-weight: 500; }
+  .liste { position: relative; }
+  .carte { display: flex; gap: 26px; margin-bottom: 30px; }
+  .carte img { width: 250px; height: 312px; border-radius: 26px; object-fit: cover; object-position: 50% 15%; flex-shrink: 0; }
+  .carte .t { font-size: 31px; font-weight: 500; color: var(--e); line-height: 1.2; margin: 10px 0 10px; }
+  .carte .m { font-size: 25px; color: var(--g); line-height: 1.35; }
+  .carte .p { font-size: 29px; color: var(--e); margin-top: 14px; }
+  .carte .p b { font-weight: 500; }
+  .pastille { display: inline-block; font-size: 22px; background: #F3E6D6; color: var(--b); padding: 6px 14px; border-radius: 999px; margin-top: 12px; }
+  .coeur { font-size: 30px; color: var(--b); }
+  /* vue annonce */
+  .v-annonce img.grande { width: 100%; height: 760px; object-fit: cover; object-position: 50% 18%; }
+  .v-annonce .infos { padding: 34px 40px; }
+  .v-annonce h4 { font-family: Bodoni; font-weight: 500; font-size: 50px; color: var(--e); line-height: 1.1; }
+  .v-annonce .m { font-size: 27px; color: var(--g); margin-top: 14px; }
+  .v-annonce .tags { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+  .v-annonce .tags span { font-size: 23px; padding: 8px 18px; border-radius: 999px; background: #F3E6D6; color: var(--b); }
+  .pied-resa { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 40px 40px; background: #fff; border-top: 1px solid #E9E0D2; display: flex; align-items: center; justify-content: space-between; }
+  .pied-resa .p { font-size: 30px; color: var(--e); } .pied-resa .p b { font-size: 40px; font-weight: 500; }
+  .pied-resa .bouton { margin: 0; padding: 24px 46px; }
+  /* vue paiement */
+  .v-paiement { padding: 50px 44px; }
+  .v-paiement h4 { font-family: Bodoni; font-weight: 500; font-size: 54px; color: var(--e); margin-bottom: 34px; }
+  .resume { background: #fff; border-radius: 30px; padding: 26px 34px; }
+  .resume .l { display: flex; justify-content: space-between; font-size: 29px; color: var(--g); padding: 18px 0; border-bottom: 1px solid #F0E8DC; }
+  .resume .l:last-child { border: 0; color: var(--e); font-weight: 500; }
+  .resume .l .ok { color: #2E6B4F; }
+  .moyens { display: flex; gap: 16px; margin: 30px 0; }
+  .moyens span { flex: 1; text-align: center; font-size: 26px; padding: 22px 0; border-radius: 22px; background: #fff; border: 2px solid #E6DCCB; color: var(--e); }
+  .moyens span.on { border-color: var(--b); color: var(--b); font-weight: 500; }
+  .securite { font-size: 24px; color: var(--g); text-align: center; margin-top: 16px; }
+  .confirme { position: absolute; inset: 0; background: var(--b); color: var(--i); display: grid; place-items: center; text-align: center; padding: 60px; opacity: 0; }
+  .confirme .rondok { width: 170px; height: 170px; border-radius: 50%; border: 4px solid var(--o); margin: 0 auto 44px; display: grid; place-items: center; }
+  .v-paiement .confirme h4, #ok h4 { color: var(--i); }
+  .confirme h4 { font-family: Bodoni; font-weight: 500; font-size: 62px; line-height: 1.08; }
+  .confirme p { font-size: 32px; color: #F4DFC2; margin-top: 28px; line-height: 1.4; }
+  .doigt { position: absolute; width: 96px; height: 96px; border-radius: 50%; background: rgba(94,29,39,.18); border: 3px solid rgba(94,29,39,.55); z-index: 9; opacity: 0; left: 0; top: 0; }
+
+  /* 5. Côté fournisseuse */
+  #p5 { background: var(--b); color: var(--i); }
+  #p5 .cadre { position: absolute; left: 90px; top: 130px; width: 900px; height: 900px; border-radius: 40px; overflow: hidden; }
+  #p5 .cadre img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 25%; }
+  #p5 .sur { position: absolute; left: 90px; top: 1090px; font-size: 28px; color: var(--o); }
+  #p5 .t { position: absolute; left: 90px; right: 90px; top: 1150px; font-size: 76px; line-height: 1.06; }
+  #p5 .t em { color: #F4DFC2; }
+  #p5 .gain { position: absolute; left: 90px; right: 90px; top: 1430px; background: rgba(255,249,240,.08); border: 1px solid rgba(255,249,240,.2); border-radius: 32px; padding: 34px 40px; }
+  #p5 .gain .l { font-size: 24px; color: #F4DFC2; text-transform: uppercase; letter-spacing: .2em; }
+  #p5 .gain .v { font-family: Bodoni; font-size: 110px; line-height: 1.1; margin-top: 8px; }
+  #p5 .gain .n { font-size: 25px; color: #E8D3BF; }
+
+  /* 6. Protection */
+  #p6 { background: var(--i); }
+  #p6 .t { position: absolute; left: 90px; right: 90px; top: 420px; font-size: 92px; line-height: 1.04; color: var(--e); }
+  #p6 .t em { color: var(--b); }
+  #p6 .grille { position: absolute; left: 90px; right: 90px; top: 760px; display: grid; gap: 30px; }
+  #p6 .g { display: flex; gap: 34px; align-items: center; background: #fff; border-radius: 34px; padding: 40px 44px; box-shadow: 0 16px 40px rgba(36,27,23,.07); }
+  #p6 .g svg { width: 84px; height: 84px; flex-shrink: 0; color: var(--b); }
+  #p6 .g b { display: block; font-size: 40px; font-weight: 500; color: var(--e); }
+  #p6 .g span { font-size: 29px; color: var(--g); line-height: 1.35; display: block; margin-top: 6px; }
+
+  /* 7. Fin */
+  #p7 { background: var(--b); }
+  #p7 .arche { position: absolute; left: 400px; top: 470px; width: 280px; height: 370px; }
+  #p7 .L { position: absolute; left: 0; right: 0; top: 590px; text-align: center; font-size: 230px; color: var(--i); line-height: 1; }
+  #p7 .nom { position: absolute; left: 0; right: 0; top: 930px; text-align: center; font-size: 112px; color: var(--i); }
+  #p7 .slogan { position: absolute; left: 90px; right: 90px; top: 1110px; text-align: center; font-family: Bodoni; font-style: italic; font-size: 52px; color: #F4DFC2; line-height: 1.2; }
+  #p7 .cta { position: absolute; left: 0; right: 0; top: 1330px; text-align: center; }
+  #p7 .cta span { display: inline-block; background: var(--i); color: var(--b); font-size: 44px; font-weight: 500; padding: 28px 60px; border-radius: 999px; }
+  #p7 .bas { position: absolute; left: 0; right: 0; top: 1520px; text-align: center; font-size: 28px; color: var(--o); }
+</style>
+</head>
+<body>
+<div id="scene">
+
+  <!-- 1. Ouverture -->
+  <section class="plan" id="p1">
+    <svg class="arche" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" stroke-width="5"/><path d="M53 524 V245 C53 144 109 77 200 37 C291 77 347 144 347 245 V524" stroke-width="2"/></svg>
+    <div class="L serif">L</div>
+    <div class="nom mot"><span>L</span><span>A</span><span>L</span><span>L</span><span>A</span><span>T</span></div>
+    <div class="slogan surtitre">Location de tenues marocaines</div>
+  </section>
+
+  <!-- 2. Le constat -->
+  <section class="plan" id="p2">
+    <div class="cadre"><img src="../../assets/photos/hub-mariage.webp" alt=""></div>
+    <div class="prix">1 200 €</div>
+    <div class="t1 serif">Une takchita de rêve… <em>portée une seule soirée.</em></div>
+    <div class="t2">Acheter pour chaque fête, ça coûte cher. Et les plus belles pièces dorment dans les housses.</div>
+  </section>
+
+  <!-- 3. L'idée -->
+  <section class="plan" id="p3">
+    <div class="ligne"></div>
+    <div class="q serif">Et si on se <em>prêtait</em> nos tenues ?</div>
+    <div class="r">LALLAT, c'est la plateforme de location de tenues marocaines entre particulières, negafas et créatrices, partout en Belgique.</div>
+  </section>
+
+  <!-- 4. Le parcours -->
+  <section class="plan" id="p4">
+    <div class="etapes"><span class="etape" id="e1">1. Cherchez</span><span class="etape" id="e2">2. Réservez</span><span class="etape" id="e3">3. Portez</span></div>
+    <div class="tel">
+      <div class="ecran">
+        <div class="barre"><span class="mot">LALLAT</span><span class="rond"></span></div>
+
+        <div class="vue v-recherche" id="vRech">
+          <h3>La tenue de vos rêves, <em>près de chez vous.</em></h3>
+          <div class="form">
+            <div class="champ"><b>Tenue</b><span class="rempli" id="fTenue">Toutes les tenues</span></div>
+            <div class="champ"><b>Où</b><span id="fCp">Votre code postal</span><i class="curseur" id="cur"></i></div>
+            <div class="champ"><b>Date de la fête</b><span id="fDate">jj/mm/aaaa</span></div>
+            <div class="bouton" id="bRech">Rechercher</div>
+          </div>
+        </div>
+
+        <div class="vue v-resultats" id="vRes">
+          <p class="compte"><b>14 tenues</b> disponibles le 14 juin près de 1080</p>
+          <div class="liste" id="liste">
+            <div class="carte"><img src="../../assets/photos/occasion-aid.webp" alt=""><div><span class="coeur">♡</span><p class="t">Caftan velours vert d'eau</p><p class="m">Chez Samira, negafa<br>Molenbeek · à 2 km</p><span class="pastille">⚡ Instantanée</span><p class="p"><b>85 €</b> la location</p></div></div>
+            <div class="carte"><img src="../../assets/photos/occasion-soiree.webp" alt=""><div><span class="coeur">♡</span><p class="t">Caftan velours gris perle</p><p class="m">Chez Nadia, particulière<br>Jette · à 4 km</p><p class="p"><b>70 €</b> la location</p></div></div>
+            <div class="carte"><img src="../../assets/photos/occasion-fiancailles.webp" alt=""><div><span class="coeur">♡</span><p class="t">Caftan ivoire et perles</p><p class="m">Chez Maison Yasmine<br>Anderlecht · à 6 km</p><p class="p"><b>120 €</b> la location</p></div></div>
+          </div>
+        </div>
+
+        <div class="vue v-annonce" id="vAnn">
+          <img class="grande" src="../../assets/photos/occasion-aid.webp" alt="">
+          <div class="infos">
+            <h4>Caftan velours vert d'eau</h4>
+            <p class="m">Chez Samira, negafa vérifiée · Molenbeek · ★ 4,9</p>
+            <div class="tags"><span>⚡ Réservation instantanée</span><span>Taille M</span><span>Pressing compris</span></div>
+          </div>
+          <div class="pied-resa"><p class="p"><b>85 €</b> la location</p><span class="bouton" id="bResa">Réserver</span></div>
+        </div>
+
+        <div class="vue v-paiement" id="vPay">
+          <h4>Votre réservation</h4>
+          <div class="resume">
+            <div class="l"><span>Location, 3 jours</span><span>85,00 €</span></div>
+            <div class="l"><span>Pressing et frais de service</span><span>19,25 €</span></div>
+            <div class="l"><span>Caution (empreinte)</span><span class="ok">Non débitée</span></div>
+            <div class="l"><span>Total</span><span>104,25 €</span></div>
+          </div>
+          <div class="moyens"><span class="on">Bancontact</span><span>Carte bancaire</span></div>
+          <div class="bouton" id="bPay">Payer 104,25 €</div>
+          <p class="securite">Paiement sécurisé. La fournisseuse est payée après le retour.</p>
+          <div class="confirme" id="ok">
+            <div>
+              <div class="rondok"><svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="#C9A66B" stroke-width="2"><path id="coche" d="M5 12.5l4.5 4.5L19 7.5" stroke-dasharray="22" stroke-dashoffset="22"/></svg></div>
+              <h4>Réservation confirmée</h4>
+              <p>Remise samedi 14 h à Molenbeek.<br>L'adresse s'affiche dans votre espace.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="doigt" id="doigt"></div>
+      </div>
+    </div>
+    <div class="legende serif" id="leg"></div>
+  </section>
+
+  <!-- 5. Côté fournisseuse -->
+  <section class="plan" id="p5">
+    <div class="cadre"><img src="../../assets/photos/devenir.webp" alt=""></div>
+    <p class="sur surtitre">Vous avez des tenues ?</p>
+    <div class="t serif">Votre takchita dort dans une housse ? <em>Faites-la voyager.</em></div>
+    <div class="gain"><p class="l">Revenu estimé par mois</p><p class="v"><span id="gain">0</span> €</p><p class="n">Exemple : 90 € la location, 3 locations par mois, commission déduite.</p></div>
+  </section>
+
+  <!-- 6. Protection -->
+  <section class="plan" id="p6">
+    <div class="t serif">Chaque location <em>est protégée.</em></div>
+    <div class="grille">
+      <div class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3l7 3v6c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><div><b>Fournisseuses vérifiées</b><span>Annonces relues, identité contrôlée.</span></div></div>
+      <div class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg><div><b>Paiement sécurisé</b><span>Bancontact ou carte, versé après le retour.</span></div></div>
+      <div class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>Caution encadrée</b><span>Une simple empreinte, libérée au retour.</span></div></div>
+      <div class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 7h16l-1.5 12h-13z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><div><b>Pressing compris</b><span>Rendez la tenue telle quelle.</span></div></div>
+    </div>
+  </section>
+
+  <!-- 7. Fin -->
+  <section class="plan" id="p7">
+    <svg class="arche" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#C9A66B" stroke-width="6"/></svg>
+    <div class="L serif">L</div>
+    <div class="nom mot">LALLAT</div>
+    <div class="slogan">La tenue de vos rêves,<br>prêtée près de chez vous.</div>
+    <div class="cta"><span>lallat.be</span></div>
+    <div class="bas surtitre">Partout en Belgique</div>
+  </section>
+</div>
+
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+  // Timeline unique, en pause : le script de rendu la positionne image par image (window.positionner).
+  const $ = (s) => document.querySelector(s);
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  const plan = (id, debut, fin) => {
+    tl.fromTo(id, { opacity: 0 }, { opacity: 1, duration: .45, ease: 'power2.inOut' }, debut);
+    if (fin) tl.to(id, { opacity: 0, duration: .45, ease: 'power2.inOut' }, fin);
+  };
+  const ecrire = (el, txt, t, d) => { const o = { n: 0 }; tl.to(o, { n: txt.length, duration: d, ease: 'none', onUpdate: () => { el.textContent = txt.slice(0, Math.round(o.n)) || el.dataset.vide; el.classList.toggle('rempli', o.n > 0); } }, t); };
+  const tap = (sel, t) => {
+    const pos = (axe) => () => { const e = $('.ecran').getBoundingClientRect(), r = $(sel).getBoundingClientRect(); return axe === 'x' ? r.left - e.left + r.width / 2 - 48 : r.top - e.top + r.height / 2 - 48; };
+    tl.set('#doigt', { x: pos('x'), y: pos('y') }, t - .5);
+    tl.fromTo('#doigt', { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: .35 }, t - .45);
+    tl.to(sel, { scale: .95, duration: .1, yoyo: true, repeat: 1, ease: 'power1.inOut' }, t);
+    tl.to('#doigt', { opacity: 0, scale: 1.3, duration: .3 }, t + .15);
+  };
+  const vue = (id, t, sortie) => {
+    tl.fromTo(id, { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: .5 }, t);
+    if (sortie) tl.to(id, { opacity: 0, x: -60, duration: .4, ease: 'power2.in' }, sortie);
+  };
+  const legende = (html, t) => {
+    tl.to('#leg', { opacity: 0, y: -10, duration: .2 }, t - .2);
+    tl.call(() => { $('#leg').innerHTML = html; }, null, t);
+    tl.fromTo('#leg', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .4, immediateRender: false }, t);
+  };
+  const etape = (id, t) => { tl.call(() => { document.querySelectorAll('.etape').forEach((e) => e.classList.toggle('on', '#' + e.id === id)); }, null, t); };
+
+  // 1. Ouverture (0 à 3,6 s)
+  plan('#p1', 0, 3.4);
+  document.querySelectorAll('#p1 .arche path').forEach((p) => { const l = p.getTotalLength(); p.style.strokeDasharray = l; p.style.strokeDashoffset = l; });
+  tl.to('#p1 .arche path', { strokeDashoffset: 0, duration: 1.3, ease: 'power2.inOut', stagger: .15 }, .15);
+  tl.from('#p1 .L', { opacity: 0, y: 40, duration: .9 }, .7);
+  tl.from('#p1 .nom span', { opacity: 0, y: 50, duration: .7, stagger: .07 }, 1.2);
+  tl.from('#p1 .slogan', { opacity: 0, letterSpacing: '.6em', duration: 1 }, 1.8);
+
+  // 2. Le constat (3,4 à 8,4 s)
+  plan('#p2', 3.4, 8.2);
+  tl.from('#p2 .cadre', { clipPath: 'inset(100% 0 0 0 round 40px)', duration: 1.1, ease: 'power3.inOut' }, 3.5);
+  tl.from('#p2 .cadre img', { scale: 1.25, duration: 4.6, ease: 'power1.out' }, 3.5);
+  tl.from('#p2 .prix', { opacity: 0, scale: .6, duration: .6, ease: 'back.out(2)' }, 4.4);
+  tl.from('#p2 .t1', { opacity: 0, y: 50, duration: .8 }, 4.6);
+  tl.from('#p2 .t2', { opacity: 0, y: 30, duration: .8 }, 5.6);
+  tl.set('#p2 .prix', { textDecoration: 'line-through', color: '#9A8F86' }, 6.6);
+
+  // 3. L'idée (8,2 à 12,6 s)
+  plan('#p3', 8.2, 12.4);
+  tl.from('#p3 .ligne', { scaleX: 0, duration: .7 }, 8.5);
+  tl.from('#p3 .q', { opacity: 0, y: 60, duration: .9 }, 8.6);
+  tl.from('#p3 .r', { opacity: 0, y: 40, duration: .9 }, 9.8);
+
+  // 4. Le parcours dans le site (12,4 à 27 s)
+  plan('#p4', 12.4, 26.8);
+  tl.from('.tel', { y: 300, opacity: 0, duration: 1 }, 12.5);
+  tl.from('#p4 .etapes', { opacity: 0, y: -20, duration: .6 }, 12.8);
+  etape('#e1', 12.9); legende('Cherchez par <em>tenue, lieu et date</em>', 13);
+  vue('#vRech', 12.9, 17.2);
+  $('#fCp').dataset.vide = 'Votre code postal'; $('#fDate').dataset.vide = 'jj/mm/aaaa'; $('#fTenue').dataset.vide = 'Toutes les tenues';
+  tl.call(() => { $('#fTenue').textContent = 'Toutes les tenues'; }, null, 13.5);
+  tl.call(() => { $('#fTenue').textContent = 'Caftan'; }, null, 14.1);
+  tl.fromTo('#fTenue', { opacity: .3 }, { opacity: 1, duration: .3 }, 14.1);
+  ecrire($('#fCp'), '1080 Molenbeek', 14.5, .9);
+  tl.to('#cur', { opacity: 0, duration: .01 }, 15.5);
+  ecrire($('#fDate'), '14 juin 2027', 15.6, .7);
+  tap('#bRech', 16.7);
+  vue('#vRes', 17.2, 20.6);
+  legende('Les tenues <em>autour de chez vous</em>', 17.3);
+  tl.from('#liste .carte', { opacity: 0, y: 60, duration: .6, stagger: .15 }, 17.4);
+  tl.to('#liste', { y: -150, duration: 1.4, ease: 'power2.inOut' }, 18.5);
+  tl.to('#liste', { y: 0, duration: .8, ease: 'power2.inOut' }, 19.6);
+  tap('#liste .carte img', 20.4);
+  etape('#e2', 20.6); legende('Réservez, même <em>en un clic</em>', 20.7);
+  vue('#vAnn', 20.6, 23.4);
+  tl.from('#vAnn img.grande', { scale: 1.15, duration: 2.6, ease: 'power1.out' }, 20.6);
+  tap('#bResa', 23.1);
+  vue('#vPay', 23.4);
+  tap('#bPay', 24.9);
+  etape('#e3', 25.2); legende('Portez, rendez, <em>c\'est tout.</em>', 25.3);
+  tl.to('#ok', { opacity: 1, duration: .45 }, 25.1);
+  tl.to('#coche', { strokeDashoffset: 0, duration: .6, ease: 'power2.out' }, 25.5);
+  tl.from('#ok h4, #ok p', { opacity: 0, y: 30, duration: .6, stagger: .15 }, 25.6);
+
+  // 5. Côté fournisseuse (26,8 à 32,2 s)
+  plan('#p5', 26.8, 32);
+  tl.from('#p5 .cadre', { clipPath: 'inset(0 0 100% 0 round 40px)', duration: 1, ease: 'power3.inOut' }, 26.9);
+  tl.from('#p5 .cadre img', { scale: 1.2, duration: 5, ease: 'power1.out' }, 26.9);
+  tl.from('#p5 .sur', { opacity: 0, x: -30, duration: .6 }, 27.5);
+  tl.from('#p5 .t', { opacity: 0, y: 40, duration: .8 }, 27.7);
+  tl.from('#p5 .gain', { opacity: 0, y: 40, duration: .7 }, 28.8);
+  const g = { v: 0 };
+  tl.to(g, { v: 230, duration: 1.6, ease: 'power2.out', onUpdate: () => { $('#gain').textContent = Math.round(g.v); } }, 29.1);
+
+  // 6. Protection (32 à 36,2 s)
+  plan('#p6', 32, 36);
+  tl.from('#p6 .t', { opacity: 0, y: 40, duration: .8 }, 32.1);
+  tl.from('#p6 .g', { opacity: 0, x: 80, duration: .6, stagger: .25 }, 32.6);
+
+  // 7. Fin (36 à 40 s)
+  plan('#p7', 36);
+  tl.from('#p7 .arche', { opacity: 0, scale: .8, duration: .9 }, 36.1);
+  tl.from('#p7 .L', { opacity: 0, y: 30, duration: .8 }, 36.3);
+  tl.from('#p7 .nom', { opacity: 0, letterSpacing: '.6em', duration: 1.1 }, 36.5);
+  tl.from('#p7 .slogan', { opacity: 0, y: 20, duration: .8 }, 37.1);
+  tl.from('#p7 .cta', { opacity: 0, scale: .8, duration: .6, ease: 'back.out(2)' }, 37.7);
+  tl.from('#p7 .bas', { opacity: 0, duration: .8 }, 38.1);
+  tl.to({}, { duration: .01 }, 40);
+
+  window.duree = tl.duration();
+  window.positionner = (t) => { tl.time(t, false); };
+  window.pret = document.fonts.ready.then(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
+</script>
+</body>
+</html>
