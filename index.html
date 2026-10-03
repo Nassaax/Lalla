@@ -39,7 +39,10 @@
   <main id="contenu">
     <!-- OUVERTURE ET RECHERCHE -->
     <section class="c2-hero" aria-labelledby="hero-titre">
-      <img class="c2-hero__photo" data-visuel-photo="accueil" alt="" hidden>
+      <picture>
+        <source media="(max-width: 700px)" srcset="assets/photos/accueil-mobile.webp">
+        <img class="c2-hero__photo" src="assets/photos/accueil.webp" srcset="assets/photos/accueil-1000.webp 1000w, assets/photos/accueil.webp 2000w" sizes="100vw" alt="" width="2000" height="1333" fetchpriority="high">
+      </picture>
       <div class="conteneur c2-hero__contenu">
         <h1 id="hero-titre" data-i18n-html="index.hero.titre">La tenue de vos rêves, <em>prêtée près de chez vous.</em></h1>
         <p data-i18n="index.hero.texte">Louez caftans, takchitas et tenues de mariée auprès de particulières, negafas et créatrices vérifiées, partout en Belgique.</p>
@@ -64,6 +67,30 @@
     <div class="conteneur">
       <nav class="c2-categories" data-categories aria-label="Catégories"></nav>
     </div>
+
+    <!-- UNE TENUE POUR CHAQUE FÊTE -->
+    <section class="c2-section" aria-labelledby="occasions-titre">
+      <div class="conteneur">
+        <div class="c2-entete"><div>
+          <p class="surtitre" data-i18n="index.occ.surtitre">Inspirations</p>
+          <h2 id="occasions-titre" data-i18n-html="index.occ.titre">Une tenue <em>pour chaque fête</em></h2>
+        </div></div>
+        <div class="c2-occasions">
+          <a class="occasion" href="catalogue.html?occasion=fiancailles" data-reveal>
+            <img src="assets/photos/occasion-fiancailles.webp" alt="" loading="lazy" width="900" height="1125">
+            <span class="occasion__texte"><strong data-i18n="occ.fiancailles">Fiançailles</strong><span data-i18n="index.occ.fiancailles">Caftans ivoire et perles</span></span>
+          </a>
+          <a class="occasion" href="catalogue.html?occasion=aid" data-reveal>
+            <img src="assets/photos/occasion-aid.webp" alt="" loading="lazy" width="900" height="1125">
+            <span class="occasion__texte"><strong data-i18n="occ.aid">Aïd</strong><span data-i18n="index.occ.aid">Velours, broderies et ceinture dorée</span></span>
+          </a>
+          <a class="occasion" href="catalogue.html?occasion=soiree" data-reveal>
+            <img src="assets/photos/occasion-soiree.webp" alt="" loading="lazy" width="900" height="1125">
+            <span class="occasion__texte"><strong data-i18n="occ.soiree">Soirée</strong><span data-i18n="index.occ.soiree">Des pièces qui marquent les esprits</span></span>
+          </a>
+        </div>
+      </div>
+    </section>
 
     <!-- APERÇU DES ANNONCES -->
     <section class="c2-section" id="apercu" aria-labelledby="apercu-titre">
@@ -132,7 +159,7 @@
     <section class="c2-section" style="padding-top:0" id="fournisseuses" aria-labelledby="devenir-titre">
       <div class="conteneur">
         <div class="devenir">
-          <div class="devenir__photo"><img data-visuel-photo="hub" alt="" hidden></div>
+          <div class="devenir__photo"><img src="assets/photos/devenir.webp" alt="" loading="lazy" width="1000" height="1250"></div>
           <div class="devenir__texte">
             <p class="surtitre" data-i18n="index.dev.surtitre">Devenez fournisseuse</p>
             <h2 id="devenir-titre" data-i18n-html="index.dev.titre">Votre takchita dort dans une housse ? <em>Faites-la voyager.</em></h2>

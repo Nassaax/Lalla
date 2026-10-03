@@ -928,3 +928,30 @@ h1 em, h2 em { font-style: italic; color: var(--bordeaux); }
 .aide h2 { font-size: clamp(1.5rem, 2.6vw, 2rem); margin: 44px 0 10px; }
 
 a.puce { text-decoration: none; display: inline-flex; align-items: center; color: inherit; }
+
+/* Inspirations : une tenue pour chaque fête */
+.c2-occasions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.occasion { position: relative; display: block; border-radius: var(--rayon-l); overflow: hidden; aspect-ratio: 4 / 5; background: #E9DBBF; color: #FFF9F0; text-decoration: none; }
+.occasion img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+.occasion::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(30,12,12,.66), rgba(30,12,12,0) 48%); }
+.occasion__texte { position: absolute; left: 22px; right: 22px; bottom: 20px; z-index: 1; display: grid; gap: 4px; }
+.occasion__texte strong { font-family: var(--serif); font-weight: 500; font-size: 1.7rem; line-height: 1.1; }
+.occasion__texte span { font-size: 15px; color: #FFF1E2; }
+.occasion:hover img, .occasion:focus-visible img { transform: scale(1.04); }
+.occasion:focus-visible { outline: 2px solid var(--bordeaux); outline-offset: 3px; }
+@media (max-width: 760px) {
+  .c2-occasions { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 74%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+  .c2-occasions::-webkit-scrollbar { display: none; }
+  .occasion { scroll-snap-align: start; }
+}
+@media (prefers-reduced-motion: reduce) { .occasion img { transition: none; } }
+/* Photo d'ouverture : la tenue passe à droite, le texte garde un fond sombre */
+.c2-hero { overflow: hidden; }
+@media (min-width: 901px) {
+  .c2-hero__photo { width: 135%; left: 0; object-position: 50% 28%; }
+  .c2-hero::before { background: linear-gradient(90deg, rgba(30,12,12,.78) 0%, rgba(30,12,12,.42) 42%, rgba(30,12,12,0) 66%), linear-gradient(to top, rgba(30,12,12,.5), rgba(30,12,12,0) 45%); }
+}
+@media (max-width: 900px) {
+  .c2-hero__photo { object-position: 50% 20%; }
+  .c2-hero::before { background: linear-gradient(to top, rgba(30,12,12,.88) 0%, rgba(30,12,12,.62) 55%, rgba(30,12,12,.38) 100%); }
+}

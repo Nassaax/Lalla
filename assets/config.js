@@ -25,7 +25,7 @@
     // Photos de l'accueil : déposez vos fichiers dans assets/photos/ et indiquez leur chemin ici
     // (ex. 'assets/photos/accueil.jpg'). Tant qu'un chemin est vide, un aplat de tissu sobre est affiché.
     photos: {
-      accueil: '',
+      accueil: '',  // photos de l'accueil désormais placées directement dans index.html (assets/photos/)
       hub: '',
       collections: { caftan: '', takchita: '', mariee: '', homme: '', enfant: '', accessoire: '' }
     },

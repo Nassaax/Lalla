@@ -1030,6 +1030,11 @@
     'fisc.manquant_entreprise': 'Le numéro d\'entreprise est requis.',
     'index.hero.cta': 'Découvrir le catalogue',
     'index.r.toutes': 'Toutes les tenues',
+    'index.occ.surtitre': 'Inspirations',
+    'index.occ.titre': 'Une tenue <em>pour chaque fête</em>',
+    'index.occ.fiancailles': 'Caftans ivoire et perles',
+    'index.occ.aid': 'Velours, broderies et ceinture dorée',
+    'index.occ.soiree': 'Des pièces qui marquent les esprits',
     'index.r.ou_aide': 'Votre code postal',
     'index.ap.mur_titre': 'Envie de voir toutes les tenues ?'
   });
@@ -1168,6 +1173,11 @@
     'fisc.manquant_entreprise': 'Het ondernemingsnummer is verplicht.',
     'index.hero.cta': 'Ontdek de catalogus',
     'index.r.toutes': 'Alle kledij',
+    'index.occ.surtitre': 'Inspiratie',
+    'index.occ.titre': 'Een outfit <em>voor elk feest</em>',
+    'index.occ.fiancailles': 'Ivoorkleurige kaftans en parels',
+    'index.occ.aid': 'Fluweel, borduurwerk en gouden riem',
+    'index.occ.soiree': 'Stukken die indruk maken',
     'index.r.ou_aide': 'Uw postcode',
     'index.hero.titre': 'De jurk van uw dromen, <em>uitgeleend bij u in de buurt.</em>',
     'index.hero.texte': 'Huur kaftans, takchita\'s en bruidskledij bij geverifieerde particulieren, negafa\'s en ontwerpsters, in heel België.',
