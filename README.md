@@ -97,7 +97,7 @@ Restez en **mode test** (interrupteur « Test mode » en haut à droite) tant qu
 3. **Connect** (versements aux fournisseuses) :
    - **Connect → Get started**, choisissez le modèle **Platform** avec des comptes **Express**.
    - Pays : Belgique. Responsabilité des pertes : la plateforme (modèle « separate charges and transfers »).
-   - Dans **Connect → Settings → Branding**, ajoutez le nom LALLAT, le logo et les couleurs (ivoire `#F4EEE3`, émeraude `#1F5E4B`).
+   - Dans **Connect → Settings → Branding**, ajoutez le nom LALLAT, le logo (`marque/avatar-bordeaux.png`) et les couleurs (bordeaux `#5E1D27`, or `#C9A66B`).
 4. **Identity** (vérification d'identité au-delà du seuil de caution) : **Identity → Get started**. Activez-le en mode test, puis en production (Stripe demande une courte validation).
 5. Le **webhook** se configure après la mise en ligne : voir §7.
 
