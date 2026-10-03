@@ -1,6 +1,7 @@
-# Fichiers de développement inutiles en production (non servis, non déployés)
+# Fichiers de développement et kit réseaux sociaux : non servis, non déployés
 tests/
 scripts/
 supabase/
 PLAN.md
 node_modules/
+marque/

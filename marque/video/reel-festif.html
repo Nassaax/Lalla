@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>LALLAT, reel festif</title>
+<link rel="stylesheet" href="../commun.css">
+<style>
+  #scene { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #041E18; }
+  #camera { position: absolute; inset: 0; }
+  .plan { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
+  .plein { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .motif { position: absolute; left: -220px; top: -220px; width: 1520px; height: 2360px; }
+  .ligne { display: block; overflow: hidden; padding: 0 .12em .1em; }
+  .ligne > span { display: inline-block; }
+  .or { background: linear-gradient(100deg, #9E7432 0%, #E9CB86 20%, #FFF3CF 30%, #D6AE62 42%, #B8893B 56%, #F4DDA0 72%, #FFF6D8 78%, #A87C36 100%); background-size: 260% 100%; background-position: 100% 50%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ital { font-family: Bodoni, serif; font-style: italic; font-weight: 500; }
+  .serif { font-family: Bodoni, serif; font-weight: 500; }
+  .centre { position: absolute; left: 0; right: 0; text-align: center; }
+  .ombre-texte { text-shadow: 0 6px 40px rgba(0,0,0,.45); }
+  #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.38) 100%); }
+  #flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 46%, rgba(255,246,220,.95) 0%, rgba(255,226,160,.55) 35%, rgba(255,226,160,0) 75%); mix-blend-mode: screen; }
+  #paillettes { position: absolute; inset: 0; pointer-events: none; }
+
+  /* 1. Accroche */
+  #s1 { background: radial-gradient(circle at 50% 46%, #11604E 0%, #0A3A30 52%, #04201A 100%); visibility: visible; }
+  #s1 .etoile { position: absolute; inset: 0; }
+  #s1 .halo { position: absolute; left: 40px; right: 40px; top: 620px; height: 560px; background: radial-gradient(ellipse at center, rgba(4,30,24,.88), rgba(4,30,24,0) 72%); }
+  #s1 .t1 { top: 690px; font-size: 168px; line-height: 1; color: #FFF8EC; }
+  #s1 .t2 { top: 880px; font-size: 138px; line-height: 1.05; filter: drop-shadow(0 4px 20px rgba(0,0,0,.55)); }
+
+  /* Portes de riad */
+  #portes { position: absolute; inset: 0; perspective: 2400px; pointer-events: none; }
+  .porte { position: absolute; top: 0; width: 540px; height: 1920px; backface-visibility: hidden; transform-style: preserve-3d; }
+  .porte.g { left: 0; transform-origin: 0 50%; }
+  .porte.d { left: 540px; transform-origin: 100% 50%; }
+  .porte svg { position: absolute; inset: 0; }
+  .porte .sombre { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.65), rgba(0,0,0,.1)); opacity: .8; }
+  .porte.d .sombre { background: linear-gradient(270deg, rgba(0,0,0,.65), rgba(0,0,0,.1)); }
+  #texte-portes { position: absolute; inset: 0; opacity: 0; }
+  #texte-portes .t1 { top: 540px; font-size: 140px; color: #FFF8EC; }
+  #texte-portes .t2 { top: 700px; font-size: 128px; filter: drop-shadow(0 6px 24px rgba(0,0,0,.55)); }
+  #texte-portes .fond { position: absolute; left: 40px; right: 40px; top: 470px; height: 440px; background: radial-gradient(ellipse at center, rgba(4,24,19,.85), rgba(4,24,19,0) 72%); }
+  #rai { position: absolute; left: 340px; width: 400px; top: 0; height: 1920px; opacity: 0; background: linear-gradient(90deg, rgba(255,236,190,0), rgba(255,240,205,.95) 50%, rgba(255,236,190,0)); mix-blend-mode: screen; }
+
+  /* 2. Ouverture photo */
+  #s2 img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.35); }
+  #s2 .degrade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(18,7,7,.94) 0%, rgba(18,7,7,.82) 28%, rgba(18,7,7,.5) 42%, rgba(18,7,7,0) 60%); }
+  #s2 .t1 { top: 1150px; font-size: 158px; line-height: 1; filter: drop-shadow(0 6px 26px rgba(0,0,0,.7)); }
+  #s2 .t2 { top: 1350px; font-size: 38px; color: #FFF1E2; letter-spacing: .26em; text-transform: uppercase; font-family: Jost; font-weight: 500; }
+
+  /* 3. Occasions */
+  #s3 .couche { position: absolute; inset: 0; clip-path: circle(0% at 50% 44%); }
+  #s3 .anneau { position: absolute; left: 540px; top: 845px; width: 4700px; height: 4700px; margin: -2350px 0 0 -2350px; border-radius: 50%; border: 14px solid #E9C77A; transform: scale(0); opacity: 0; }
+  #s3 .sur { position: absolute; left: 0; right: 0; top: 240px; text-align: center; font-size: 30px; color: #F7E3A3; opacity: 0; }
+  #arche3 { position: absolute; left: 160px; top: 330px; width: 760px; height: 1003px; opacity: 0; }
+  #arche3 .fenetre { position: absolute; inset: 0; -webkit-mask: var(--arche) center / 100% 100% no-repeat; mask: var(--arche) center / 100% 100% no-repeat; background: #0A0A0A; }
+  #arche3 .fenetre img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; opacity: 0; }
+  #arche3 .contour { position: absolute; left: -26px; top: -30px; width: 812px; height: 1059px; overflow: visible; }
+  #s3 .mots { position: absolute; left: 0; right: 0; top: 1250px; height: 230px; overflow: hidden; }
+  #s3 .mot-occ { position: absolute; left: 0; right: 0; top: 0; text-align: center; font-size: 168px; line-height: 1.2; color: #FFF8EC; text-shadow: 0 8px 40px rgba(0,0,0,.45); }
+
+  /* 4. Triptyque et bandeaux */
+  #s4 .bande-photo { position: absolute; top: 0; width: 360px; height: 1920px; overflow: hidden; }
+  #s4 .bande-photo img { position: absolute; left: -180px; top: -60px; width: 720px; height: 2040px; object-fit: cover; }
+  #s4 .sep { position: absolute; top: 0; width: 4px; height: 1920px; background: #E9C77A; }
+  #s4 .voile { position: absolute; inset: 0; background: rgba(20,8,8,.18); }
+  .bandeau { position: absolute; left: -300px; width: 1680px; height: 160px; display: flex; align-items: center; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,.35); }
+  .bandeau .defile { white-space: nowrap; font-family: Bodoni; font-weight: 500; font-size: 64px; letter-spacing: .14em; }
+  #b1 { top: 820px; background: linear-gradient(90deg, #B8893B, #F4DDA0 30%, #E2BC6E 50%, #F7E3A3 70%, #B8893B); rotate: -7deg; }
+  #b1 .defile { color: #5E1D27; }
+  #b2 { top: 1050px; background: #FAF6F0; rotate: 5deg; }
+  #b2 .defile { color: #0E5543; font-style: italic; }
+
+  /* 5. Constellation */
+  #s5 { background: radial-gradient(circle at 50% 55%, #1B2A57 0%, #0E1633 50%, #070B1C 100%); }
+  #s5 .bord { position: absolute; left: 0; right: 0; top: 0; height: 8px; background: linear-gradient(90deg, #B8893B, #F7E3A3, #B8893B); }
+  #s5 .t1 { top: 250px; font-size: 112px; color: #FFF8EC; line-height: 1.05; }
+  #s5 .t2 { top: 380px; font-size: 112px; line-height: 1.05; }
+  #zone-carte { position: absolute; left: 90px; top: 610px; width: 900px; height: 740px; }
+  #carte { position: absolute; inset: 0; }
+  .ville { position: absolute; transform: translate(-50%, -50%); }
+  .ville .pt { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: #FFF3CF; box-shadow: 0 0 22px 6px rgba(247,227,163,.75); }
+  .ville .onde { position: absolute; left: -40px; top: -40px; width: 80px; height: 80px; border-radius: 50%; border: 3px solid #F7E3A3; transform: scale(0); opacity: 0; }
+  .ville .nom { position: absolute; left: 22px; top: -20px; white-space: nowrap; font-family: Jost; font-weight: 500; font-size: 30px; letter-spacing: .12em; text-transform: uppercase; color: #FFF3CF; opacity: 0; text-shadow: 0 2px 12px rgba(0,0,0,.6); }
+  .ville.gauche .nom { left: auto; right: 22px; }
+  .ville.dessous .nom { left: 0; top: 18px; transform: translateX(-50%); }
+  .ville.capitale .nom { font-size: 38px; color: #F7E3A3; }
+
+  /* 6. Confiance */
+  #s6 { background: radial-gradient(circle at 50% 40%, #FFFDF8 0%, #FAF6F0 55%, #EFE4D2 100%); }
+  #s6 .t1 { top: 380px; font-size: 96px; color: #241B17; line-height: 1.05; }
+  #s6 .t1b { top: 490px; font-size: 96px; color: #241B17; line-height: 1.05; }
+  #s6 .t2 { top: 600px; font-size: 112px; color: #5E1D27; line-height: 1.05; }
+  #s6 .pastilles { position: absolute; left: 0; right: 0; top: 860px; display: grid; justify-items: center; gap: 36px; }
+  #s6 .pastille { display: flex; align-items: center; gap: 28px; background: #fff; border-radius: 999px; padding: 30px 56px 30px 32px; font-family: Jost; font-weight: 500; font-size: 46px; color: #241B17; box-shadow: 0 24px 60px rgba(94,29,39,.14); }
+  #s6 .pastille i { width: 74px; height: 74px; border-radius: 50%; background: linear-gradient(135deg, #E9C77A, #B8893B); display: grid; place-items: center; }
+
+  /* 7. Fournisseuses */
+  #s7 { background: radial-gradient(circle at 50% 35%, #7A2559 0%, #4A1238 50%, #26081C 100%); clip-path: polygon(130% 0%, 130% 0%, 100% 100%, 100% 100%); }
+  #arche7 { position: absolute; left: 230px; top: 250px; width: 620px; height: 818px; opacity: 0; }
+  #arche7 .fenetre { position: absolute; inset: 0; -webkit-mask: var(--arche) center / 100% 100% no-repeat; mask: var(--arche) center / 100% 100% no-repeat; }
+  #arche7 .fenetre img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; transform: scale(1.2); }
+  #arche7 .contour { position: absolute; left: -22px; top: -26px; width: 664px; height: 866px; overflow: visible; }
+  #s7 .ta { position: absolute; left: 0; right: 0; top: 1120px; text-align: center; }
+  #s7 .ta .l1 { font-size: 100px; color: #FFF8EC; line-height: 1.05; }
+  #s7 .ta .l2 { font-size: 100px; line-height: 1.05; color: #F4C8DF; }
+  #s7 .tb { position: absolute; left: 0; right: 0; top: 1110px; text-align: center; }
+  #s7 .tb .l1 { font-size: 176px; line-height: 1.05; }
+  #s7 .tb .l2 { font-family: Jost; font-size: 44px; color: #FFF1E2; margin-top: 20px; opacity: 0; }
+
+  /* 8. Final */
+  #s8 { background: radial-gradient(circle at 50% 36%, #8A2C3C 0%, #5E1D27 45%, #34101A 100%); clip-path: circle(0% at 50% 44%); }
+  #s8 .rosace { position: absolute; inset: 0; opacity: 0; }
+  #s8 .arche { position: absolute; left: 390px; top: 450px; width: 300px; height: 396px; overflow: visible; }
+  #s8 .L { top: 560px; font-size: 250px; line-height: 1; color: #FFF8EC; opacity: 0; }
+  #s8 .nom { top: 930px; display: flex; justify-content: center; font-size: 132px; letter-spacing: .26em; margin-right: -.26em; }
+  #s8 .nom span { display: inline-block; opacity: 0; }
+  #s8 .slogan { top: 1105px; font-size: 54px; line-height: 1.22; color: #F7E3A3; opacity: 0; }
+  #s8 .cta { top: 1290px; opacity: 0; }
+  #s8 .cta span { display: inline-block; background: #FAF6F0; color: #5E1D27; font-family: Jost; font-weight: 500; font-size: 48px; padding: 28px 64px; border-radius: 999px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  #s8 .bas { top: 1430px; font-family: Jost; font-weight: 500; font-size: 28px; letter-spacing: .3em; text-transform: uppercase; color: #E9C77A; opacity: 0; }
+  #s8 .anneau { position: absolute; left: 540px; top: 845px; width: 4700px; height: 4700px; margin: -2350px 0 0 -2350px; border-radius: 50%; border: 16px solid #E9C77A; transform: scale(0); opacity: 0; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <pattern id="zellige" width="150" height="150" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#E9C77A" stroke-width="1.6">
+        <polygon id="etoile-tuile" points=""/>
+        <polygon id="octo-tuile" points=""/>
+        <path d="M75 0V22M75 128V150M0 75H22M128 75H150M0 0L37 37M150 0L113 37M0 150L37 113M150 150L113 113"/>
+      </g>
+    </pattern>
+  </defs>
+</svg>
+
+<div id="scene"><div id="camera">
+
+  <!-- 1. Accroche -->
+  <section class="plan" id="s1">
+    <svg class="motif" id="motif1"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".2"/></svg>
+    <svg class="etoile" viewBox="0 0 1080 1920"><g id="etoile1" transform="translate(540 930)" fill="none" stroke="#E9C77A"></g></svg>
+    <div class="halo"></div>
+    <div class="centre t1 serif ombre-texte"><span class="ligne"><span id="h1">Invitée</span></span></div>
+    <div class="centre t2 ital"><span class="ligne"><span id="h2" class="or">à un mariage&nbsp;?</span></span></div>
+  </section>
+
+  <!-- 2. La photo derrière les portes -->
+  <section class="plan" id="s2">
+    <img src="images/v-ouverture.jpg" alt="">
+    <div class="degrade"></div>
+    <div class="centre t1 ital"><span class="ligne"><span id="o1" class="or">sans l'acheter.</span></span></div>
+    <div class="centre t2"><span class="ligne"><span id="o2">Louez-le, près de chez vous</span></span></div>
+  </section>
+  <div id="rai"></div>
+
+  <!-- Portes de riad -->
+  <div id="portes">
+    <div class="porte g"><svg viewBox="0 0 540 1920" id="porte-g"></svg><div class="sombre"></div></div>
+    <div class="porte d"><svg viewBox="0 0 540 1920" id="porte-d"></svg><div class="sombre"></div></div>
+  </div>
+  <div id="texte-portes">
+    <div class="fond"></div>
+    <div class="centre t1 serif ombre-texte">Le caftan</div>
+    <div class="centre t2 ital"><span id="p2" class="or">de vos rêves…</span></div>
+  </div>
+
+  <!-- 3. Occasions -->
+  <section class="plan" id="s3">
+    <div class="couche" style="background:radial-gradient(circle at 50% 42%, #188A6C 0%, #0E5543 50%, #06302A 100%)"><svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".16"/></svg></div>
+    <div class="couche" style="background:radial-gradient(circle at 50% 42%, #D0397E 0%, #A0215F 50%, #5C0F37 100%)"><svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".16"/></svg></div>
+    <div class="couche" style="background:radial-gradient(circle at 50% 42%, #DE7A2E 0%, #B4561B 50%, #6A2E0C 100%)"><svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".16"/></svg></div>
+    <div class="couche" style="background:radial-gradient(circle at 50% 42%, #3460C0 0%, #1C3C8C 50%, #0C1C4A 100%)"><svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".16"/></svg></div>
+    <div class="couche" style="background:radial-gradient(circle at 50% 42%, #8A2C3C 0%, #5E1D27 50%, #2E0C13 100%)"><svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".16"/></svg></div>
+    <div class="anneau"></div><div class="anneau"></div><div class="anneau"></div><div class="anneau"></div><div class="anneau"></div>
+    <p class="sur surtitre">Une tenue pour chaque fête</p>
+    <div id="arche3">
+      <div class="fenetre">
+        <img src="images/v-mariage.jpg" alt="">
+        <img src="images/v-fiancailles.jpg" alt="">
+        <img src="images/v-henne.jpg" alt="">
+        <img src="images/v-aid.jpg" alt="">
+        <img src="images/v-soiree.jpg" alt="">
+      </div>
+      <svg class="contour" viewBox="0 0 812 1059"><path id="contour3" d="M6 1056 V456 C6 236 156 96 406 10 C656 96 806 236 806 456 V1056" fill="none" stroke="#E9C77A" stroke-width="5"/></svg>
+    </div>
+    <div class="mots">
+      <div class="mot-occ ital">Mariage</div>
+      <div class="mot-occ ital">Fiançailles</div>
+      <div class="mot-occ ital">Henné</div>
+      <div class="mot-occ ital">Aïd</div>
+      <div class="mot-occ ital">Soirées</div>
+    </div>
+  </section>
+
+  <!-- 4. Triptyque -->
+  <section class="plan" id="s4">
+    <div class="bande-photo" style="left:0"><img src="images/v-ouverture.jpg" alt="" style="object-position:40% 30%"></div>
+    <div class="bande-photo" style="left:360px"><img src="images/v-fiancailles.jpg" alt="" style="object-position:50% 25%"></div>
+    <div class="bande-photo" style="left:720px"><img src="images/v-soiree.jpg" alt="" style="object-position:50% 25%"></div>
+    <div class="voile"></div>
+    <div class="sep" style="left:358px"></div><div class="sep" style="left:718px"></div>
+    <div class="bandeau" id="b1"><div class="defile">CAFTANS ✦ TAKCHITAS ✦ TENUES DE MARIÉE ✦ JABADORS ✦ ACCESSOIRES ✦ CAFTANS ✦ TAKCHITAS ✦ TENUES DE MARIÉE ✦ JABADORS ✦</div></div>
+    <div class="bandeau" id="b2"><div class="defile">Mariage ✦ Fiançailles ✦ Henné ✦ Aïd ✦ Soirées ✦ Mariage ✦ Fiançailles ✦ Henné ✦ Aïd ✦ Soirées ✦ Mariage ✦</div></div>
+  </section>
+
+  <!-- 5. Constellation -->
+  <section class="plan" id="s5">
+    <div class="bord"></div>
+    <div class="centre t1 serif"><span class="ligne"><span id="c1">Près de chez vous,</span></span></div>
+    <div class="centre t2 ital"><span class="ligne"><span id="c2" class="or">partout en Belgique.</span></span></div>
+    <div id="zone-carte"><canvas id="carte" width="900" height="740"></canvas></div>
+  </section>
+
+  <!-- 6. Confiance -->
+  <section class="plan" id="s6">
+    <svg class="motif" id="motif6"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".5" style="filter:brightness(.55) saturate(1.3)"/></svg>
+    <div class="centre t1 serif"><span class="ligne"><span id="f1">Des tenues prêtées</span></span></div>
+    <div class="centre t1b serif"><span class="ligne"><span id="f1b">par des femmes</span></span></div>
+    <div class="centre t2 ital"><span class="ligne"><span id="f2">de confiance.</span></span></div>
+    <div class="pastilles">
+      <div class="pastille"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Fournisseuses vérifiées</div>
+      <div class="pastille"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Paiement sécurisé</div>
+      <div class="pastille"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>Pressing compris</div>
+    </div>
+  </section>
+
+  <!-- 7. Fournisseuses -->
+  <section class="plan" id="s7">
+    <svg class="motif" id="motif7"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".14"/></svg>
+    <div id="arche7">
+      <div class="fenetre"><img src="images/v-devenir.jpg" alt=""></div>
+      <svg class="contour" viewBox="0 0 664 866"><path id="contour7" d="M6 863 V373 C6 193 128 79 332 8 C536 79 658 193 658 373 V863" fill="none" stroke="#E9C77A" stroke-width="5"/></svg>
+    </div>
+    <div class="ta">
+      <div class="serif l1"><span class="ligne"><span id="a1">Votre caftan dort</span></span></div>
+      <div class="ital l2"><span class="ligne"><span id="a2">dans une housse&nbsp;?</span></span></div>
+    </div>
+    <div class="tb">
+      <div class="ital l1"><span class="ligne"><span id="pr" class="or">Prêtez-le.</span></span></div>
+      <p class="l2" id="pr2">Il fera briller une autre fête.</p>
+    </div>
+  </section>
+
+  <!-- 8. Final -->
+  <section class="plan" id="s8">
+    <svg class="motif" id="motif8"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".1"/></svg>
+    <svg class="rosace" viewBox="0 0 1080 1920"><g id="rosace" transform="translate(540 668)" fill="none" stroke="#E9C77A"></g></svg>
+    <div class="anneau"></div>
+    <svg class="arche" viewBox="0 0 400 528"><path id="arche8" d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#E9C77A" stroke-width="6"/><path id="arche8b" d="M54 524 V246 C54 142 110 76 200 36 C290 76 346 142 346 246 V524" fill="none" stroke="#E9C77A" stroke-width="2" opacity=".7"/></svg>
+    <div class="centre L serif">L</div>
+    <div class="centre nom serif"><span class="or">L</span><span class="or">A</span><span class="or">L</span><span class="or">L</span><span class="or">A</span><span class="or">T</span></div>
+    <div class="centre slogan ital">La tenue de vos rêves,<br>prêtée près de chez vous.</div>
+    <div class="centre cta"><span>lallat.be</span></div>
+    <div class="centre bas">Inscription gratuite · Partout en Belgique</div>
+  </section>
+
+  <div id="flash"></div>
+  <div id="vignette"></div>
+</div>
+<canvas id="paillettes" width="1080" height="1920"></canvas>
+</div>
+
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="belgique.js"></script>
+<script>
+  const $ = (s) => document.querySelector(s), $$ = (s) => [...document.querySelectorAll(s)];
+  const ARCHE = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 528' preserveAspectRatio='none'%3E%3Cpath d='M0 528V236C0 118 74 40 200 0C326 40 400 118 400 236V528Z'/%3E%3C/svg%3E\")";
+  document.documentElement.style.setProperty('--arche', ARCHE);
+
+  // Étoile à huit branches (deux carrés croisés) : 16 sommets
+  const etoile = (R, rot = 0, cx = 0, cy = 0) => {
+    const p = [];
+    for (let i = 0; i < 16; i++) {
+      const a = (i * 22.5 + rot - 90) * Math.PI / 180, r = i % 2 ? R * 0.7654 : R;
+      p.push((cx + r * Math.cos(a)).toFixed(1) + ',' + (cy + r * Math.sin(a)).toFixed(1));
+    }
+    return p.join(' ');
+  };
+  const octogone = (R, cx, cy) => { const p = []; for (let i = 0; i < 8; i++) { const a = (i * 45 + 22.5) * Math.PI / 180; p.push((cx + R * Math.cos(a)).toFixed(1) + ',' + (cy + R * Math.sin(a)).toFixed(1)); } return p.join(' '); };
+  $('#etoile-tuile').setAttribute('points', etoile(54, 0, 75, 75));
+  $('#octo-tuile').setAttribute('points', octogone(26, 75, 75));
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (nom, attrs, parent) => { const e = document.createElementNS(NS, nom); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+
+  // Grande étoile de l'accroche
+  const g1 = $('#etoile1');
+  el('polygon', { points: etoile(380, 0), 'stroke-width': 3, opacity: .75 }, g1);
+  el('polygon', { points: etoile(320, 22.5), 'stroke-width': 1.6, opacity: .55 }, g1);
+  el('circle', { r: 420, 'stroke-width': 1.2, opacity: .6 }, g1);
+  el('circle', { r: 440, 'stroke-width': .8, opacity: .35, 'stroke-dasharray': '4 10' }, g1);
+
+  // Rosace finale
+  const ro = $('#rosace');
+  [[230, 0, 2.4, .9], [230, 22.5, 1.4, .7], [400, 11.25, 1.8, .55], [560, 0, 1.2, .4], [720, 22.5, 1, .28]].forEach(([R, r, w, o]) => el('polygon', { points: etoile(R, r), 'stroke-width': w, opacity: o }, ro));
+  for (let i = 0; i < 32; i++) { const a = i * 11.25 * Math.PI / 180; el('line', { x1: (250 * Math.cos(a)).toFixed(1), y1: (250 * Math.sin(a)).toFixed(1), x2: (980 * Math.cos(a)).toFixed(1), y2: (980 * Math.sin(a)).toFixed(1), 'stroke-width': .8, opacity: .22 }, ro); }
+  el('circle', { r: 300, 'stroke-width': 1, opacity: .5, 'stroke-dasharray': '3 9' }, ro);
+
+  // Portes de riad (dessinées en SVG, symétriques)
+  const porte = (svg, gauche) => {
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="bois${gauche ? 'g' : 'd'}" x1="0" x2="1"><stop offset="0" stop-color="${gauche ? '#0B3E32' : '#0E4A3C'}"/><stop offset="1" stop-color="${gauche ? '#0E4A3C' : '#0B3E32'}"/></linearGradient>
+        <radialGradient id="med${gauche ? 'g' : 'd'}"><stop offset="0" stop-color="#FFF3CF"/><stop offset=".55" stop-color="#E2BC6E"/><stop offset="1" stop-color="#9E7432"/></radialGradient>
+      </defs>
+      <rect width="540" height="1920" fill="url(#bois${gauche ? 'g' : 'd'})"/>
+      <rect width="540" height="1920" fill="url(#zellige)" opacity=".12"/>
+      <rect x="${gauche ? 26 : 8}" y="26" width="506" height="1868" fill="none" stroke="#C9A66B" stroke-width="6"/>
+      <rect x="${gauche ? 46 : 28}" y="46" width="466" height="1828" fill="none" stroke="#C9A66B" stroke-width="1.5" opacity=".7"/>
+      <path d="M${gauche ? 96 : 78} 1800 V700 C${gauche ? 96 : 78} 470 ${gauche ? 180 : 162} 330 ${gauche ? 279 : 261} 270 C${gauche ? 378 : 360} 330 ${gauche ? 462 : 444} 470 ${gauche ? 462 : 444} 700 V1800 Z" fill="rgba(0,0,0,.18)" stroke="#E2BC6E" stroke-width="4"/>
+      <path d="M${gauche ? 120 : 102} 1776 V706 C${gauche ? 120 : 102} 496 ${gauche ? 196 : 178} 370 ${gauche ? 279 : 261} 316 C${gauche ? 362 : 344} 370 ${gauche ? 438 : 420} 496 ${gauche ? 438 : 420} 706 V1776 Z" fill="none" stroke="#E2BC6E" stroke-width="1.5" opacity=".7"/>
+      <polygon points="${etoile(96, 0, gauche ? 279 : 261, 960)}" fill="url(#med${gauche ? 'g' : 'd'})" stroke="#9E7432" stroke-width="2"/>
+      <polygon points="${etoile(60, 22.5, gauche ? 279 : 261, 960)}" fill="none" stroke="#7A5420" stroke-width="2"/>
+      <circle cx="${gauche ? 279 : 261}" cy="960" r="18" fill="#7A5420"/>
+      ${Array.from({ length: 22 }, (_, i) => `<circle cx="${gauche ? 66 : 48}" cy="${120 + i * 80}" r="7" fill="#E2BC6E"/><circle cx="${gauche ? 492 : 474}" cy="${120 + i * 80}" r="7" fill="#E2BC6E"/>`).join('')}
+      <circle cx="${gauche ? 500 : 40}" cy="1120" r="34" fill="none" stroke="#E2BC6E" stroke-width="8"/>
+      <circle cx="${gauche ? 500 : 40}" cy="1082" r="10" fill="#E2BC6E"/>
+      <line x1="${gauche ? 538 : 2}" y1="0" x2="${gauche ? 538 : 2}" y2="1920" stroke="#E2BC6E" stroke-width="4"/>`;
+  };
+  porte($('#porte-g'), true); porte($('#porte-d'), false);
+
+  // ------------------------------------------------------------------
+  // Paillettes et confettis : trajectoires calculées à partir d'une graine (rendu identique à chaque image)
+  // ------------------------------------------------------------------
+  const graine = (s) => () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const OR = ['#F7E3A3', '#E9C77A', '#FFF6D8', '#D9B25F', '#FFFFFF'];
+  const FETE = ['#F7E3A3', '#E9C77A', '#D0397E', '#18A07A', '#3460C0', '#FFF6D8', '#DE7A2E'];
+  const particules = [];
+  const rafale = (o) => {
+    const r = graine(o.graine);
+    for (let i = 0; i < o.n; i++) {
+      const a = o.angle ? o.angle[0] + r() * (o.angle[1] - o.angle[0]) : r() * Math.PI * 2;
+      const v = o.v[0] + r() * (o.v[1] - o.v[0]);
+      particules.push({
+        x0: o.x + (r() - .5) * (o.dx || 0), y0: o.y + (r() - .5) * (o.dy || 0),
+        vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: o.g ?? 300, frein: o.frein ?? 2.2,
+        t0: o.t0 + r() * (o.etale || 0), vie: o.vie[0] + r() * (o.vie[1] - o.vie[0]),
+        taille: o.taille[0] + r() * (o.taille[1] - o.taille[0]),
+        c: o.couleurs[Math.floor(r() * o.couleurs.length)], type: o.types[Math.floor(r() * o.types.length)],
+        rot: r() * 6.28, vr: (r() - .5) * 14, ph: r() * 6.28, oscille: o.oscille ? 20 + r() * 40 : 0, lumiere: o.lumiere !== false
+      });
+    }
+  };
+  const pluie = (o) => {
+    const r = graine(o.graine);
+    for (let i = 0; i < o.n; i++) {
+      const vy = o.v[0] + r() * (o.v[1] - o.v[0]);
+      particules.push({ x0: r() * 1080, y0: -40 - r() * 300, vx: (r() - .5) * 60, vy, g: 0, frein: 0, t0: o.t0 + r() * o.etale, vie: 2300 / vy,
+        taille: o.taille[0] + r() * (o.taille[1] - o.taille[0]), c: o.couleurs[Math.floor(r() * o.couleurs.length)], type: o.types[Math.floor(r() * o.types.length)],
+        rot: r() * 6.28, vr: (r() - .5) * 10, ph: r() * 6.28, oscille: 20 + r() * 50, lumiere: true });
+    }
+  };
+  rafale({ graine: 1, t0: 1.0, x: 540, y: 930, n: 70, v: [250, 900], vie: [1.0, 1.8], taille: [2, 6], couleurs: OR, types: ['point', 'etoile'], g: 120, etale: .15 });
+  rafale({ graine: 2, t0: 3.62, x: 540, y: 960, dy: 1500, n: 110, angle: [-0.5, 0.5], v: [300, 1300], vie: [0.9, 1.6], taille: [2, 6], couleurs: OR, types: ['point', 'etoile'], g: 80, etale: .2 });
+  rafale({ graine: 22, t0: 3.62, x: 540, y: 960, dy: 1500, n: 110, angle: [Math.PI - 0.5, Math.PI + 0.5], v: [300, 1300], vie: [0.9, 1.6], taille: [2, 6], couleurs: OR, types: ['point', 'etoile'], g: 80, etale: .2 });
+  rafale({ graine: 3, t0: 5.0, x: 540, y: 830, dx: 700, dy: 900, n: 70, v: [60, 280], vie: [0.8, 1.5], taille: [2, 5], couleurs: OR, types: ['etoile', 'point'], g: -40, etale: .3 });
+  pluie({ graine: 4, t0: 7.55, n: 130, etale: 1.6, v: [520, 900], taille: [6, 12], couleurs: FETE, types: ['confetti', 'confetti', 'etoile'] });
+  [12.6, 12.9, 13.2].forEach((t, i) => rafale({ graine: 5 + i, t0: t + .08, x: 540, y: 935 + i * 166, dx: 560, dy: 40, n: 22, v: [80, 360], vie: [0.6, 1.1], taille: [3, 6], couleurs: ['#E2BC6E', '#C9A66B', '#B8893B'], types: ['etoile'], g: -60, lumiere: false }));
+  rafale({ graine: 9, t0: 15.72, x: 540, y: 1200, dx: 500, n: 90, v: [200, 900], vie: [0.9, 1.6], taille: [2, 6], couleurs: OR, types: ['point', 'etoile', 'confetti'], g: 260, etale: .1 });
+  rafale({ graine: 10, t0: 17.75, x: 540, y: 668, n: 220, v: [300, 1700], vie: [1.1, 2.2], taille: [2, 7], couleurs: OR, types: ['point', 'etoile', 'confetti'], g: 220, etale: .12 });
+  pluie({ graine: 11, t0: 18.0, n: 150, etale: 4.2, v: [260, 520], taille: [4, 9], couleurs: OR, types: ['confetti', 'etoile', 'point'] });
+
+  const ctx = $('#paillettes').getContext('2d');
+  const dessinerParticules = (t) => {
+    ctx.clearRect(0, 0, 1080, 1920);
+    for (const p of particules) {
+      const tau = t - p.t0;
+      if (tau < 0 || tau > p.vie) continue;
+      const f = p.frein ? (1 - Math.exp(-p.frein * tau)) / p.frein : tau;
+      const x = p.x0 + p.vx * f + Math.sin(tau * 3 + p.ph) * p.oscille;
+      const y = p.y0 + p.vy * f + .5 * p.g * tau * tau;
+      const vieRel = tau / p.vie;
+      const a = Math.min(1, tau / .06) * (vieRel > .6 ? 1 - (vieRel - .6) / .4 : 1);
+      ctx.globalAlpha = a;
+      ctx.globalCompositeOperation = p.lumiere && p.type !== 'confetti' ? 'lighter' : 'source-over';
+      if (p.type === 'point') {
+        const s = p.taille;
+        const gr = ctx.createRadialGradient(x, y, 0, x, y, s * 3);
+        gr.addColorStop(0, p.c); gr.addColorStop(.35, p.c + 'AA'); gr.addColorStop(1, p.c + '00');
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y, s * 3, 0, 6.283); ctx.fill();
+      } else if (p.type === 'etoile') {
+        const s = p.taille * 3.2 * (.65 + .35 * Math.sin(tau * 14 + p.ph));
+        ctx.fillStyle = p.c; ctx.save(); ctx.translate(x, y); ctx.rotate(p.rot * .2);
+        ctx.beginPath();
+        for (let k = 0; k < 8; k++) { const r = k % 2 ? s * .16 : s; const ang = k * Math.PI / 4; ctx.lineTo(Math.cos(ang) * r, Math.sin(ang) * r); }
+        ctx.closePath(); ctx.fill(); ctx.restore();
+      } else {
+        const w = p.taille * 1.7, h = p.taille * .8;
+        ctx.save(); ctx.translate(x, y); ctx.rotate(p.rot + p.vr * tau); ctx.scale(Math.cos(tau * 9 + p.ph), 1);
+        ctx.fillStyle = p.c; ctx.fillRect(-w / 2, -h / 2, w, h); ctx.restore();
+      }
+    }
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  };
+
+  // ------------------------------------------------------------------
+  // Carte de Belgique en constellation
+  // ------------------------------------------------------------------
+  const B = window.BELGIQUE, bx = B.villes['Bruxelles'];
+  const r0 = graine(42);
+  const pts = B.points.map(([x, y]) => ({ x, y, d: Math.hypot(x - bx[0], y - bx[1]), ph: r0() * 6.28, j: r0() * .12 }));
+  const dmax = Math.max(...pts.map((p) => p.d));
+  const ROUTES = ['Anvers', 'Gand', 'Liège', 'Charleroi', 'Namur', 'Bruges', 'Mons', 'Hasselt'];
+  const cctx = $('#carte').getContext('2d');
+  const dessinerCarte = (t) => {
+    if (t < 9.3 || t > 12.1) return;
+    cctx.clearRect(0, 0, 900, 740);
+    cctx.globalCompositeOperation = 'lighter';
+    for (const p of pts) {
+      const tau = t - (9.9 + 1.0 * p.d / dmax + p.j);
+      if (tau < 0) continue;
+      const pop = Math.exp(-tau * 9);
+      const rayon = 1.6 * Math.min(1, tau / .2) + 4 * pop;
+      cctx.globalAlpha = Math.min(1, (.5 + .3 * Math.sin(t * 5 + p.ph)) + .5 * pop);
+      cctx.fillStyle = pop > .3 ? '#FFF6D8' : '#E9C77A';
+      cctx.beginPath(); cctx.arc(p.x, p.y, rayon, 0, 6.283); cctx.fill();
+    }
+    // Routes dorées depuis Bruxelles
+    cctx.globalAlpha = .9; cctx.lineWidth = 2.4; cctx.strokeStyle = '#F7E3A3';
+    ROUTES.forEach((nom, i) => {
+      const debut = 10.45 + i * .06, prog = Math.max(0, Math.min(1, (t - debut) / .5));
+      if (!prog) return;
+      const [x2, y2] = B.villes[nom], cx = (bx[0] + x2) / 2 + (y2 - bx[1]) * .25, cy = (bx[1] + y2) / 2 - (x2 - bx[0]) * .25;
+      cctx.beginPath(); cctx.moveTo(bx[0], bx[1]);
+      for (let s = 1; s <= 30; s++) { const u = prog * s / 30; cctx.lineTo((1 - u) * (1 - u) * bx[0] + 2 * (1 - u) * u * cx + u * u * x2, (1 - u) * (1 - u) * bx[1] + 2 * (1 - u) * u * cy + u * u * y2); }
+      cctx.stroke();
+    });
+    cctx.globalAlpha = 1; cctx.globalCompositeOperation = 'source-over';
+  };
+  // Étiquettes des villes
+  const zone = $('#zone-carte');
+  ['Bruxelles', ...ROUTES].forEach((nom) => {
+    const [x, y] = B.villes[nom];
+    const d = document.createElement('div');
+    d.className = 'ville' + (nom === 'Bruxelles' ? ' capitale' : '') + (['Gand', 'Bruges', 'Mons'].includes(nom) ? ' gauche' : '') + (nom === 'Charleroi' ? ' dessous' : '');
+    d.style.left = x + 'px'; d.style.top = y + 'px';
+    d.innerHTML = '<div class="onde"></div><div class="pt"></div><div class="nom">' + nom + '</div>';
+    zone.appendChild(d);
+  });
+
+  // ------------------------------------------------------------------
+  // Timeline (120 battements par minute : un temps = 0,5 s)
+  // ------------------------------------------------------------------
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  const montrer = (id, t) => tl.set(id, { visibility: 'visible' }, t);
+  const cacher = (id, t) => tl.set(id, { visibility: 'hidden' }, t);
+  const entrer = (sel, t, d = .55, ease = 'power4.out') => { gsap.set(sel, { yPercent: 110 }); tl.to(sel, { yPercent: 0, duration: d, ease }, t); };
+  const brillance = (sel, t, d = 1) => { tl.fromTo(sel, { backgroundPosition: '100% 50%' }, { backgroundPosition: '0% 50%', duration: d, ease: 'power1.inOut', immediateRender: false }, t); };
+  const tracer = (sel, t, d) => $$(sel).forEach((p) => { const l = p.getTotalLength(); gsap.set(p, { strokeDasharray: l, strokeDashoffset: l }); tl.to(p, { strokeDashoffset: 0, duration: d, ease: 'power2.inOut' }, t); });
+  const eclair = (t, force = .8, d = .5) => { tl.to('#flash', { opacity: force, duration: d * .3, ease: 'power2.out' }, t); tl.to('#flash', { opacity: 0, duration: d * .7, ease: 'power2.in' }, t + d * .3); };
+  const secousse = (t) => { tl.to('#camera', { x: 10, y: -6, duration: .04, ease: 'none' }, t); tl.to('#camera', { x: -8, y: 5, duration: .05, ease: 'none' }, t + .04); tl.to('#camera', { x: 4, y: -2, duration: .05, ease: 'none' }, t + .09); tl.to('#camera', { x: 0, y: 0, duration: .08, ease: 'power1.out' }, t + .14); };
+
+  // États de départ
+  gsap.set('.porte.g', { rotationY: -100 }); gsap.set('.porte.d', { rotationY: 100 });
+  gsap.set('#rai', { scaleX: 0 });
+  gsap.set('#s3 .mot-occ', { yPercent: 105 });
+  gsap.set('#s4 .sep', { scaleY: 0 });
+  gsap.set('.bandeau', { scaleX: 0 });
+  gsap.set('#s5', { yPercent: 100 });
+  gsap.set('.ville .pt', { scale: 0 });
+  gsap.set('#s6 .pastille', { scale: 0 });
+
+  // 1. Accroche (0 à 2,5 s)
+  tl.fromTo('#motif1', { rotation: -4, scale: 1.12 }, { rotation: 4, scale: 1, duration: 2.6, ease: 'none' }, 0);
+  $$('#etoile1 > *').forEach((p, i) => { const l = p.getTotalLength ? p.getTotalLength() : 3000; gsap.set(p, { strokeDasharray: l, strokeDashoffset: l }); tl.to(p, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut' }, .05 + i * .1); });
+  tl.fromTo('#etoile1', { rotation: -20, scale: .8, svgOrigin: '540 930' }, { rotation: 25, scale: 1.08, duration: 2.5, ease: 'power1.out', svgOrigin: '540 930' }, 0);
+  entrer('#h1', .08, .6); entrer('#h2', .32, .6);
+  brillance('#h2', .8, 1.1);
+  tl.to('#s1 .t1, #s1 .t2', { scale: 1.06, duration: 1.2, ease: 'none' }, .9);
+
+  // Portes : fermeture (2,0 s), message, ouverture (3,45 s)
+  tl.to('.porte.g', { rotationY: 0, duration: .32, ease: 'power3.in' }, 2.0);
+  tl.to('.porte.d', { rotationY: 0, duration: .32, ease: 'power3.in' }, 2.0);
+  tl.to('.porte .sombre', { opacity: 0, duration: .32, ease: 'power2.in' }, 2.0);
+  tl.to('.porte.g', { rotationY: -4, duration: .09, ease: 'power1.out' }, 2.32); tl.to('.porte.g', { rotationY: 0, duration: .14, ease: 'power1.in' }, 2.41);
+  tl.to('.porte.d', { rotationY: 4, duration: .09, ease: 'power1.out' }, 2.32); tl.to('.porte.d', { rotationY: 0, duration: .14, ease: 'power1.in' }, 2.41);
+  secousse(2.32);
+  cacher('#s1', 2.5); montrer('#s2', 2.5);
+  tl.fromTo('#texte-portes', { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: .5, ease: 'power3.out', immediateRender: false }, 2.45);
+  brillance('#p2', 2.7, .8);
+  tl.to('#texte-portes', { opacity: 0, scale: .96, duration: .25, ease: 'power2.in' }, 3.25);
+  tl.to('.porte.g', { rotationY: -9, duration: .18, ease: 'power2.out' }, 3.45);
+  tl.to('.porte.d', { rotationY: 9, duration: .18, ease: 'power2.out' }, 3.45);
+  tl.to('#rai', { scaleX: 1, opacity: 1, duration: .25, ease: 'power2.out' }, 3.45);
+  tl.to('.porte.g', { rotationY: -112, duration: .6, ease: 'power3.inOut' }, 3.6);
+  tl.to('.porte.d', { rotationY: 112, duration: .6, ease: 'power3.inOut' }, 3.6);
+  tl.to('.porte .sombre', { opacity: .85, duration: .5, ease: 'power2.in' }, 3.6);
+  tl.to('#rai', { scaleX: 3.5, opacity: 0, duration: .6, ease: 'power2.out' }, 3.7);
+  eclair(3.62, .75, .6);
+  tl.to('#s2 img', { scale: 1.06, duration: 1.6, ease: 'power2.out' }, 3.5);
+
+  // 2. « sans l'acheter. » (3,9 à 5 s)
+  entrer('#o1', 3.9, .6); entrer('#o2', 4.1, .5);
+  brillance('#o1', 4.1, .9);
+
+  // 3. Occasions : un mot et une couleur par temps (5 à 7,5 s)
+  const couches = $$('#s3 .couche'), anneaux = $$('#s3 .anneau'), photos = $$('#arche3 img'), mots = $$('#s3 .mot-occ');
+  montrer('#s3', 4.85);
+  for (let i = 0; i < 5; i++) {
+    const b = 5.0 + i * .5;
+    tl.to(couches[i], { clipPath: 'circle(150% at 50% 44%)', duration: .45, ease: 'power3.inOut' }, b - .14);
+    tl.fromTo(anneaux[i], { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: .45, ease: 'power3.inOut', immediateRender: false }, b - .14);
+    tl.set(photos[i], { opacity: 1 }, b);
+    tl.fromTo(photos[i], { scale: 1.25, rotation: -2 }, { scale: 1.04, rotation: 0, duration: .55, ease: 'power3.out', immediateRender: false }, b);
+    tl.to(mots[i], { yPercent: 0, duration: .36, ease: 'power4.out' }, b);
+    if (i < 4) tl.to(mots[i], { yPercent: -105, duration: .26, ease: 'power3.in' }, b + .45 - .22);
+  }
+  cacher('#s2', 5.3);
+  tl.fromTo('#arche3', { opacity: 0, scale: .72, y: 60 }, { opacity: 1, scale: 1, y: 0, duration: .6, ease: 'back.out(1.6)', immediateRender: false }, 4.98);
+  tracer('#contour3', 5.0, .7);
+  tl.to('#s3 .sur', { opacity: 1, duration: .4 }, 5.1);
+  tl.to('#arche3', { scale: 1.03, duration: 2.2, ease: 'none' }, 5.6);
+  $$('#s3 .motif').forEach((m) => tl.fromTo(m, { rotation: 0 }, { rotation: 8, duration: 3, ease: 'none', immediateRender: false }, 4.9));
+
+  // 4. Triptyque et bandeaux (7,5 à 9,5 s)
+  montrer('#s4', 7.5);
+  const bandes = $$('#s4 .bande-photo');
+  gsap.set(bandes[0], { yPercent: -100 }); gsap.set(bandes[1], { yPercent: 100 }); gsap.set(bandes[2], { yPercent: -100 });
+  bandes.forEach((b, i) => tl.to(b, { yPercent: 0, duration: .5, ease: 'power4.out' }, 7.5 + i * .07));
+  $$('#s4 .bande-photo img').forEach((im, i) => tl.fromTo(im, { y: i % 2 ? 40 : -60 }, { y: i % 2 ? -60 : 40, duration: 2.2, ease: 'none', immediateRender: false }, 7.5));
+  tl.to('#s4 .sep', { scaleY: 1, duration: .5, ease: 'power3.out', stagger: .08 }, 7.62);
+  cacher('#s3', 7.75);
+  tl.to('#b1', { scaleX: 1, duration: .45, ease: 'power3.out' }, 7.75);
+  tl.to('#b2', { scaleX: 1, duration: .45, ease: 'power3.out' }, 7.92);
+  tl.fromTo('#b1 .defile', { x: 0 }, { x: -760, duration: 2.0, ease: 'none', immediateRender: false }, 7.75);
+  tl.fromTo('#b2 .defile', { x: -760 }, { x: 0, duration: 2.0, ease: 'none', immediateRender: false }, 7.92);
+
+  // 5. Constellation (9,4 à 12 s)
+  montrer('#s5', 9.35);
+  tl.to('#s5', { yPercent: 0, duration: .5, ease: 'power3.inOut' }, 9.4);
+  cacher('#s4', 9.95);
+  entrer('#c1', 9.85, .6); entrer('#c2', 10.05, .6);
+  brillance('#c2', 10.4, 1.1);
+  $$('.ville').forEach((v, i) => {
+    const t = (i === 0 ? 10.25 : 10.85 + (i - 1) * .06);
+    tl.to(v.querySelector('.pt'), { scale: 1, duration: .35, ease: 'back.out(3)' }, t);
+    tl.fromTo(v.querySelector('.onde'), { scale: 0, opacity: 1 }, { scale: 2.6, opacity: 0, duration: .8, ease: 'power2.out', immediateRender: false }, t);
+    tl.to(v.querySelector('.nom'), { opacity: 1, duration: .3 }, t + .05);
+  });
+  const [zx, zy] = B.villes['Bruxelles'];
+  tl.to('#zone-carte', { scale: 5, transformOrigin: zx + 'px ' + zy + 'px', duration: .5, ease: 'power3.in' }, 11.55);
+  tl.to('#s5 .t1, #s5 .t2', { opacity: 0, duration: .25 }, 11.55);
+  eclair(11.85, 1, .45);
+
+  // 6. Confiance (12 à 14 s)
+  montrer('#s6', 11.95); cacher('#s5', 12.05);
+  tl.fromTo('#motif6', { rotation: 0, scale: 1.1 }, { rotation: -5, scale: 1, duration: 2.2, ease: 'none', immediateRender: false }, 11.95);
+  entrer('#f1', 12.05, .55); entrer('#f1b', 12.18, .55); entrer('#f2', 12.32, .55);
+  $$('#s6 .pastille').forEach((p, i) => tl.to(p, { scale: 1, duration: .5, ease: 'back.out(1.8)' }, 12.6 + i * .3));
+
+  // 7. Fournisseuses (14 à 17 s)
+  montrer('#s7', 13.9);
+  tl.to('#s7', { clipPath: 'polygon(-30% 0%, 130% 0%, 100% 100%, -60% 100%)', duration: .55, ease: 'power3.inOut' }, 13.95);
+  cacher('#s6', 14.55);
+  tl.fromTo('#motif7', { rotation: 0 }, { rotation: 6, duration: 3, ease: 'none', immediateRender: false }, 13.95);
+  tl.fromTo('#arche7', { opacity: 0, scale: .75, rotation: -5 }, { opacity: 1, scale: 1, rotation: 0, duration: .7, ease: 'power3.out', immediateRender: false }, 14.2);
+  tracer('#contour7', 14.25, .8);
+  tl.to('#arche7 img', { scale: 1.04, duration: 2.8, ease: 'power1.out' }, 14.2);
+  entrer('#a1', 14.45, .55); entrer('#a2', 14.65, .55);
+  tl.to('#a1, #a2', { yPercent: -110, duration: .3, ease: 'power3.in' }, 15.45);
+  entrer('#pr', 15.7, .6, 'back.out(1.4)');
+  brillance('#pr', 15.85, 1);
+  tl.to('#pr2', { opacity: 1, duration: .5 }, 16.0);
+
+  // 8. Final (17 à 22 s)
+  montrer('#s8', 16.9);
+  tl.to('#s8', { clipPath: 'circle(150% at 50% 44%)', duration: .55, ease: 'power3.inOut' }, 16.95);
+  tl.fromTo('#s8 .anneau', { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: .55, ease: 'power3.inOut', immediateRender: false }, 16.95);
+  cacher('#s7', 17.6);
+  tl.fromTo('#motif8', { rotation: 0, scale: 1.1 }, { rotation: 6, scale: 1, duration: 5, ease: 'none', immediateRender: false }, 17);
+  tl.fromTo('.rosace', { opacity: 0 }, { opacity: 1, duration: .6, immediateRender: false }, 17.1);
+  tl.fromTo('#rosace', { scale: .25, rotation: -30, svgOrigin: '540 668' }, { scale: 1, rotation: 0, duration: 1.3, ease: 'power3.out', svgOrigin: '540 668', immediateRender: false }, 17.1);
+  tl.to('#rosace', { rotation: 18, duration: 3.6, ease: 'none', svgOrigin: '540 668' }, 18.4);
+  tracer('#arche8, #arche8b', 17.3, .8);
+  tl.fromTo('#s8 .L', { opacity: 0, y: 30, scale: .9 }, { opacity: 1, y: 0, scale: 1, duration: .6, immediateRender: false }, 17.75);
+  eclair(17.72, .9, .6);
+  $$('#s8 .nom span').forEach((s, i) => tl.fromTo(s, { opacity: 0, y: 70, rotationX: -70 }, { opacity: 1, y: 0, rotationX: 0, duration: .55, ease: 'back.out(1.6)', immediateRender: false }, 18.1 + i * .07));
+  brillance('#s8 .nom span', 18.8, 1.2);
+  tl.fromTo('#s8 .slogan', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: .6, immediateRender: false }, 18.9);
+  tl.fromTo('#s8 .cta', { opacity: 0, scale: .7 }, { opacity: 1, scale: 1, duration: .55, ease: 'back.out(2)', immediateRender: false }, 19.4);
+  tl.fromTo('#s8 .bas', { opacity: 0 }, { opacity: 1, duration: .6, immediateRender: false }, 19.8);
+  tl.to({}, { duration: .01 }, 22);
+
+  window.duree = 22;
+  window.positionner = (t) => { tl.time(t, false); dessinerParticules(t); dessinerCarte(t); };
+  window.pret = document.fonts.ready.then(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
+</script>
+</body>
+</html>

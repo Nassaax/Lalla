@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 
 const [source, sortie, apercus] = process.argv.slice(2);
-const FPS = 30;
+const FPS = Number(process.env.IPS || 30);
 const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 1080, height: 1920 } });
 await p.goto('file://' + path.resolve(source));
