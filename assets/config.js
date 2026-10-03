@@ -8,10 +8,10 @@
 (function (root) {
   var CONFIG = {
     brand: {
-      name: 'LALLA',
-      email: 'bonjour@lalla.be',
-      instagram: 'lalla.be',
-      domaine: 'lalla.be'
+      name: 'LALLAT',
+      email: 'bonjour@lallat.be',
+      instagram: 'lallat.be',
+      domaine: 'lallat.be'
     },
     // Zones couvertes : toute la Belgique (Bruxelles et les 10 provinces). Valeur stockée en français.
     villes: ['Bruxelles', 'Anvers', 'Brabant flamand', 'Brabant wallon', 'Flandre occidentale', 'Flandre orientale',

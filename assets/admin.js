@@ -1,5 +1,5 @@
 /*
- * LALLA — back-office (admin.html). Outil interne, en français.
+ * LALLAT — back-office (admin.html). Outil interne, en français.
  * Lecture via Supabase (RLS : est_admin()), actions sensibles via /api/v1/admin-*.
  */
 (function () {

@@ -2,7 +2,7 @@
   "name": "lalla",
   "private": true,
   "type": "module",
-  "description": "LALLA — location de tenues marocaines en Belgique",
+  "description": "LALLAT — location de tenues marocaines en Belgique",
   "engines": {
     "node": ">=20"
   },

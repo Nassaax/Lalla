@@ -1,5 +1,5 @@
 /*
- * LALLA — espace personnel (compte.html) : tableau de bord selon le rôle.
+ * LALLAT — espace personnel (compte.html) : tableau de bord selon le rôle.
  * Cliente : réservations, états des lieux, essayages, mensurations, avis.
  * Fournisseuse : demandes, annonces (ajout en série), calendrier, revenus, paiements, boutique.
  * Partenaire : fiche annuaire, demandes de devis.

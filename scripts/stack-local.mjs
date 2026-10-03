@@ -89,7 +89,7 @@ export async function demarrerPile({ reset = true, journal = false } = {}) {
     GOTRUE_MAILER_AUTOCONFIRM: 'true',
     GOTRUE_SMTP_HOST: '127.0.0.1',
     GOTRUE_SMTP_PORT: String(PORTS.smtp),
-    GOTRUE_SMTP_ADMIN_EMAIL: 'bonjour@lalla.local',
+    GOTRUE_SMTP_ADMIN_EMAIL: 'bonjour@lallat.local',
     GOTRUE_SMTP_USER: 'x',
     GOTRUE_SMTP_PASS: 'x',
     GOTRUE_RATE_LIMIT_EMAIL_SENT: '1000',
@@ -103,7 +103,7 @@ export async function demarrerPile({ reset = true, journal = false } = {}) {
   await attendre(`http://127.0.0.1:${PORTS.gotrue}/health`);
 
   if (reset) {
-    // Émulation storage (le schéma auth vient de GoTrue), puis migrations LALLA
+    // Émulation storage (le schéma auth vient de GoTrue), puis migrations LALLAT
     const stub = readFileSync(path.join(racine, 'supabase/tests/00_supabase_stub.sql'), 'utf8');
     const storageSeul = stub.slice(stub.indexOf('create table if not exists storage.buckets'));
     psql(DB, storageSeul);

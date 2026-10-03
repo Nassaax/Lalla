@@ -1,4 +1,4 @@
-# LALLA — Plan technique
+# LALLAT — Plan technique
 
 > Plateforme belge de location de tenues marocaines entre particulières, negafas, créatrices et clientes.
 > Promesse : « Portez l'exceptionnel, le temps d'une fête. »

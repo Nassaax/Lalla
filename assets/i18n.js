@@ -935,7 +935,7 @@
     'msg.nouvelle': 'Nouvelle conversation',
     'msg.ecrire': 'Écrire un message…',
     'msg.envoyer': 'Envoyer',
-    'msg.securite': 'Pour votre sécurité, payez et échangez uniquement sur LALLA. Les coordonnées sont masquées jusqu\'au paiement.',
+    'msg.securite': 'Pour votre sécurité, payez et échangez uniquement sur LALLAT. Les coordonnées sont masquées jusqu\'au paiement.',
     'msg.premier': 'Écrivez votre premier message à {nom} : taille, date de l\'événement, essayage…',
     'msg.masque': 'Coordonnées masquées jusqu\'au paiement',
     'carte.chez': 'Chez {nom}, {type} à {lieu}',
@@ -967,7 +967,7 @@
     'profil.langues': 'Parle {langues}',
     'profil.avis': 'avis',
     'profil.note': 'note',
-    'profil.annees': 'an(s) sur LALLA',
+    'profil.annees': 'an(s) sur LALLAT',
     'profil.a_propos': 'À propos de {nom}',
     'profil.bio_vide': 'Cette fournisseuse n\'a pas encore rédigé sa présentation.',
     'profil.annonces': 'Les tenues de {nom}',
@@ -1078,7 +1078,7 @@
     'msg.nouvelle': 'Nieuw gesprek',
     'msg.ecrire': 'Schrijf een bericht…',
     'msg.envoyer': 'Versturen',
-    'msg.securite': 'Voor uw veiligheid betaalt en communiceert u enkel via LALLA. Contactgegevens worden verborgen tot de betaling.',
+    'msg.securite': 'Voor uw veiligheid betaalt en communiceert u enkel via LALLAT. Contactgegevens worden verborgen tot de betaling.',
     'msg.premier': 'Schrijf uw eerste bericht aan {nom}: maat, datum van het evenement, passen…',
     'msg.masque': 'Contactgegevens verborgen tot de betaling',
     'carte.chez': 'Bij {nom}, {type} in {lieu}',
@@ -1110,7 +1110,7 @@
     'profil.langues': 'Spreekt {langues}',
     'profil.avis': 'reviews',
     'profil.note': 'score',
-    'profil.annees': 'jaar op LALLA',
+    'profil.annees': 'jaar op LALLAT',
     'profil.a_propos': 'Over {nom}',
     'profil.bio_vide': 'Deze aanbieder heeft nog geen voorstelling geschreven.',
     'profil.annonces': 'De kledij van {nom}',
@@ -1203,7 +1203,7 @@
     'index.cmt.c2': 'Stel uw vragen via bericht. De aanbieder aanvaardt binnen 24 u, of meteen bij direct reserveren.',
     'index.cmt.c3t': 'Draag, breng terug',
     'index.cmt.c3': 'Overhandiging bij u in de buurt op het afgesproken tijdstip, of verzekerde verzending. Stomerij inbegrepen, waarborg vrijgegeven bij terugbezorging.',
-    'index.prot.surtitre': 'LALLA-bescherming',
+    'index.prot.surtitre': 'LALLAT-bescherming',
     'index.prot.titre': 'Elke verhuur <em>is beschermd.</em>',
     'index.prot.1t': 'Geverifieerde aanbieders',
     'index.prot.1': 'Advertenties nagelezen voor publicatie, identiteit gecontroleerd voor waardevolle stukken.',
@@ -1227,7 +1227,7 @@
     'aide.q1': 'Hoe reserveer ik kledij?',
     'aide.r1': 'Kies een stuk, geef uw data op en verstuur uw aanvraag. De aanbieder antwoordt binnen 24 uur. Is direct reserveren actief (symbool ⚡), dan wordt ze meteen aanvaard. Daarna betaalt u in één keer.',
     'aide.q2': 'Kan ik vragen stellen voor ik reserveer?',
-    'aide.r2': 'Ja: gebruik de knop « Contacteren » op de advertentie of het profiel van de aanbieder. Uw gesprekken blijven in uw LALLA-berichten.',
+    'aide.r2': 'Ja: gebruik de knop « Contacteren » op de advertentie of het profiel van de aanbieder. Uw gesprekken blijven in uw LALLAT-berichten.',
     'aide.q3': 'Kan ik passen voor ik huur?',
     'aide.r3': 'Als de advertentie het vermeldt, reserveert u een pasmoment bij de aanbieder of tijdens een showroom. De paskosten worden afgetrokken als u daarna huurt.',
     'aide.q4': 'Hoe verloopt de overhandiging?',
@@ -1237,7 +1237,7 @@
     'aide.q6': 'Wie kan kledij aanbieden?',
     'aide.r6': 'Particulieren, negafa\'s en ontwerpsters, in heel België. Elke advertentie wordt door ons team nagelezen voor ze online komt.',
     'aide.q7': 'Hoeveel verdien ik?',
-    'aide.r7': 'U bepaalt uw prijs. LALLA houdt een commissie in op de huurprijs; de stomerijkosten worden u extra uitbetaald. De uitbetaling vertrekt 24 uur na de bevestigde terugbezorging.',
+    'aide.r7': 'U bepaalt uw prijs. LALLAT houdt een commissie in op de huurprijs; de stomerijkosten worden u extra uitbetaald. De uitbetaling vertrekt 24 uur na de bevestigde terugbezorging.',
     'aide.q8': 'En als het stuk beschadigd is?',
     'aide.r8': 'Bij overhandiging en terugbezorging wordt de staat in foto\'s vastgelegd. Bij schade opent u binnen 48 uur een geschil: het team bekijkt de foto\'s en kan de waarborg geheel of gedeeltelijk inhouden.',
     'aide.q9': 'Waarom vraagt men mijn fiscale gegevens?',
@@ -1247,7 +1247,7 @@
     'aide.q11': 'Is de betaling veilig?',
     'aide.r11': 'Ja, ze verloopt via Stripe (Bancontact of kaart). De aanbieder wordt pas betaald na de terugbezorging.',
     'aide.q12': 'Waarom zijn mijn contactgegevens verborgen in de berichten?',
-    'aide.r12': 'Om u te beschermen: voor de betaling worden nummers, e-mails en links verborgen. Buiten LALLA betalen ontneemt u de waarborg, de hulp en de verhaalmogelijkheden.',
+    'aide.r12': 'Om u te beschermen: voor de betaling worden nummers, e-mails en links verborgen. Buiten LALLAT betalen ontneemt u de waarborg, de hulp en de verhaalmogelijkheden.',
     'aide.q13': 'Hoe meld ik een probleem?',
     'aide.r13': 'Gebruik « Melden » op de betrokken advertentie, het profiel of het gesprek. Ons team behandelt elke melding.',
     'aide.q14': 'Hoe annuleer ik?',
@@ -1272,7 +1272,7 @@
   })();
 
   function marque() {
-    return (window.LALLA_CONFIG && window.LALLA_CONFIG.brand.name) || 'LALLA';
+    return (window.LALLA_CONFIG && window.LALLA_CONFIG.brand.name) || 'LALLAT';
   }
 
   function t(cle, vars) {

@@ -1,5 +1,5 @@
 /*
- * LALLA — contrôleurs des pages publiques (accueil, catalogue, fiche tenue, boutique, panier, partenaires).
+ * LALLAT — contrôleurs des pages publiques (accueil, catalogue, fiche tenue, boutique, panier, partenaires).
  * S'appuie sur window.Lalla (assets/app.js).
  */
 (function () {

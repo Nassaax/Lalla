@@ -1,5 +1,5 @@
 /*
- * LALLA — cœur front partagé par toutes les pages publiques.
+ * LALLAT — cœur front partagé par toutes les pages publiques.
  * Vanilla JS, sans build. Dépendances CDN : supabase-js, GSAP (ScrollTrigger, SplitText, Flip), Lenis.
  * Sommaire :
  *   1. Utilitaires          5. Images & placeholders
@@ -114,7 +114,7 @@
 
   function initSupabase() {
     if (!window.supabase || !ENV.supabaseUrl || !ENV.supabaseAnonKey) {
-      console.warn('[LALLA] Supabase non configuré (voir README : variables SUPABASE_URL et SUPABASE_ANON_KEY).');
+      console.warn('[LALLAT] Supabase non configuré (voir README : variables SUPABASE_URL et SUPABASE_ANON_KEY).');
       return;
     }
     L.sb = window.supabase.createClient(ENV.supabaseUrl, ENV.supabaseAnonKey, {

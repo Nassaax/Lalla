@@ -1,4 +1,4 @@
-# Lance la tâche horaire de LALLA (le plan Hobby de Vercel n'autorise que des crons quotidiens).
+# Lance la tâche horaire de LALLAT (le plan Hobby de Vercel n'autorise que des crons quotidiens).
 # À configurer une fois dans GitHub → Settings → Secrets and variables → Actions :
 #   - secret   CRON_SECRET : la même valeur que sur Vercel
 #   - variable SITE_URL    : l'adresse du site, sans « / » final (ex. https://lalla.vercel.app)

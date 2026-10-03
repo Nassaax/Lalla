@@ -1,8 +1,8 @@
-# LALLA
+# LALLAT
 
 > Portez l'exceptionnel, le temps d'une fête.
 
-LALLA est une plateforme belge de location de tenues marocaines (caftans, takchitas, tenues de mariée, tenues homme, enfant, accessoires). Elle met en relation des particulières, negafas et créatrices avec des clientes, partout en Belgique (Bruxelles et les dix provinces). La plateforme vérifie les annonces, encaisse le paiement, prend sa commission et reverse le reste.
+LALLAT est une plateforme belge de location de tenues marocaines (caftans, takchitas, tenues de mariée, tenues homme, enfant, accessoires). Elle met en relation des particulières, negafas et créatrices avec des clientes, partout en Belgique (Bruxelles et les dix provinces). La plateforme vérifie les annonces, encaisse le paiement, prend sa commission et reverse le reste.
 
 Ce guide s'adresse à une personne **non développeuse** : il explique pas à pas comment mettre le site en ligne. Comptez environ deux heures la première fois.
 
@@ -50,7 +50,7 @@ Le détail technique (schéma, règles d'accès, schéma des paiements, animatio
 3. **Stripe** (gratuit, commission par transaction) : https://stripe.com/be
 4. **Resend** (gratuit jusqu'à 3 000 emails par mois) : https://resend.com
 5. **Vercel** (gratuit ; le plan Pro est conseillé pour les crons horaires, voir §8) : https://vercel.com
-6. **Un nom de domaine**, par exemple `lalla.be`, chez votre registraire habituel.
+6. **Un nom de domaine**, par exemple `lallat.be`, chez votre registraire habituel.
 
 Gardez un fichier texte sécurisé (un gestionnaire de mots de passe, par exemple) pour y noter les clés au fur et à mesure. **Ne collez jamais une clé secrète dans le code ni dans un email.**
 
@@ -97,7 +97,7 @@ Restez en **mode test** (interrupteur « Test mode » en haut à droite) tant qu
 3. **Connect** (versements aux fournisseuses) :
    - **Connect → Get started**, choisissez le modèle **Platform** avec des comptes **Express**.
    - Pays : Belgique. Responsabilité des pertes : la plateforme (modèle « separate charges and transfers »).
-   - Dans **Connect → Settings → Branding**, ajoutez le nom LALLA, le logo et les couleurs (ivoire `#F4EEE3`, émeraude `#1F5E4B`).
+   - Dans **Connect → Settings → Branding**, ajoutez le nom LALLAT, le logo et les couleurs (ivoire `#F4EEE3`, émeraude `#1F5E4B`).
 4. **Identity** (vérification d'identité au-delà du seuil de caution) : **Identity → Get started**. Activez-le en mode test, puis en production (Stripe demande une courte validation).
 5. Le **webhook** se configure après la mise en ligne : voir §7.
 
@@ -105,10 +105,10 @@ Restez en **mode test** (interrupteur « Test mode » en haut à droite) tant qu
 
 ## 5. Resend : les emails
 
-1. Sur resend.com, ouvrez **Domains → Add domain** et saisissez `lalla.be` (votre domaine).
+1. Sur resend.com, ouvrez **Domains → Add domain** et saisissez `lallat.be` (votre domaine).
 2. Ajoutez chez votre registraire les enregistrements DNS que Resend affiche (SPF, DKIM), puis attendez la validation (de quelques minutes à quelques heures).
 3. Ouvrez **API Keys → Create API key** (permission « Sending access »). Ce sera `RESEND_API_KEY`.
-4. L'adresse d'envoi par défaut est `bonjour@<domaine>` (définie dans `assets/config.js`). Pour en utiliser une autre, ajoutez la variable facultative `EMAIL_FROM`, par exemple `LALLA <bonjour@lalla.be>`.
+4. L'adresse d'envoi par défaut est `bonjour@<domaine>` (définie dans `assets/config.js`). Pour en utiliser une autre, ajoutez la variable facultative `EMAIL_FROM`, par exemple `LALLAT <bonjour@lallat.be>`.
 
 ---
 

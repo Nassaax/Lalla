@@ -88,7 +88,7 @@ export async function seed() {
   const ids = {};
   console.log('Admin…');
   ids.admin = await creerUtilisateur(`admin@${DOMAINE}`, { prenom: 'Équipe' });
-  verifier(await sb.from('profils').update({ est_admin: true, compte_valide: true, nom_affiche: 'Équipe LALLA' }).eq('id', ids.admin), 'admin');
+  verifier(await sb.from('profils').update({ est_admin: true, compte_valide: true, nom_affiche: 'Équipe LALLAT' }).eq('id', ids.admin), 'admin');
 
   console.log('Fournisseuses…');
   for (const f of FOURNISSEUSES) {

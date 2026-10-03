@@ -1,5 +1,5 @@
 /*
- * LALLA, visuels d'attente (aucune photo externe).
+ * LALLAT, visuels d'attente (aucune photo externe).
  * Tant qu'une tenue n'a pas de photo, on affiche un aplat de tissu sobre : la couleur de la pièce,
  * adoucie vers un gris chaud, un reflet satiné très léger et un grain fin. Aucun dessin de vêtement.
  * Spécification : placeholder:<categorie|sous_categorie>:<couleur>:<face|dos|broderie|portee|doublure>:<graine>

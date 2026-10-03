@@ -5,4 +5,4 @@ Disallow: /compte.html
 Disallow: /panier.html
 Disallow: /api/
 
-Sitemap: https://lalla.be/sitemap.xml
+Sitemap: https://lallat.be/sitemap.xml

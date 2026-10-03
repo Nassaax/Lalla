@@ -185,5 +185,5 @@ export function creerServeur({ port = Number(process.env.PORT) || 8787, passerel
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   const s = await creerServeur();
-  console.log(`LALLA en local : http://localhost:${s.address().port}`);
+  console.log(`LALLAT en local : http://localhost:${s.address().port}`);
 }

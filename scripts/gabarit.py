@@ -22,16 +22,16 @@ def page(fichier, page, titre_cle, titre, desc_cle, desc, contenu, scripts_extra
   <title data-i18n="{titre_cle}">{titre}</title>
   <meta name="description" data-i18n-attr="content:{desc_cle}" content="{desc}">
   <meta name="robots" content="{robots}">
-  <link rel="canonical" href="https://lalla.be/{chemin}">
-  <link rel="alternate" hreflang="fr-BE" href="https://lalla.be/{chemin}">
-  <link rel="alternate" hreflang="nl-BE" href="https://lalla.be/{chemin}{'&' if '?' in chemin else '?'}lang=nl">
+  <link rel="canonical" href="https://lallat.be/{chemin}">
+  <link rel="alternate" hreflang="fr-BE" href="https://lallat.be/{chemin}">
+  <link rel="alternate" hreflang="nl-BE" href="https://lallat.be/{chemin}{'&' if '?' in chemin else '?'}lang=nl">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="LALLA">
+  <meta property="og:site_name" content="LALLAT">
   <meta property="og:locale" content="fr_BE">
   <meta property="og:title" content="{titre}">
   <meta property="og:description" content="{desc}">
-  <meta property="og:url" content="https://lalla.be/{chemin}">
-  <meta property="og:image" content="https://lalla.be/assets/og-default.jpg">
+  <meta property="og:url" content="https://lallat.be/{chemin}">
+  <meta property="og:image" content="https://lallat.be/assets/og-default.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#F4EEE3">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
