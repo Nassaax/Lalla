@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>LALLAT, reel propriétaires</title>
+<link rel="stylesheet" href="../commun.css">
+<style>
+  #scene { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #070504; }
+  #camera { position: absolute; inset: 0; }
+  .plan { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
+  .motif { position: absolute; left: -220px; top: -220px; width: 1520px; height: 2360px; }
+  .ligne { display: block; overflow: hidden; padding: 0 .12em .1em; }
+  .ligne > span { display: inline-block; }
+  .or { background: linear-gradient(100deg, #9E7432 0%, #E9CB86 20%, #FFF3CF 30%, #D6AE62 42%, #B8893B 56%, #F4DDA0 72%, #FFF6D8 78%, #A87C36 100%); background-size: 260% 100%; background-position: 100% 50%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ital { font-family: Bodoni, serif; font-style: italic; font-weight: 500; }
+  .serif { font-family: Bodoni, serif; font-weight: 500; }
+  .centre { position: absolute; left: 0; right: 0; text-align: center; }
+  .ombre { filter: drop-shadow(0 6px 24px rgba(0,0,0,.55)); }
+  .rayons { position: absolute; left: 50%; top: 50%; width: 2600px; height: 2600px; margin: -1300px 0 0 -1300px; background: repeating-conic-gradient(from 0deg, rgba(233,199,122,.09) 0deg 5deg, rgba(233,199,122,0) 5deg 15deg); -webkit-mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 30%, transparent 62%); mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 30%, transparent 62%); }
+  #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.4) 100%); }
+  #flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 46%, rgba(255,246,220,.95) 0%, rgba(255,226,160,.55) 35%, rgba(255,226,160,0) 75%); mix-blend-mode: screen; }
+  #paillettes { position: absolute; inset: 0; pointer-events: none; }
+  .anneau { position: absolute; left: 540px; top: 900px; width: 4700px; height: 4700px; margin: -2350px 0 0 -2350px; border-radius: 50%; border: 14px solid #E9C77A; opacity: 0; }
+
+  /* A. L'armoire */
+  #sa { background: radial-gradient(circle at 50% 58%, #3E2C1F 0%, #1A120D 50%, #070504 100%); visibility: visible; }
+  #sa .t1 { top: 200px; font-size: 124px; color: #FFF8EC; line-height: 1; }
+  #sa .t2 { top: 335px; font-size: 136px; line-height: 1.02; }
+  #armoire { position: absolute; left: 170px; top: 560px; width: 740px; height: 1060px; perspective: 2000px; transform-origin: 370px 520px; }
+  #armoire .caisse { position: absolute; inset: 0; background: linear-gradient(90deg, #2B1B12, #3B2618 50%, #2B1B12); clip-path: polygon(0% 14%, 50% 0%, 100% 14%, 100% 100%, 0% 100%); }
+  #armoire .interieur { position: absolute; left: 30px; top: 170px; width: 680px; height: 820px; overflow: hidden; background: radial-gradient(circle at 50% 26%, #FFF1C8 0%, #E2BC6E 26%, #8A5E2A 62%, #2A1A0E 100%); }
+  #armoire .lueur { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, rgba(255,250,230,.9), rgba(255,240,200,0) 60%); opacity: 0; mix-blend-mode: screen; }
+  #armoire .tringle { position: absolute; left: 24px; right: 24px; top: 44px; height: 10px; border-radius: 6px; background: linear-gradient(180deg, #FFF3CF, #B8893B); box-shadow: 0 4px 10px rgba(0,0,0,.35); }
+  .cintre { position: absolute; top: 36px; width: 196px; height: 420px; transform-origin: 98px 12px; }
+  .cintre svg { position: absolute; left: 0; top: 0; width: 196px; height: 90px; overflow: visible; }
+  .cintre .carte { position: absolute; left: 0; top: 70px; width: 196px; height: 300px; -webkit-mask: var(--arche) center / 100% 100% no-repeat; mask: var(--arche) center / 100% 100% no-repeat; box-shadow: 0 20px 40px rgba(0,0,0,.4); }
+  .cintre .carte img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+  #armoire .etagere { position: absolute; left: 24px; right: 24px; top: 560px; height: 12px; background: linear-gradient(180deg, #E2BC6E, #7A5226); border-radius: 4px; }
+  #armoire .housses { position: absolute; left: 70px; right: 70px; top: 600px; height: 190px; display: flex; gap: 22px; }
+  #armoire .housses span { flex: 1; border-radius: 14px; background: linear-gradient(180deg, rgba(255,248,236,.55), rgba(255,248,236,.25)); border: 1px solid rgba(255,248,236,.5); }
+  .battant { position: absolute; top: 170px; width: 340px; height: 820px; backface-visibility: hidden; }
+  .battant.g { left: 30px; transform-origin: 0 50%; }
+  .battant.d { left: 370px; transform-origin: 100% 50%; }
+  .battant svg { position: absolute; inset: 0; }
+  .battant .sombre { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,0)); opacity: 0; }
+  .battant.d .sombre { background: linear-gradient(270deg, rgba(0,0,0,.6), rgba(0,0,0,0)); }
+  #armoire .contour { position: absolute; left: 0; top: 0; width: 740px; height: 1060px; overflow: visible; }
+
+  /* B. La housse */
+  #sb { background: radial-gradient(circle at 50% 40%, #8A2C3C 0%, #5E1D27 48%, #2E0C13 100%); clip-path: circle(0% at 50% 47%); }
+  #housse { position: absolute; left: 220px; top: 250px; width: 640px; height: 960px; opacity: 0; }
+  #housse .fenetre { position: absolute; inset: 0; -webkit-mask: var(--arche) center / 100% 100% no-repeat; mask: var(--arche) center / 100% 100% no-repeat; }
+  #housse img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+  #housse .givre { position: absolute; inset: 0; }
+  #housse .givre img { filter: blur(18px) brightness(.9) saturate(.45); transform: scale(1.08); }
+  #housse .givre .film { position: absolute; inset: 0; background: linear-gradient(100deg, rgba(250,246,240,.55) 0%, rgba(250,246,240,.28) 30%, rgba(255,255,255,.5) 38%, rgba(250,246,240,.25) 46%, rgba(250,246,240,.4) 100%); }
+  #housse .dents { position: absolute; left: 317px; width: 6px; background: repeating-linear-gradient(180deg, #E9C77A 0 6px, #7A5226 6px 10px); }
+  #housse .bords { position: absolute; inset: 0; overflow: visible; }
+  #housse .curseur { position: absolute; left: 304px; width: 32px; height: 70px; }
+  #sb .ta { position: absolute; left: 0; right: 0; top: 1255px; text-align: center; }
+  #sb .ta .l1 { font-size: 96px; color: #FFF8EC; line-height: 1.05; }
+  #sb .ta .l2 { font-size: 96px; color: #F7E3A3; line-height: 1.05; }
+  #sb .tb { top: 1260px; font-size: 168px; line-height: 1.05; }
+
+  /* C. Le téléphone */
+  #sc { background: radial-gradient(circle at 50% 45%, #11604E 0%, #0A3A30 52%, #04201A 100%); }
+  #etapes { position: absolute; left: 0; right: 0; top: 170px; height: 130px; overflow: hidden; }
+  .etape { position: absolute; left: 0; right: 0; top: 0; text-align: center; font-size: 72px; line-height: 1.5; color: #FFF8EC; }
+  .etape b { font-style: italic; font-weight: 500; color: #F7E3A3; margin-right: .2em; }
+  #tel { position: absolute; left: 190px; top: 340px; width: 700px; height: 1400px; border-radius: 104px; background: #0E0B0A; padding: 20px; box-shadow: 0 60px 140px rgba(0,0,0,.5), inset 0 0 0 3px #3A302A; opacity: 0; transform-origin: 350px 600px; }
+  #tel .ecran { position: relative; width: 100%; height: 100%; border-radius: 86px; overflow: hidden; }
+  #tel .fond-ecran { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; filter: brightness(.5) saturate(1.1); }
+  #tel .ile { position: absolute; left: 230px; top: 26px; width: 200px; height: 58px; border-radius: 30px; background: #000; }
+  #tel .date { position: absolute; left: 0; right: 0; top: 118px; text-align: center; font-family: Jost; font-weight: 500; font-size: 34px; color: rgba(255,255,255,.88); }
+  #tel .heure { position: absolute; left: 0; right: 0; top: 150px; text-align: center; font-family: Jost; font-weight: 400; font-size: 200px; line-height: 1; color: #fff; letter-spacing: -.02em; }
+  #notifs { position: absolute; left: 20px; right: 20px; top: 420px; }
+  .notif { position: absolute; left: 0; right: 0; top: 0; height: 138px; border-radius: 38px; background: rgba(250,246,240,.94); display: grid; grid-template-columns: 76px 1fr; gap: 22px; align-items: center; padding: 0 28px 0 24px; box-shadow: 0 18px 40px rgba(0,0,0,.25); opacity: 0; }
+  .notif .icone { width: 76px; height: 76px; border-radius: 20px; background: #5E1D27; display: grid; place-items: center; }
+  .notif .haut { display: flex; justify-content: space-between; font-family: Jost; font-size: 22px; color: #7A6E66; letter-spacing: .06em; }
+  .notif .titre { font-family: Jost; font-weight: 500; font-size: 31px; color: #241B17; margin-top: 2px; }
+  .notif .texte { font-family: Jost; font-size: 27px; color: #54483F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .notif.argent .titre { color: #5E1D27; }
+  .notif.argent .texte b { color: #2E6B4F; font-weight: 500; }
+
+  /* D. Le compteur */
+  #sd { background: radial-gradient(circle at 50% 46%, #2E2014 0%, #140D08 50%, #050302 100%); }
+  #sd .t0 { top: 290px; font-family: Jost; font-weight: 500; font-size: 30px; letter-spacing: .3em; text-transform: uppercase; color: #E9C77A; opacity: 0; }
+  #sd .t1 { top: 350px; font-size: 70px; color: #FFF8EC; line-height: 1.12; }
+  .jeton { position: absolute; top: 0; left: 0; padding: 18px 34px; border-radius: 999px; background: linear-gradient(135deg, #FFF3CF, #E2BC6E 50%, #B8893B); color: #4A1520; font-family: Jost; font-weight: 500; font-size: 46px; box-shadow: 0 16px 40px rgba(0,0,0,.4); opacity: 0; white-space: nowrap; }
+  #compteur { position: absolute; left: 0; right: 0; top: 760px; display: flex; justify-content: center; font-family: Bodoni; font-weight: 500; font-size: 250px; line-height: 1; color: #F2D58E; filter: drop-shadow(0 0 30px rgba(233,199,122,.35)); }
+  #compteur .col { display: inline-block; width: .62em; height: 1em; overflow: hidden; text-align: center; }
+  #compteur .ruban { display: block; }
+  #compteur .ruban span { display: block; height: 1em; }
+  #compteur .virgule { width: .26em; text-align: center; }
+  #compteur .euro { margin-left: .12em; }
+  #balayage { position: absolute; left: -400px; top: 720px; width: 260px; height: 340px; background: linear-gradient(90deg, rgba(255,246,220,0), rgba(255,246,220,.75), rgba(255,246,220,0)); transform: skewX(-18deg); mix-blend-mode: screen; opacity: 0; }
+  #sd .t2 { top: 1035px; font-size: 92px; color: #FFF8EC; opacity: 0; }
+  #sd .t3 { top: 1170px; font-size: 62px; opacity: 0; }
+  #sd .note { top: 1290px; font-family: Jost; font-size: 27px; color: #CDBFA9; opacity: 0; line-height: 1.4; }
+
+  /* E. Protection */
+  #se { background: radial-gradient(circle at 50% 38%, #FFFDF8 0%, #FAF6F0 55%, #EFE4D2 100%); clip-path: polygon(130% 0%, 130% 0%, 100% 100%, 100% 100%); }
+  #se .t1 { top: 215px; font-size: 100px; color: #241B17; line-height: 1.05; }
+  #se .t2 { top: 330px; font-size: 108px; color: #5E1D27; line-height: 1.05; }
+  #bouclier { position: absolute; left: 340px; top: 500px; width: 400px; height: 528px; opacity: 0; }
+  #bouclier .fenetre { position: absolute; inset: 0; -webkit-mask: var(--arche) center / 100% 100% no-repeat; mask: var(--arche) center / 100% 100% no-repeat; }
+  #bouclier img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; }
+  #bouclier svg { position: absolute; left: -36px; top: -40px; width: 472px; height: 604px; overflow: visible; }
+  #garanties { position: absolute; left: 140px; right: 100px; top: 1090px; display: grid; gap: 22px; }
+  .garantie { display: flex; align-items: center; gap: 26px; font-family: Jost; font-weight: 500; font-size: 40px; color: #241B17; opacity: 0; }
+  .garantie i { flex-shrink: 0; width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #E9C77A, #B8893B); display: grid; place-items: center; box-shadow: 0 8px 20px rgba(184,137,59,.35); }
+
+  /* F. Final */
+  #sf { background: radial-gradient(circle at 50% 34%, #8A2C3C 0%, #5E1D27 45%, #34101A 100%); clip-path: circle(0% at 50% 47%); }
+  #sf .rosace { position: absolute; inset: 0; opacity: 0; }
+  #sf .arche { position: absolute; left: 390px; top: 400px; width: 300px; height: 396px; overflow: visible; }
+  #sf .L { top: 510px; font-size: 250px; line-height: 1; color: #FFF8EC; opacity: 0; }
+  #sf .nom { top: 870px; display: flex; justify-content: center; font-size: 132px; letter-spacing: .26em; margin-right: -.26em; }
+  #sf .nom span { display: inline-block; opacity: 0; }
+  #sf .slogan { top: 1050px; font-size: 64px; line-height: 1.2; color: #F7E3A3; opacity: 0; }
+  #sf .cta { top: 1250px; opacity: 0; }
+  #sf .cta span { display: inline-block; background: #FAF6F0; color: #5E1D27; font-family: Jost; font-weight: 500; font-size: 42px; padding: 28px 56px; border-radius: 999px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  #sf .bas { top: 1395px; font-family: Jost; font-weight: 500; font-size: 28px; letter-spacing: .3em; text-transform: uppercase; color: #E9C77A; opacity: 0; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <pattern id="zellige" width="150" height="150" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#E9C77A" stroke-width="1.6">
+        <polygon id="etoile-tuile" points=""/>
+        <polygon id="octo-tuile" points=""/>
+        <path d="M75 0V22M75 128V150M0 75H22M128 75H150M0 0L37 37M150 0L113 37M0 150L37 113M150 150L113 113"/>
+      </g>
+    </pattern>
+    <linearGradient id="dore" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF3CF"/><stop offset=".5" stop-color="#E2BC6E"/><stop offset="1" stop-color="#9E7432"/></linearGradient>
+    <symbol id="logo-app" viewBox="0 0 40 40"><path d="M10 34V17C10 11 14 7 20 5C26 7 30 11 30 17V34" fill="none" stroke="#E9C77A" stroke-width="1.6"/><text x="20" y="31" text-anchor="middle" font-family="Bodoni" font-size="17" fill="#FFF8EC">L</text></symbol>
+  </defs>
+</svg>
+
+<div id="scene"><div id="camera">
+
+  <!-- A. Votre armoire vaut de l'or -->
+  <section class="plan" id="sa">
+    <div class="rayons" id="rayons-a"></div>
+    <div class="centre t1 serif ombre"><span class="ligne"><span id="a1">Votre armoire</span></span></div>
+    <div class="centre t2 ital ombre"><span class="ligne"><span id="a2" class="or">vaut de l'or.</span></span></div>
+    <div id="armoire">
+      <div class="caisse"></div>
+      <div class="interieur">
+        <div class="tringle"></div>
+        <div class="cintre" style="left:30px"></div>
+        <div class="cintre" style="left:242px"></div>
+        <div class="cintre" style="left:454px"></div>
+        <div class="etagere"></div>
+        <div class="housses"><span></span><span></span><span></span></div>
+        <div class="lueur"></div>
+      </div>
+      <div class="battant g"><svg viewBox="0 0 340 820" id="battant-g"></svg><div class="sombre"></div></div>
+      <div class="battant d"><svg viewBox="0 0 340 820" id="battant-d"></svg><div class="sombre"></div></div>
+      <svg class="contour" viewBox="0 0 740 1060"><path id="contour-a" d="M0 1060 V148 L370 0 L740 148 V1060 Z M30 170 H710 V990 H30 Z" fill="none" stroke="#E9C77A" stroke-width="4"/></svg>
+    </div>
+  </section>
+
+  <!-- B. La housse -->
+  <section class="plan" id="sb">
+    <svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".12"/></svg>
+    <div class="anneau" id="anneau-b"></div>
+    <div id="housse">
+      <div class="fenetre">
+        <img src="images/v-ouverture.jpg" alt="" id="net">
+        <div class="givre" id="givre"><img src="images/v-ouverture.jpg" alt=""><div class="film"></div></div>
+        <div class="dents" id="dents"></div>
+        <svg class="bords" viewBox="0 0 640 960"><path id="bords" d="" fill="none" stroke="#E9C77A" stroke-width="5"/></svg>
+      </div>
+      <svg class="curseur" id="curseur" viewBox="0 0 32 70"><rect x="2" y="0" width="28" height="30" rx="6" fill="url(#dore)"/><rect x="9" y="26" width="14" height="40" rx="7" fill="url(#dore)"/><circle cx="16" cy="54" r="4" fill="#5E1D27"/></svg>
+    </div>
+    <div class="ta">
+      <div class="serif l1"><span class="ligne"><span id="b1">Ce caftan dort</span></span></div>
+      <div class="ital l2"><span class="ligne"><span id="b2">dans une housse&nbsp;?</span></span></div>
+    </div>
+    <div class="centre tb ital ombre"><span class="ligne"><span id="b3" class="or">Réveillez-le.</span></span></div>
+  </section>
+
+  <!-- C. Trois étapes sur le téléphone -->
+  <section class="plan" id="sc">
+    <svg class="motif" id="motif-c"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".14"/></svg>
+    <div id="etapes">
+      <div class="etape serif"><b>1.</b>Publiez gratuitement</div>
+      <div class="etape serif"><b>2.</b>Acceptez les demandes</div>
+      <div class="etape serif"><b>3.</b>Elle revient, vous encaissez</div>
+    </div>
+    <div id="tel">
+      <div class="ecran">
+        <img class="fond-ecran" src="images/v-aid.jpg" alt="">
+        <div class="ile"></div>
+        <div class="date">samedi 14 juin</div>
+        <div class="heure">14:32</div>
+        <div id="notifs"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- D. Ce que ça peut rapporter -->
+  <section class="plan" id="sd">
+    <div class="rayons" id="rayons-d"></div>
+    <svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".06"/></svg>
+    <div class="centre t0">Exemple</div>
+    <div class="centre t1 serif"><span class="ligne"><span id="d1">90 € la location,</span></span><span class="ligne"><span id="d2">3 locations par mois</span></span></div>
+    <div class="jeton" id="j1">+76,50 €</div><div class="jeton" id="j2">+76,50 €</div><div class="jeton" id="j3">+76,50 €</div>
+    <div id="compteur">
+      <span class="col"><span class="ruban"></span></span><span class="col"><span class="ruban"></span></span><span class="col"><span class="ruban"></span></span><span class="virgule">,</span><span class="col"><span class="ruban"></span></span><span class="col"><span class="ruban"></span></span><span class="euro">€</span>
+    </div>
+    <div id="balayage"></div>
+    <div class="centre t2 ital">par mois</div>
+    <div class="centre t3 serif or">Soit près de 2&nbsp;750&nbsp;€ par an.</div>
+    <div class="centre note">Exemple indicatif, après 15&nbsp;% de commission.<br>Vous fixez votre prix et vos dates.</div>
+  </section>
+
+  <!-- E. Protection -->
+  <section class="plan" id="se">
+    <svg class="motif" id="motif-e"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".5" style="filter:brightness(.55) saturate(1.3)"/></svg>
+    <div class="centre t1 serif"><span class="ligne"><span id="e1">Peur qu'on l'abîme&nbsp;?</span></span></div>
+    <div class="centre t2 ital"><span class="ligne"><span id="e2">Vous êtes protégée.</span></span></div>
+    <div id="bouclier">
+      <div class="fenetre"><img src="images/v-fiancailles.jpg" alt=""></div>
+      <svg viewBox="0 0 472 604"><path id="bouclier-trait" d="M6 600 V280 C6 140 96 52 236 6 C376 52 466 140 466 280 V600" fill="none" stroke="#C9A66B" stroke-width="6" style="filter:drop-shadow(0 0 14px rgba(233,199,122,.8))"/></svg>
+    </div>
+    <div id="garanties">
+      <div class="garantie"><i><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></i>La cliente paie avant la remise</div>
+      <div class="garantie"><i><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></i>Une caution par empreinte bancaire</div>
+      <div class="garantie"><i><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></i>Un état des lieux en photos</div>
+      <div class="garantie"><i><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M12 4v16M6 20h12M5 8h14M5 8l-2.5 6a3 3 0 0 0 5 0zM19 8l-2.5 6a3 3 0 0 0 5 0z"/></svg></i>Notre équipe tranche les litiges</div>
+    </div>
+  </section>
+
+  <!-- F. Final -->
+  <section class="plan" id="sf">
+    <svg class="motif" id="motif-f"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".1"/></svg>
+    <svg class="rosace" viewBox="0 0 1080 1920"><g id="rosace" transform="translate(540 598)" fill="none" stroke="#E9C77A"></g></svg>
+    <div class="anneau" id="anneau-f"></div>
+    <svg class="arche" viewBox="0 0 400 528"><path id="arche-f" d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#E9C77A" stroke-width="6"/><path id="arche-fb" d="M54 524 V246 C54 142 110 76 200 36 C290 76 346 142 346 246 V524" fill="none" stroke="#E9C77A" stroke-width="2" opacity=".7"/></svg>
+    <div class="centre L serif">L</div>
+    <div class="centre nom serif"><span class="or">L</span><span class="or">A</span><span class="or">L</span><span class="or">L</span><span class="or">A</span><span class="or">T</span></div>
+    <div class="centre slogan ital">Un revenu en plus,<br>simple et protégé.</div>
+    <div class="centre cta"><span>Publiez gratuitement sur lallat.be</span></div>
+    <div class="centre bas">Particulières · Negafas · Créatrices</div>
+  </section>
+
+  <div id="flash"></div>
+  <div id="vignette"></div>
+</div>
+<canvas id="paillettes" width="1080" height="1920"></canvas>
+</div>
+
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+  const $ = (s) => document.querySelector(s), $$ = (s) => [...document.querySelectorAll(s)];
+  const ARCHE = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 528' preserveAspectRatio='none'%3E%3Cpath d='M0 528V236C0 118 74 40 200 0C326 40 400 118 400 236V528Z'/%3E%3C/svg%3E\")";
+  document.documentElement.style.setProperty('--arche', ARCHE);
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (nom, attrs, parent) => { const e = document.createElementNS(NS, nom); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+  const etoile = (R, rot = 0, cx = 0, cy = 0) => { const p = []; for (let i = 0; i < 16; i++) { const a = (i * 22.5 + rot - 90) * Math.PI / 180, r = i % 2 ? R * 0.7654 : R; p.push((cx + r * Math.cos(a)).toFixed(1) + ',' + (cy + r * Math.sin(a)).toFixed(1)); } return p.join(' '); };
+  const octogone = (R, cx, cy) => { const p = []; for (let i = 0; i < 8; i++) { const a = (i * 45 + 22.5) * Math.PI / 180; p.push((cx + R * Math.cos(a)).toFixed(1) + ',' + (cy + R * Math.sin(a)).toFixed(1)); } return p.join(' '); };
+  $('#etoile-tuile').setAttribute('points', etoile(54, 0, 75, 75));
+  $('#octo-tuile').setAttribute('points', octogone(26, 75, 75));
+  const clamp = (v) => Math.max(0, Math.min(1, v));
+  const doux = (v) => v * v * (3 - 2 * v);
+
+  // Battants de l'armoire
+  const battant = (svg, gauche) => {
+    const x = gauche ? 0 : 0, id = gauche ? 'g' : 'd';
+    svg.innerHTML = `
+      <defs><linearGradient id="bois${id}" x1="0" x2="1"><stop offset="0" stop-color="${gauche ? '#2F1E14' : '#3A2619'}"/><stop offset="1" stop-color="${gauche ? '#3A2619' : '#2F1E14'}"/></linearGradient></defs>
+      <rect width="340" height="820" fill="url(#bois${id})"/>
+      <rect width="340" height="820" fill="url(#zellige)" opacity=".1"/>
+      <rect x="14" y="14" width="312" height="792" fill="none" stroke="#C9A66B" stroke-width="3"/>
+      <path d="M54 770 V320 C54 200 104 128 170 96 C236 128 286 200 286 320 V770 Z" fill="rgba(0,0,0,.2)" stroke="#E2BC6E" stroke-width="3"/>
+      <path d="M74 752 V326 C74 222 116 158 170 128 C224 158 266 222 266 326 V752 Z" fill="none" stroke="#E2BC6E" stroke-width="1.2" opacity=".7"/>
+      <polygon points="${etoile(46, 0, 170, 430)}" fill="url(#dore)" stroke="#9E7432" stroke-width="1.5"/>
+      <circle cx="${gauche ? 318 : 22}" cy="470" r="11" fill="url(#dore)"/>`;
+  };
+  battant($('#battant-g'), true); battant($('#battant-d'), false);
+
+  // Cintres avec photos de tenues
+  ['v-aid', 'v-fiancailles', 'v-soiree'].forEach((img, i) => {
+    $$('.cintre')[i].innerHTML = `<svg viewBox="0 0 196 90"><path d="M98 0 C88 0 84 8 88 14 C92 20 98 18 98 26 L98 34 M10 74 L98 34 L186 74" fill="none" stroke="#FFF3CF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="carte"><img src="images/${img}.jpg" alt=""></div>`;
+  });
+
+  // Rosace finale
+  const ro = $('#rosace');
+  [[220, 0, 2.4, .9], [220, 22.5, 1.4, .7], [380, 11.25, 1.8, .55], [540, 0, 1.2, .4], [700, 22.5, 1, .28]].forEach(([R, r, w, o]) => el('polygon', { points: etoile(R, r), 'stroke-width': w, opacity: o }, ro));
+  for (let i = 0; i < 32; i++) { const a = i * 11.25 * Math.PI / 180; el('line', { x1: (240 * Math.cos(a)).toFixed(1), y1: (240 * Math.sin(a)).toFixed(1), x2: (980 * Math.cos(a)).toFixed(1), y2: (980 * Math.sin(a)).toFixed(1), 'stroke-width': .8, opacity: .22 }, ro); }
+
+  // Notifications (de la plus ancienne à la plus récente)
+  const NOTIFS = [
+    { t: 5.95, titre: 'Annonce en ligne', texte: 'Caftan velours vert · 90 €' },
+    { t: 7.15, titre: 'Nouvelle demande', texte: 'Sara · du 13 au 15 juin' },
+    { t: 7.75, titre: 'Réservation payée', texte: 'Remise samedi à 14 h' },
+    { t: 8.95, titre: 'Versement reçu', texte: '<b>+76,50 €</b> · tenue rendue', argent: true },
+    { t: 9.55, titre: 'Versement reçu', texte: '<b>+76,50 €</b> · nouvelle location', argent: true },
+    { t: 10.15, titre: 'Versement reçu', texte: '<b>+76,50 €</b> · ce mois : 229,50 €', argent: true }
+  ];
+  const zoneNotifs = $('#notifs');
+  NOTIFS.forEach((n) => {
+    const d = document.createElement('div');
+    d.className = 'notif' + (n.argent ? ' argent' : '');
+    d.innerHTML = `<div class="icone"><svg width="56" height="56"><use href="#logo-app"/></svg></div><div><div class="haut"><span>LALLAT</span><span>maintenant</span></div><div class="titre">${n.titre}</div><div class="texte">${n.texte}</div></div>`;
+    zoneNotifs.appendChild(d);
+  });
+
+  // Compteur à rouleaux
+  const CIBLE = [2, 2, 9, 5, 0];
+  $$('#compteur .ruban').forEach((r) => { r.innerHTML = Array.from({ length: 30 }, (_, i) => `<span>${i % 10}</span>`).join(''); });
+
+  // ------------------------------------------------------------------ paillettes, confettis et pièces
+  const graine = (s) => () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const OR = ['#F7E3A3', '#E9C77A', '#FFF6D8', '#D9B25F', '#FFFFFF'];
+  const particules = [];
+  const rafale = (o) => {
+    const r = graine(o.graine);
+    for (let i = 0; i < o.n; i++) {
+      const a = o.angle ? o.angle[0] + r() * (o.angle[1] - o.angle[0]) : r() * Math.PI * 2;
+      const v = o.v[0] + r() * (o.v[1] - o.v[0]);
+      particules.push({ x0: o.x + (r() - .5) * (o.dx || 0), y0: o.y + (r() - .5) * (o.dy || 0), vx: Math.cos(a) * v, vy: Math.sin(a) * v,
+        g: o.g ?? 300, frein: o.frein ?? 2.2, t0: o.t0 + r() * (o.etale || 0), vie: o.vie[0] + r() * (o.vie[1] - o.vie[0]),
+        taille: o.taille[0] + r() * (o.taille[1] - o.taille[0]), c: o.couleurs[Math.floor(r() * o.couleurs.length)],
+        type: o.types[Math.floor(r() * o.types.length)], rot: r() * 6.28, vr: (r() - .5) * 14, ph: r() * 6.28, oscille: o.oscille ? 20 + r() * 40 : 0, lumiere: o.lumiere !== false });
+    }
+  };
+  const pluie = (o) => {
+    const r = graine(o.graine);
+    for (let i = 0; i < o.n; i++) {
+      const vy = o.v[0] + r() * (o.v[1] - o.v[0]);
+      particules.push({ x0: r() * 1080, y0: -40 - r() * 300, vx: (r() - .5) * 60, vy, g: 0, frein: 0, t0: o.t0 + r() * o.etale, vie: 2300 / vy,
+        taille: o.taille[0] + r() * (o.taille[1] - o.taille[0]), c: o.couleurs[Math.floor(r() * o.couleurs.length)], type: o.types[Math.floor(r() * o.types.length)],
+        rot: r() * 6.28, vr: (r() - .5) * 10, ph: r() * 6.28, oscille: 20 + r() * 50, lumiere: true });
+    }
+  };
+  rafale({ graine: 1, t0: 1.35, x: 540, y: 1000, dx: 400, n: 28, angle: [-Math.PI * .85, -Math.PI * .15], v: [700, 1500], vie: [1.4, 2.0], taille: [12, 18], couleurs: OR, types: ['piece'], g: 1700, frein: .6, etale: .15 });
+  rafale({ graine: 2, t0: 1.3, x: 540, y: 950, dx: 500, dy: 400, n: 90, v: [150, 700], vie: [0.9, 1.6], taille: [2, 6], couleurs: OR, types: ['point', 'etoile'], g: -60, etale: .3 });
+  rafale({ graine: 3, t0: 4.1, x: 540, y: 700, dx: 500, dy: 800, n: 70, v: [80, 300], vie: [0.8, 1.4], taille: [2, 5], couleurs: OR, types: ['etoile', 'point'], g: -40, etale: .2 });
+  [8.95, 9.55, 10.15].forEach((t, i) => rafale({ graine: 4 + i, t0: t + .05, x: 540, y: 830, dx: 560, dy: 60, n: 26, v: [100, 420], vie: [0.6, 1.1], taille: [2, 5], couleurs: OR, types: ['etoile', 'point'], g: -80 }));
+  rafale({ graine: 8, t0: 13.62, x: 540, y: 880, dx: 500, n: 36, angle: [-Math.PI * .9, -Math.PI * .1], v: [800, 1700], vie: [1.4, 2.0], taille: [12, 20], couleurs: OR, types: ['piece'], g: 1800, frein: .5, etale: .1 });
+  rafale({ graine: 9, t0: 13.62, x: 540, y: 880, n: 120, v: [300, 1400], vie: [1.0, 1.8], taille: [2, 6], couleurs: OR, types: ['point', 'etoile'], g: 200, etale: .1 });
+  [16.2, 16.6, 17.0, 17.4].forEach((t, i) => rafale({ graine: 10 + i, t0: t + .1, x: 175, y: 1125 + i * 92, dx: 30, dy: 30, n: 14, v: [60, 260], vie: [0.5, 0.9], taille: [3, 6], couleurs: ['#E2BC6E', '#C9A66B', '#B8893B'], types: ['etoile'], g: -40, lumiere: false }));
+  rafale({ graine: 20, t0: 19.8, x: 540, y: 598, n: 200, v: [300, 1700], vie: [1.1, 2.2], taille: [2, 7], couleurs: OR, types: ['point', 'etoile', 'confetti'], g: 220, etale: .12 });
+  rafale({ graine: 21, t0: 19.8, x: 540, y: 640, dx: 300, n: 26, angle: [-Math.PI * .9, -Math.PI * .1], v: [800, 1600], vie: [1.4, 2.1], taille: [12, 18], couleurs: OR, types: ['piece'], g: 1700, frein: .5, etale: .1 });
+  pluie({ graine: 22, t0: 20.2, n: 140, etale: 4.0, v: [260, 520], taille: [4, 10], couleurs: OR, types: ['confetti', 'etoile', 'piece', 'point'] });
+
+  const ctx = $('#paillettes').getContext('2d');
+  const dessinerParticules = (t) => {
+    ctx.clearRect(0, 0, 1080, 1920);
+    for (const p of particules) {
+      const tau = t - p.t0;
+      if (tau < 0 || tau > p.vie) continue;
+      const f = p.frein ? (1 - Math.exp(-p.frein * tau)) / p.frein : tau;
+      const x = p.x0 + p.vx * f + Math.sin(tau * 3 + p.ph) * p.oscille;
+      const y = p.y0 + p.vy * f + .5 * p.g * tau * tau;
+      const vieRel = tau / p.vie;
+      ctx.globalAlpha = Math.min(1, tau / .06) * (vieRel > .6 ? 1 - (vieRel - .6) / .4 : 1);
+      ctx.globalCompositeOperation = p.lumiere && (p.type === 'point' || p.type === 'etoile') ? 'lighter' : 'source-over';
+      if (p.type === 'point') {
+        const s = p.taille, gr = ctx.createRadialGradient(x, y, 0, x, y, s * 3);
+        gr.addColorStop(0, p.c); gr.addColorStop(.35, p.c + 'AA'); gr.addColorStop(1, p.c + '00');
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y, s * 3, 0, 6.283); ctx.fill();
+      } else if (p.type === 'etoile') {
+        const s = p.taille * 3.2 * (.65 + .35 * Math.sin(tau * 14 + p.ph));
+        ctx.fillStyle = p.c; ctx.save(); ctx.translate(x, y); ctx.rotate(p.rot * .2); ctx.beginPath();
+        for (let k = 0; k < 8; k++) { const r = k % 2 ? s * .16 : s, ang = k * Math.PI / 4; ctx.lineTo(Math.cos(ang) * r, Math.sin(ang) * r); }
+        ctx.closePath(); ctx.fill(); ctx.restore();
+      } else if (p.type === 'piece') {
+        const s = p.taille, tour = Math.cos(tau * 8 + p.ph);
+        ctx.save(); ctx.translate(x, y); ctx.rotate(p.rot * .3); ctx.scale(Math.max(.1, Math.abs(tour)), 1);
+        const gr = ctx.createLinearGradient(-s, -s, s, s);
+        gr.addColorStop(0, '#FFF3CF'); gr.addColorStop(.45, tour > 0 ? '#E2BC6E' : '#C9A050'); gr.addColorStop(1, '#8A6528');
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(0, 0, s, 0, 6.283); ctx.fill();
+        ctx.strokeStyle = 'rgba(122,82,32,.9)'; ctx.lineWidth = s * .12; ctx.beginPath(); ctx.arc(0, 0, s * .76, 0, 6.283); ctx.stroke();
+        ctx.restore();
+      } else {
+        const w = p.taille * 1.7, h = p.taille * .8;
+        ctx.save(); ctx.translate(x, y); ctx.rotate(p.rot + p.vr * tau); ctx.scale(Math.cos(tau * 9 + p.ph), 1);
+        ctx.fillStyle = p.c; ctx.fillRect(-w / 2, -h / 2, w, h); ctx.restore();
+      }
+    }
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  };
+
+  // ------------------------------------------------------------------ éléments pilotés image par image
+  const cintres = $$('.cintre');
+  const balancer = (t) => {
+    cintres.forEach((c, i) => {
+      const tau = t - 1.3 - i * .05;
+      const a = tau < 0 ? 0 : [7, -9, 6][i] * Math.exp(-1.5 * tau) * Math.sin(6.5 * tau + i);
+      c.style.transform = `rotate(${a.toFixed(3)}deg)`;
+    });
+  };
+  const givre = $('#givre'), dents = $('#dents'), bords = $('#bords'), curseur = $('#curseur');
+  const fermetureEclair = (t) => {
+    const p = doux(clamp((t - 3.35) / .7)), q = doux(clamp((t - 4.05) / .3));
+    let w = 3 + p * 20; w += q * (50 - w);
+    const y = p * 100;
+    givre.style.clipPath = `polygon(0% 0%, ${50 - w}% 0%, 50% ${y}%, ${50 + w}% 0%, 100% 0%, 100% 100%, 0% 100%)`;
+    const yPx = 40 + p * 900;
+    dents.style.top = yPx + 'px'; dents.style.height = Math.max(0, 940 - yPx) + 'px';
+    dents.style.opacity = 1 - q;
+    const xG = 320 - w * 6.4, xD = 320 + w * 6.4, yB = y * 9.6;
+    bords.setAttribute('d', p > 0 ? `M${xG} 0 L320 ${yB} L${xD} 0` : '');
+    bords.style.opacity = 1 - q;
+    curseur.style.top = (yPx - 20) + 'px'; curseur.style.opacity = 1 - q;
+  };
+
+  // ------------------------------------------------------------------ timeline (120 BPM, 24 s)
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  const montrer = (id, t) => tl.set(id, { visibility: 'visible' }, t);
+  const cacher = (id, t) => tl.set(id, { visibility: 'hidden' }, t);
+  const entrer = (sel, t, d = .55, ease = 'power4.out') => { gsap.set(sel, { yPercent: 110 }); tl.to(sel, { yPercent: 0, duration: d, ease }, t); };
+  const brillance = (sel, t, d = 1) => tl.fromTo(sel, { backgroundPosition: '100% 50%' }, { backgroundPosition: '0% 50%', duration: d, ease: 'power1.inOut', immediateRender: false }, t);
+  const tracer = (sel, t, d) => $$(sel).forEach((p) => { const l = p.getTotalLength(); gsap.set(p, { strokeDasharray: l, strokeDashoffset: l }); tl.to(p, { strokeDashoffset: 0, duration: d, ease: 'power2.inOut' }, t); });
+  const eclair = (t, force = .8, d = .5) => { tl.to('#flash', { opacity: force, duration: d * .3, ease: 'power2.out' }, t); tl.to('#flash', { opacity: 0, duration: d * .7, ease: 'power2.in' }, t + d * .3); };
+
+  gsap.set('.battant.g', { rotationY: 0 }); gsap.set('.battant.d', { rotationY: 0 });
+  gsap.set('#etapes .etape', { yPercent: 110 });
+  gsap.set('.notif', { y: -170, scale: .92 });
+  gsap.set('#sb', { clipPath: 'circle(0% at 50% 47%)' });
+
+  // A. L'armoire (0 à 2,6 s)
+  tl.fromTo('#rayons-a', { rotation: 0, opacity: 0 }, { rotation: 20, opacity: 1, duration: 2.6, ease: 'none' }, 0);
+  tl.fromTo('#armoire', { opacity: 0, scale: .9, y: 40 }, { opacity: 1, scale: 1, y: 0, duration: .7 }, 0);
+  tracer('#contour-a', .05, .9);
+  entrer('#a1', .1, .6); entrer('#a2', .4, .6);
+  brillance('#a2', .85, 1.1);
+  tl.to('.battant.g', { rotationY: -118, duration: .6, ease: 'power3.inOut' }, 1.15);
+  tl.to('.battant.d', { rotationY: 118, duration: .6, ease: 'power3.inOut' }, 1.15);
+  tl.to('.battant .sombre', { opacity: .8, duration: .5, ease: 'power2.in' }, 1.15);
+  tl.to('#armoire .lueur', { opacity: 1, duration: .35, ease: 'power2.out' }, 1.3);
+  tl.to('#armoire .lueur', { opacity: .35, duration: .8, ease: 'power2.inOut' }, 1.65);
+  eclair(1.3, .55, .6);
+  tl.to('#armoire', { scale: 1.5, y: -110, duration: .8, ease: 'power2.in' }, 1.85);
+  tl.to('#sa .t1, #sa .t2', { opacity: 0, y: -40, duration: .35, ease: 'power2.in' }, 2.15);
+
+  // B. La housse (2,5 à 5,2 s)
+  montrer('#sb', 2.45);
+  tl.to('#sb', { clipPath: 'circle(150% at 50% 47%)', duration: .5, ease: 'power3.inOut' }, 2.45);
+  tl.fromTo('#anneau-b', { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: .5, ease: 'power3.inOut', immediateRender: false }, 2.45);
+  cacher('#sa', 2.95);
+  tl.fromTo('#housse', { opacity: 0, scale: .9, y: 40 }, { opacity: 1, scale: 1, y: 0, duration: .55, immediateRender: false }, 2.6);
+  entrer('#b1', 2.75, .55); entrer('#b2', 2.95, .55);
+  tl.to('#givre', { opacity: 0, duration: .3, ease: 'power2.in' }, 4.2);
+  tl.fromTo('#net', { scale: 1.12 }, { scale: 1, duration: 1, ease: 'power2.out', immediateRender: false }, 4.05);
+  tl.to('#b1, #b2', { yPercent: -110, duration: .28, ease: 'power3.in' }, 4.0);
+  entrer('#b3', 4.2, .6, 'back.out(1.4)');
+  brillance('#b3', 4.35, .9);
+
+  // C. Le téléphone (5,1 à 11,2 s)
+  montrer('#sc', 5.05);
+  gsap.set('#sc', { yPercent: 100 });
+  tl.to('#sc', { yPercent: 0, duration: .5, ease: 'power3.inOut' }, 5.1);
+  cacher('#sb', 5.65);
+  tl.fromTo('#motif-c', { rotation: 0 }, { rotation: 8, duration: 6, ease: 'none', immediateRender: false }, 5.1);
+  tl.fromTo('#tel', { opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: .7, ease: 'power3.out', immediateRender: false }, 5.3);
+  const etapes = $$('#etapes .etape');
+  [5.45, 6.9, 8.6].forEach((t, i) => {
+    tl.to(etapes[i], { yPercent: 0, duration: .5, ease: 'power4.out' }, t);
+    if (i < 2) tl.to(etapes[i], { yPercent: -110, duration: .3, ease: 'power3.in' }, [6.9, 8.6][i] - .3);
+  });
+  const cartes = $$('.notif');
+  NOTIFS.forEach((n, i) => {
+    for (let j = 0; j < i; j++) tl.to(cartes[j], { y: '+=154', duration: .45, ease: 'power3.out' }, n.t);
+    tl.to(cartes[i], { y: 0, scale: 1, opacity: 1, duration: .5, ease: 'back.out(1.5)' }, n.t);
+  });
+  tl.to('#tel', { scale: 2.6, opacity: 0, duration: .45, ease: 'power3.in' }, 10.75);
+  tl.to('#etapes', { opacity: 0, duration: .25 }, 10.75);
+  eclair(11.05, .9, .4);
+
+  // D. Le compteur (11,1 à 15,2 s)
+  montrer('#sd', 11.1); cacher('#sc', 11.2);
+  tl.fromTo('#rayons-d', { rotation: 0 }, { rotation: 30, duration: 4.2, ease: 'none', immediateRender: false }, 11.1);
+  tl.to('#sd .t0', { opacity: 1, duration: .4 }, 11.2);
+  entrer('#d1', 11.25, .5); entrer('#d2', 11.4, .5);
+  const jetons = [['#j1', 150, 610], ['#j2', 395, 560], ['#j3', 640, 610]];
+  jetons.forEach(([id, x, y], i) => {
+    gsap.set(id, { x, y });
+    tl.fromTo(id, { opacity: 0, scale: .6 }, { opacity: 1, scale: 1, duration: .35, ease: 'back.out(2)', immediateRender: false }, 11.55 + i * .12);
+    tl.to(id, { x: 395, y: 860, scale: .3, opacity: 0, duration: .4, ease: 'power3.in' }, 11.95 + i * .15);
+  });
+  $$('#compteur .ruban').forEach((r, i) => {
+    const index = (i === 0 ? 10 : 20) + CIBLE[i];
+    tl.fromTo(r, { y: 0 }, { y: -index * 250, duration: 1.3 + i * .08, ease: 'power3.out', immediateRender: false }, 12.15);
+  });
+  tl.fromTo('#compteur', { scale: .9 }, { scale: 1, duration: 1.6, ease: 'power2.out', immediateRender: false }, 12.15);
+  tl.fromTo('#balayage', { x: 0, opacity: 0 }, { x: 1700, opacity: 1, duration: .7, ease: 'power2.inOut', immediateRender: false }, 13.6);
+  eclair(13.62, .55, .5);
+  tl.fromTo('#sd .t2', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: .5, immediateRender: false }, 13.7);
+  tl.fromTo('#sd .t3', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: .5, immediateRender: false }, 14.0);
+  brillance('#sd .t3', 14.2, 1);
+  tl.to('#sd .note', { opacity: 1, duration: .5 }, 14.2);
+
+  // E. Protection (15,15 à 19,2 s)
+  montrer('#se', 15.1);
+  tl.to('#se', { clipPath: 'polygon(-30% 0%, 130% 0%, 100% 100%, -60% 100%)', duration: .55, ease: 'power3.inOut' }, 15.15);
+  cacher('#sd', 15.75);
+  tl.fromTo('#motif-e', { rotation: 0, scale: 1.1 }, { rotation: -5, scale: 1, duration: 4, ease: 'none', immediateRender: false }, 15.15);
+  entrer('#e1', 15.35, .55); entrer('#e2', 15.55, .55);
+  tl.fromTo('#bouclier', { opacity: 0, scale: .85 }, { opacity: 1, scale: 1, duration: .6, immediateRender: false }, 15.55);
+  tracer('#bouclier-trait', 15.65, .8);
+  $$('.garantie').forEach((g, i) => {
+    tl.fromTo(g, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: .45, immediateRender: false }, 16.2 + i * .4);
+    tl.fromTo(g.querySelector('i'), { scale: 0 }, { scale: 1, duration: .45, ease: 'back.out(2.5)', immediateRender: false }, 16.2 + i * .4);
+  });
+
+  // F. Final (19,15 à 24 s)
+  montrer('#sf', 19.1);
+  tl.to('#sf', { clipPath: 'circle(150% at 50% 47%)', duration: .55, ease: 'power3.inOut' }, 19.15);
+  tl.fromTo('#anneau-f', { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: .55, ease: 'power3.inOut', immediateRender: false }, 19.15);
+  cacher('#se', 19.75);
+  tl.fromTo('#motif-f', { rotation: 0, scale: 1.1 }, { rotation: 6, scale: 1, duration: 4.8, ease: 'none', immediateRender: false }, 19.2);
+  tl.fromTo('.rosace', { opacity: 0 }, { opacity: 1, duration: .6, immediateRender: false }, 19.3);
+  tl.fromTo('#rosace', { scale: .25, rotation: -30, svgOrigin: '540 598' }, { scale: 1, rotation: 0, duration: 1.3, ease: 'power3.out', svgOrigin: '540 598', immediateRender: false }, 19.3);
+  tl.to('#rosace', { rotation: 16, duration: 3.4, ease: 'none', svgOrigin: '540 598' }, 20.6);
+  tracer('#arche-f, #arche-fb', 19.4, .8);
+  tl.fromTo('#sf .L', { opacity: 0, y: 30, scale: .9 }, { opacity: 1, y: 0, scale: 1, duration: .6, immediateRender: false }, 19.8);
+  eclair(19.78, .9, .6);
+  $$('#sf .nom span').forEach((s, i) => tl.fromTo(s, { opacity: 0, y: 70, rotationX: -70 }, { opacity: 1, y: 0, rotationX: 0, duration: .55, ease: 'back.out(1.6)', immediateRender: false }, 20.1 + i * .07));
+  brillance('#sf .nom span', 20.75, 1.2);
+  tl.fromTo('#sf .slogan', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: .6, immediateRender: false }, 20.9);
+  tl.fromTo('#sf .cta', { opacity: 0, scale: .7 }, { opacity: 1, scale: 1, duration: .55, ease: 'back.out(2)', immediateRender: false }, 21.5);
+  tl.fromTo('#sf .bas', { opacity: 0 }, { opacity: 1, duration: .6, immediateRender: false }, 21.9);
+  tl.to({}, { duration: .01 }, 24);
+
+  window.duree = 24;
+  window.positionner = (t) => { tl.time(t, false); balancer(t); fermetureEclair(t); dessinerParticules(t); };
+  window.pret = document.fonts.ready.then(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
+</script>
+</body>
+</html>
