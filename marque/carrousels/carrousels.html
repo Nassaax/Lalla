@@ -73,6 +73,14 @@
   .st { width: 1080px; height: 1920px; background: var(--b); display: grid; place-items: center; }
   .st .rond { width: 760px; height: 760px; border-radius: 50%; border: 3px solid rgba(201,166,107,.55); display: grid; place-items: center; }
   .st svg.ic { width: 330px; height: 330px; color: var(--o); }
+  .lt { background: var(--b); }
+  .lt .arc { position: absolute; left: 50%; top: 50%; width: 760px; height: 1003px; transform: translate(-50%, -52%); }
+  .lt .lettre { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-40%); text-align: center; font-family: Bodoni; font-weight: 500; font-size: 640px; line-height: 1; color: var(--i); }
+  .lt .sujet { position: absolute; left: 0; right: 0; bottom: 70px; text-align: center; font-size: 26px; color: var(--o); }
+  .lt.reel { height: 1920px; }
+  .lt.reel .arc { width: 811px; height: 1070px; }
+  .lt.reel .lettre { font-size: 683px; }
+  .lt.reel .sujet { bottom: 315px; font-size: 28px; }
   .q { font-family: Bodoni; font-style: italic; font-size: 30px; color: var(--b); margin-bottom: 26px; }
   .cta { display: inline-block; margin-top: 56px; background: var(--i); color: var(--b); font-size: 42px; font-weight: 500; padding: 30px 62px; border-radius: 999px; }
   .s:not(.bx) .cta { background: var(--b); color: var(--i); }
@@ -550,10 +558,19 @@
 <section class="s st" data-nom="stories-a-la-une/lexique"><div class="rond"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=".9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h9.5a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3z"/><path d="M8 20a3 3 0 0 1 0-6h9.5"/></svg></div></section>
 <section class="s st" data-nom="stories-a-la-une/guide"><div class="rond"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=".9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div></section>
 
+
+<!-- =========================== MINIATURES DE GRILLE : LALLAT =========================== -->
+<section class="s lt reel" data-nom="video/couverture-reel-T"><svg class="arc" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#C9A66B" stroke-width="2.4"/><path d="M48 524 V244 C48 140 106 70 200 28 C294 70 352 140 352 244 V524" fill="none" stroke="#C9A66B" stroke-width=".8" opacity=".7"/></svg><div class="lettre">T</div><p class="sujet surtitre">Le concept en 40 secondes</p></section>
+<section class="s lt" data-nom="1-concept/00-miniature-A"><svg class="arc" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#C9A66B" stroke-width="2.4"/><path d="M48 524 V244 C48 140 106 70 200 28 C294 70 352 140 352 244 V524" fill="none" stroke="#C9A66B" stroke-width=".8" opacity=".7"/></svg><div class="lettre">A</div><p class="sujet surtitre">Le concept</p></section>
+<section class="s lt" data-nom="2-fournisseuse/00-miniature-L"><svg class="arc" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#C9A66B" stroke-width="2.4"/><path d="M48 524 V244 C48 140 106 70 200 28 C294 70 352 140 352 244 V524" fill="none" stroke="#C9A66B" stroke-width=".8" opacity=".7"/></svg><div class="lettre">L</div><p class="sujet surtitre">Devenir fournisseuse</p></section>
+<section class="s lt" data-nom="4-lexique/00-miniature-L"><svg class="arc" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#C9A66B" stroke-width="2.4"/><path d="M48 524 V244 C48 140 106 70 200 28 C294 70 352 140 352 244 V524" fill="none" stroke="#C9A66B" stroke-width=".8" opacity=".7"/></svg><div class="lettre">L</div><p class="sujet surtitre">Le petit lexique</p></section>
+<section class="s lt" data-nom="5-louer/00-miniature-A"><svg class="arc" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#C9A66B" stroke-width="2.4"/><path d="M48 524 V244 C48 140 106 70 200 28 C294 70 352 140 352 244 V524" fill="none" stroke="#C9A66B" stroke-width=".8" opacity=".7"/></svg><div class="lettre">A</div><p class="sujet surtitre">Louer plutôt qu'acheter</p></section>
+<section class="s lt" data-nom="3-questions/00-miniature-L"><svg class="arc" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#C9A66B" stroke-width="2.4"/><path d="M48 524 V244 C48 140 106 70 200 28 C294 70 352 140 352 244 V524" fill="none" stroke="#C9A66B" stroke-width=".8" opacity=".7"/></svg><div class="lettre">L</div><p class="sujet surtitre">Vos questions</p></section>
+
 <script>
   // Arche en filigrane sur les diapositives de texte
   document.querySelectorAll('section.s:not(.photo-s)').forEach(function (s) {
-    if (s.querySelector('.logo') || s.classList.contains('st')) return;
+    if (s.querySelector('.logo') || s.classList.contains('st') || s.classList.contains('lt')) return;
     var c = s.classList.contains('bx') ? '#C9A66B'&nbsp;: '#5E1D27';
     s.insertAdjacentHTML('afterbegin', '<svg class="filigrane" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="' + c + '" stroke-width="6"/><path d="M60 524 V246 C60 146 114 80 200 42 C286 80 340 146 340 246 V524" fill="none" stroke="' + c + '" stroke-width="2"/></svg>');
   });

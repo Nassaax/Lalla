@@ -12,7 +12,7 @@ await p.evaluate(() => document.fonts.ready.then(() => Promise.all([...document.
 const slides = await p.locator('section.s').all();
 for (const s of slides) {
   const nom = await s.getAttribute('data-nom');
-  const fichier = path.resolve('marque/carrousels', nom + '.png');
+  const fichier = nom.startsWith('video/') ? path.resolve('marque', nom + '.png') : path.resolve('marque/carrousels', nom + '.png');
   fs.mkdirSync(path.dirname(fichier), { recursive: true });
   await s.screenshot({ path: fichier });
 }
