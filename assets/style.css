@@ -955,3 +955,9 @@ a.puce { text-decoration: none; display: inline-flex; align-items: center; color
   .c2-hero__photo { object-position: 50% 20%; }
   .c2-hero::before { background: linear-gradient(to top, rgba(30,12,12,.88) 0%, rgba(30,12,12,.62) 55%, rgba(30,12,12,.38) 100%); }
 }
+
+/* Menu mobile : le flou de l'en-tête crée un bloc conteneur qui piégeait le menu fixe ; on le retire quand le menu est ouvert */
+.menu-ouvert .entete { -webkit-backdrop-filter: none; backdrop-filter: none; transform: none; background: var(--ivoire); }
+@media (max-width: 1023px) {
+  .nav { bottom: auto; height: calc(100dvh - var(--entete-h)); overflow-y: auto; background: var(--ivoire); }
+}
