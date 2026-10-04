@@ -857,7 +857,7 @@
     if (!L.parametres) { demarrer(); return; }
     L.parametres().then(function (p) {
       if (p.reservations_ouvertes === true) { demarrer(); return; }
-      L.vider(etatZone).appendChild(h('p', { class: 'message message--alerte' }, t('lanc.versements', { quand: L.quandOuverture(p) })));
+      L.vider(etatZone).appendChild(h('p', { class: 'message message--alerte' }, t('lanc.versements')));
     });
   };
 

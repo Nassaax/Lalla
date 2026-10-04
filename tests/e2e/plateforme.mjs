@@ -33,14 +33,12 @@ console.log('▶ Pré-lancement');
 const adminPL = await session('admin@demo.lalla.be');
 const clientePL = await session('cliente1@demo.lalla.be');
 await adminPL.api('admin-parametres', { cle: 'reservations_ouvertes', valeur: false });
-await adminPL.api('admin-parametres', { cle: 'date_ouverture', valeur: '2027-01-15' });
-await assert.rejects(clientePL.api('commande-creer', { articles: [{ tenue_id: tn.id, mode_remise: 'main_propre' }], evenement: plus(21), debut: plus(20), fin: plus(22) }), /ouvrent le 15 janvier 2027/);
+await assert.rejects(clientePL.api('commande-creer', { articles: [{ tenue_id: tn.id, mode_remise: 'main_propre' }], evenement: plus(21), debut: plus(20), fin: plus(22) }), /Coming soon/);
 await assert.rejects(clientePL.api('admin-parametres', { cle: 'reservations_ouvertes', valeur: true }));
-await assert.rejects(adminPL.api('admin-parametres', { cle: 'date_ouverture', valeur: 'demain' }), /Date attendue/);
 await adminPL.api('admin-parametres', { cle: 'reservations_ouvertes', valeur: true });
 const annonce = await clientePL.sb.from('notifications').select('type, lien').eq('type', 'ouverture');
 assert.equal(annonce.data.length, 1, 'inscrites prévenues de l\'ouverture');
-ok('pré-lancement : réservation refusée avec la date annoncée, ouverture par l\'admin, inscrites prévenues');
+ok('pré-lancement : réservation refusée (Coming soon), ouverture par l\'admin, inscrites prévenues');
 
 console.log('▶ Réservation instantanée et créneau de remise');
 const cliente = await session('cliente2@demo.lalla.be');
