@@ -89,6 +89,8 @@ export async function seed() {
   console.log('Admin…');
   ids.admin = await creerUtilisateur(`admin@${DOMAINE}`, { prenom: 'Équipe' });
   verifier(await sb.from('profils').update({ est_admin: true, compte_valide: true, nom_affiche: 'Équipe LALLAT' }).eq('id', ids.admin), 'admin');
+  // Démonstration : réservations ouvertes (le site réel démarre en pré-lancement).
+  verifier(await sb.from('parametres').upsert({ cle: 'reservations_ouvertes', valeur: true }), 'lancement');
 
   console.log('Fournisseuses…');
   for (const f of FOURNISSEUSES) {

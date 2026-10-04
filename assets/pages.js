@@ -15,12 +15,31 @@
   var parametres = null;
   L.parametres = function () {
     if (parametres) return Promise.resolve(parametres);
-    var defauts = { commission_taux: 0.15, frais_service_taux: 0.05, frais_pressing_cents: 1500, frais_essayage_cents: 1500, caution_taux: 0.5, pressing_jours: 2, seuil_identity_cents: 50000 };
+    var defauts = { commission_taux: 0.15, frais_service_taux: 0.05, frais_pressing_cents: 1500, frais_essayage_cents: 1500, caution_taux: 0.5, pressing_jours: 2, seuil_identity_cents: 50000, reservations_ouvertes: false, date_ouverture: '' };
     if (!L.sb) return Promise.resolve(defauts);
     return L.sb.from('parametres').select('cle, valeur').then(function (r) {
       parametres = Object.assign({}, defauts);
       (r.data || []).forEach(function (p) { parametres[p.cle] = p.valeur; });
       return parametres;
+    });
+  };
+
+  /** Pré-lancement : « le 1er novembre » ou « très bientôt ». */
+  function quandOuverture(p) {
+    if (!p.date_ouverture) return t('lanc.bientot');
+    var d = new Date(p.date_ouverture + 'T12:00:00');
+    return t('lanc.le', { date: d.toLocaleDateString(I18N.langue === 'nl' ? 'nl-BE' : 'fr-BE', { day: 'numeric', month: 'long' }) });
+  }
+  L.quandOuverture = quandOuverture;
+
+  /** Bandeau discret sous l'en-tête tant que les réservations sont fermées. */
+  L.bandeauLancement = function (page) {
+    if (['index', 'catalogue', 'tenue', 'boutique', 'panier'].indexOf(page) < 0) return;
+    L.parametres().then(function (p) {
+      if (p.reservations_ouvertes === true || $('.bandeau-lancement')) return;
+      var b = h('div', { class: 'bandeau-lancement', role: 'status' }, h('span', null, t('lanc.bandeau', { quand: quandOuverture(p) })));
+      var entete = $('#entete');
+      if (entete) entete.insertAdjacentElement('afterend', b);
     });
   };
 
@@ -712,6 +731,7 @@
 
   /** Boîte de réservation : dates, disponibilité, estimation, ajout au panier, essayage. */
   function boiteReservation(tn, p) {
+    if (p.reservations_ouvertes !== true) return boitePreLancement(tn, p);
     var panier = L.panier.lire();
     var dates = panier.dates || {};
     var dispo = h('p', { class: 'disponibilite', 'aria-live': 'polite' }, t('tenue.choisir_dates'));
@@ -793,6 +813,26 @@
     });
     if (evenement.value) setTimeout(verifier, 0);
     return form;
+  }
+
+  /** Pré-lancement : à la place du formulaire de réservation, favoris et question à la fournisseuse. */
+  function boitePreLancement(tn, p) {
+    var favori = h('button', { class: 'bouton bouton--plein', type: 'button' }, t('lanc.favori'));
+    favori.addEventListener('click', function () {
+      if (!L.session) { L.ui.authentification('inscription'); return; }
+      favori.disabled = true;
+      L.sb.from('favoris').insert({ tenue_id: tn.id }).then(function (r) {
+        if (r.error && r.error.code !== '23505') { favori.disabled = false; L.ui.toast(L.messageErreur(r.error), 'erreur'); return; }
+        favori.textContent = t('favori.ajoute');
+        L.ui.toast(t('lanc.favori_ok'), 'succes');
+      });
+    });
+    return h('div', { class: 'reservation-boite reservation-boite--lancement' },
+      h('p', { class: 'surtitre' }, t('lanc.surtitre')),
+      h('h2', { style: { fontSize: '1.6rem', margin: 0 } }, t('lanc.titre')),
+      h('p', { class: 'texte' }, t('lanc.texte', { quand: quandOuverture(p) })),
+      favori,
+      h('button', { class: 'bouton bouton--ligne bouton--plein', type: 'button', onclick: function () { L.contacter(tn.fournisseuse_id, tn.id); } }, t('lanc.question')));
   }
 
   /** Demande d'essayage chez la fournisseuse (frais payés via Stripe Checkout). */
@@ -1047,8 +1087,13 @@
           ligneRecap('tenue.r_location', totalLocation), ligneRecap('tenue.r_pressing', pressing), ligneRecap('tenue.r_service', service),
           h('div', { class: 'recap__ligne recap__ligne--total' }, h('span', null, t('tenue.r_total')), h('span', null, L.euros(totalLocation + pressing + service))),
           h('p', { class: 'recap__ligne--note' }, t('panier.resume_note'))));
+      if (p.reservations_ouvertes !== true) {
+        form = h('div', { class: 'panneau' }, h('h2', { class: 'panneau__titre' }, t('lanc.titre')), h('p', { class: 'texte' }, t('lanc.panier', { quand: quandOuverture(p) })),
+          h('a', { class: 'bouton bouton--ligne', href: 'catalogue.html' }, t('index.ap.explorer')));
+      }
       zone.appendChild(etapes(0));
       zone.appendChild(h('div', { class: 'panier' }, h('div', null, liste, form), resume));
+      if (p.reservations_ouvertes !== true) return;
       blocMensurations($('[data-mensurations]', form));
 
       form.addEventListener('submit', function (e) {

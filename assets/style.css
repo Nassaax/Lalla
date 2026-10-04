@@ -961,3 +961,8 @@ a.puce { text-decoration: none; display: inline-flex; align-items: center; color
 @media (max-width: 1023px) {
   .nav { bottom: auto; height: calc(100dvh - var(--entete-h)); overflow-y: auto; background: var(--ivoire); }
 }
+
+/* Pré-lancement */
+.bandeau-lancement { background: var(--bordeaux); color: #FFF3E6; text-align: center; font-size: 14px; line-height: 1.45; padding: 10px var(--gouttiere); }
+.reservation-boite--lancement { display: grid; gap: 14px; }
+.reservation-boite--lancement .texte { margin: 0; }

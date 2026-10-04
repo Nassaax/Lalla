@@ -222,7 +222,9 @@
 
   VUES.parametres = function (z) {
     return sb(L.sb.from('parametres').select('*').order('cle')).then(function (liste) {
+      var lancement = blocLancement(liste, function () { VUES.parametres(z); });
       var form = h('form', { class: 'formulaire' });
+      liste = liste.filter(function (p) { return p.cle !== 'reservations_ouvertes' && p.cle !== 'date_ouverture'; });
       liste.forEach(function (p) {
         var def = LIBELLES_PARAMS[p.cle] || [p.cle, 'brut', p.description];
         var champ;
@@ -248,9 +250,36 @@
         });
         Promise.all(envois).then(function () { L.ui.toast('Paramètres enregistrés', 'succes'); }).catch(function (err) { L.ui.toast(err.message, 'erreur'); });
       });
-      L.vider(z).appendChild(panneau('Paramètres métier', form));
+      L.vider(z).appendChild(lancement);
+      z.appendChild(panneau('Paramètres métier', form));
     });
   };
+
+  /** Interrupteur de lancement : pré-lancement (rien n'est encaissé) ou réservations ouvertes. */
+  function blocLancement(liste, recharger) {
+    var val = function (cle, def) { var l = liste.filter(function (p) { return p.cle === cle; })[0]; return l ? l.valeur : def; };
+    var ouvert = val('reservations_ouvertes', false) === true;
+    var date = h('input', { type: 'date', class: 'champ__controle', value: val('date_ouverture', '') || '', id: 'date-ouverture' });
+    var envoyer = function (cle, valeur) { return L.api('admin-parametres', { cle: cle, valeur: valeur }); };
+    var bascule = h('button', { class: 'bouton' + (ouvert ? ' bouton--ligne' : ''), type: 'button' }, ouvert ? 'Repasser en pré-lancement' : 'Ouvrir les réservations');
+    bascule.addEventListener('click', function () {
+      var message = ouvert ? 'Fermer les réservations ? Les commandes déjà payées ne sont pas touchées.' : 'Ouvrir les réservations ? Vérifiez d\'abord que Stripe est configuré en mode réel. Toutes les inscrites seront prévenues.';
+      if (!window.confirm(message)) return;
+      bascule.disabled = true;
+      envoyer('reservations_ouvertes', !ouvert).then(function () { L.ui.toast(ouvert ? 'Site repassé en pré-lancement' : 'Réservations ouvertes', 'succes'); recharger(); })
+        .catch(function (e) { bascule.disabled = false; L.ui.toast(L.messageErreur(e), 'erreur'); });
+    });
+    var enregistrerDate = h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () {
+      envoyer('date_ouverture', date.value || '').then(function () { L.ui.toast('Date d\'ouverture enregistrée', 'succes'); }).catch(function (e) { L.ui.toast(L.messageErreur(e), 'erreur'); });
+    } }, 'Enregistrer la date');
+    return panneau('Lancement', h('div', { class: 'formulaire' },
+      h('p', { class: 'message ' + (ouvert ? 'message--succes' : 'message--alerte') }, ouvert
+        ? 'Réservations ouvertes : les clientes peuvent réserver et payer.'
+        : 'Pré-lancement : comptes, annonces, favoris et messages fonctionnent, mais aucune réservation ni aucun paiement n\'est possible.'),
+      h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'date-ouverture' }, 'Date d\'ouverture annoncée (facultatif)'), date,
+        h('p', { class: 'champ__aide' }, 'Affichée sur le site : « Les réservations ouvrent le … ». Laissez vide pour « très bientôt ».')),
+      h('div', { class: 'actions', style: { margin: 0 } }, enregistrerDate, bascule)));
+  }
 
   VUES.showrooms = function (z, recharger) {
     return sb(L.sb.from('showrooms').select('*, showroom_inscriptions(count)').order('debut', { ascending: false })).then(function (liste) {

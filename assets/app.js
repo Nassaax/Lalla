@@ -955,8 +955,9 @@
     if (fn) {
       try { fn(); } catch (e) { console.error(e); }
     }
+    if (L.bandeauLancement) L.bandeauLancement(page);
     L.motion.reveler(document);
-    if (L.param('connexion') === '1') L.auth.pret.then(function () { if (!L.session) L.ui.authentification('connexion'); });
+    if (L.param('connexion') === '1') L.auth.pret.then(function () { if (!L.session) L.ui.authentification('connexion', page === 'admin' ? { ensuite: function () { location.reload(); } } : undefined); });
     // Application installable : service worker (HTTPS uniquement, hors tests locaux).
     if ('serviceWorker' in navigator && location.protocol === 'https:') {
       window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () { /* facultatif */ }); });

@@ -847,10 +847,18 @@
         etatZone.appendChild(h('button', { class: 'bouton', type: 'button', onclick: function (e) { e.currentTarget.disabled = true; L.api('connect-onboarding').then(function (r) { location.href = r.url; }).catch(function (err) { e.target.disabled = false; L.ui.toast(L.messageErreur(err), 'erreur'); }); } }, s.compte ? t('paiements.reprendre') : t('paiements.configurer')));
       }
     }
-    rendre({ complet: etat.profil.stripe_onboarding_complet, compte: !!etat.prive.stripe_account_id });
-    if (L.param('connect') || !etat.profil.stripe_onboarding_complet) {
-      L.api('connect-statut').then(function (s) { if (s.complet && !etat.profil.stripe_onboarding_complet) L.ui.toast(t('paiements.actif'), 'succes'); etat.profil.stripe_onboarding_complet = s.complet; rendre(s); }).catch(function () {});
+    function demarrer() {
+      rendre({ complet: etat.profil.stripe_onboarding_complet, compte: !!etat.prive.stripe_account_id });
+      if (L.param('connect') || !etat.profil.stripe_onboarding_complet) {
+        L.api('connect-statut').then(function (s) { if (s.complet && !etat.profil.stripe_onboarding_complet) L.ui.toast(t('paiements.actif'), 'succes'); etat.profil.stripe_onboarding_complet = s.complet; rendre(s); }).catch(function () {});
+      }
     }
+    // Pré-lancement : pas de configuration des versements avant l'ouverture des réservations.
+    if (!L.parametres) { demarrer(); return; }
+    L.parametres().then(function (p) {
+      if (p.reservations_ouvertes === true) { demarrer(); return; }
+      L.vider(etatZone).appendChild(h('p', { class: 'message message--alerte' }, t('lanc.versements', { quand: L.quandOuverture(p) })));
+    });
   };
 
   // ===========================================================================
