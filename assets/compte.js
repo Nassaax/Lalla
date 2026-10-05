@@ -612,6 +612,35 @@
       return L.ui.champ(c[0], t(c[1]) + ' (cm)', { type: 'number', step: '0.5', min: '10', max: '220', inputmode: 'decimal', value: v[c[0]] || '' });
     }));
     var ensembleZone = h('div');
+    // Caution choisie par la fournisseuse : pourcentage de la valeur déclarée ou montant fixe (0 = sans caution).
+    var tauxActuel = Math.round(Number(v.caution_taux != null ? v.caution_taux : 0.5) * 100);
+    var tauxProposes = [0, 10, 20, 30, 40, 50, 75, 100];
+    if (tauxProposes.indexOf(tauxActuel) < 0) tauxProposes.push(tauxActuel);
+    tauxProposes.sort(function (a, b) { return a - b; });
+    var apercuCaution = h('p', { class: 'champ__aide', 'aria-live': 'polite', style: { margin: 0, fontWeight: 600 } });
+    var blocCaution = h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('annonce.caution')),
+      h('p', { class: 'champ__aide', style: { margin: 0 } }, t('annonce.caution_aide')),
+      h('label', { class: 'case' }, h('input', { type: 'radio', name: 'caution_mode', value: 'pourcentage', checked: v.caution_mode !== 'montant' }), h('span', null, t('annonce.caution_pct'))),
+      h('label', { class: 'case' }, h('input', { type: 'radio', name: 'caution_mode', value: 'montant', checked: v.caution_mode === 'montant' }), h('span', null, t('annonce.caution_montant'))),
+      L.ui.champ('caution_taux', 'annonce.caution_taux', { tag: 'select', options: tauxProposes.map(function (x) { return [String(x), x + ' %', x === tauxActuel]; }) }),
+      L.ui.champ('caution_montant', 'annonce.caution_euros', { type: 'number', min: '0', max: '50000', step: '1', inputmode: 'numeric', value: v.caution_montant_cents != null ? v.caution_montant_cents / 100 : '' }),
+      apercuCaution);
+    function lireCaution() {
+      var mode = form.caution_mode.value === 'montant' ? 'montant' : 'pourcentage';
+      return {
+        caution_mode: mode,
+        caution_taux: mode === 'pourcentage' ? Number(form.caution_taux.value) / 100 : null,
+        caution_montant_cents: mode === 'montant' ? Math.max(0, Math.round(Number(form.caution_montant.value || 0) * 100)) : null
+      };
+    }
+    function majCaution() {
+      var c = lireCaution();
+      form.caution_taux.closest('.champ').hidden = c.caution_mode !== 'pourcentage';
+      form.caution_montant.closest('.champ').hidden = c.caution_mode !== 'montant';
+      var valeur = Math.round(Number(form.valeur.value || 0) * 100);
+      var montant = c.caution_mode === 'montant' ? Math.min(c.caution_montant_cents, valeur || c.caution_montant_cents) : Math.round(valeur * c.caution_taux);
+      apercuCaution.textContent = montant > 0 ? t('annonce.caution_apercu', { montant: L.euros(montant) }) : t('annonce.caution_sans');
+    }
     var form = h('form', { class: 'formulaire', novalidate: true },
       h('div', { class: 'grille-2' },
         L.ui.champ('categorie', 'cat.f_categorie', { tag: 'select', options: C.categories.map(function (c) { return [c, t('cat.' + c), v.categorie === c]; }) }),
@@ -627,6 +656,7 @@
       h('div', { class: 'grille-2' },
         L.ui.champ('prix', 'annonce.prix', { type: 'number', required: true, min: '5', max: '5000', step: '1', inputmode: 'numeric', value: v.prix_location_cents ? v.prix_location_cents / 100 : '' }),
         L.ui.champ('valeur', 'annonce.valeur', { type: 'number', required: true, min: '10', max: '50000', step: '1', inputmode: 'numeric', value: v.valeur_declaree_cents ? v.valeur_declaree_cents / 100 : '', aide: t('annonce.valeur_aide') })),
+      blocCaution,
       h('div', { class: 'grille-2' },
         L.ui.champ('duree_min', 'annonce.duree_min', { type: 'number', min: '1', max: '30', value: v.duree_min_jours }),
         L.ui.champ('duree_max', 'annonce.duree_max', { type: 'number', min: '1', max: '30', value: v.duree_max_jours })),
@@ -652,6 +682,9 @@
       rendrePhotos();
     }
     form.categorie.addEventListener('change', majVisibilite);
+    ['caution_taux', 'caution_montant', 'valeur'].forEach(function (n) { form[n].addEventListener('input', majCaution); form[n].addEventListener('change', majCaution); });
+    $$('[name=caution_mode]', form).forEach(function (x) { x.addEventListener('change', majCaution); });
+    majCaution();
     if (v.description) form.description.value = v.description;
     majVisibilite();
     if (tn && tn.categorie !== 'accessoire') blocEnsemble(ensembleZone, tn);
@@ -674,6 +707,7 @@
         remise_main_propre: form.main_propre.checked, essayage_possible: form.essayage.checked, envoi_assure: form.envoi.checked, reservation_instantanee: form.instantanee ? form.instantanee.checked : false,
         frais_envoi_cents: form.envoi.checked ? Math.round(Number(form.frais_envoi.value || 0) * 100) : 0
       };
+      Object.assign(valeurs, lireCaution());
       ['poitrine_cm', 'taille_cm', 'hanches_cm', 'longueur_cm', 'manche_cm'].forEach(function (c) { valeurs[c] = cat === 'accessoire' || !form[c].value ? null : Number(form[c].value); });
       if (cat !== 'accessoire' && ['poitrine_cm', 'taille_cm', 'hanches_cm', 'longueur_cm', 'manche_cm'].some(function (c) { return valeurs[c] == null; })) { erreur(retour, { message: t('annonce.mesures_requises') }); return; }
       var boutons = $$('[type=submit]', form);

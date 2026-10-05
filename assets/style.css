@@ -125,6 +125,8 @@ p { margin: 0 0 1em; }
 .bouton--danger:hover { --fond: var(--rouge); --texte: #fff; }
 .bouton--petit { min-height: 38px; padding: 0 16px; font-size: 11.5px; }
 .bouton--plein { width: 100%; }
+.bouton--inactif, .bouton--inactif:hover { opacity: .45; cursor: not-allowed; }
+.panier__options { border: 1px solid var(--ligne); border-radius: var(--rayon, 12px); padding: 14px 16px; display: grid; gap: 14px; }
 .bouton--whatsapp { --fond: #fff; --texte: var(--noir); border-color: var(--ligne-forte); text-transform: none; letter-spacing: .01em; font-weight: 500; }
 .bouton--whatsapp:hover { --fond: var(--emeraude-clair); }
 .lien { background: none; border: 0; padding: 0; color: var(--emeraude); text-decoration: underline; text-underline-offset: 3px; font-weight: 600; cursor: pointer; }

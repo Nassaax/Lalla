@@ -18,6 +18,17 @@ test('réservation simple : commission, pressing, caution, transfert', () => {
   assert.equal(r.total_cliente_cents, 10000 + 1500 + 500);
 });
 
+test('caution choisie par la fournisseuse : montant fixe, sans caution, pourcentage, plafond', () => {
+  const fixe = calculerReservation({ pieces: [{ ...caftan, caution_mode: 'montant', caution_montant_cents: 20000 }], mode_remise: 'main_propre' }, p);
+  assert.equal(fixe.caution_cents, 20000);
+  const sans = calculerReservation({ pieces: [{ ...caftan, caution_mode: 'montant', caution_montant_cents: 0 }], mode_remise: 'main_propre' }, p);
+  assert.equal(sans.caution_cents, 0);
+  const pct = calculerReservation({ pieces: [{ ...caftan, caution_mode: 'pourcentage', caution_taux: 0.2 }, mdamma], mode_remise: 'main_propre' }, p);
+  assert.equal(pct.caution_cents, 24000 + 20000);
+  const plafond = calculerReservation({ pieces: [{ ...caftan, caution_mode: 'montant', caution_montant_cents: 999999 }], mode_remise: 'main_propre' }, p);
+  assert.equal(plafond.caution_cents, 120000);
+});
+
 test('accessoire sans pressing, envoi facturé seulement en mode envoi', () => {
   const r = calculerReservation({ pieces: [caftan, mdamma], mode_remise: 'envoi', frais_envoi_cents: 1200 }, p);
   assert.equal(r.frais_pressing_cents, 1500);

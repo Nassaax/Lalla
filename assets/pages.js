@@ -721,6 +721,15 @@
     arche.addEventListener('contextmenu', function (e) { if (actif) e.preventDefault(); });
   }
 
+  /** Caution d'une annonce : même règle que lib/pricing.js (montant fixe ou pourcentage, plafonnée à la valeur). */
+  function cautionTenue(tn, p) {
+    var valeur = Number(tn.valeur_declaree_cents) || 0;
+    if (tn.caution_mode === 'montant') return Math.min(Math.max(0, Math.round(Number(tn.caution_montant_cents) || 0)), valeur);
+    var taux = tn.caution_taux == null ? Number(p.caution_taux) : Number(tn.caution_taux);
+    return Math.min(Math.round(valeur * Math.min(Math.max(taux, 0), 1)), valeur);
+  }
+  L.cautionTenue = cautionTenue;
+
   /** Boîte de réservation : dates, disponibilité, estimation, ajout au panier, essayage. */
   function boiteReservation(tn, p) {
     if (p.reservations_ouvertes !== true) return boitePreLancement(tn, p);
@@ -735,8 +744,9 @@
       tn.remise_main_propre ? h('option', { value: 'main_propre' }, t('tenue.main_propre')) : null,
       tn.envoi_assure ? h('option', { value: 'envoi' }, t('tenue.envoi', { prix: L.euros(tn.frais_envoi_cents) })) : null);
     var bouton = h('button', { class: 'bouton bouton--plein', type: 'submit' }, t(tn.reservation_instantanee ? 'tenue.ajouter_instantane' : 'tenue.ajouter_panier'));
+    var raison = h('p', { class: 'champ__aide reservation-boite__raison', 'aria-live': 'polite', style: { margin: 0, textAlign: 'center' } });
     var dejaDansPanier = L.panier.contient(tn.id);
-    if (dejaDansPanier) bouton.textContent = t('tenue.deja_panier');
+    if (dejaDansPanier) bouton.textContent = t('tenue.finaliser');
     var form = h('form', { class: 'reservation-boite', novalidate: true },
       h('h2', { style: { fontSize: '1.6rem', margin: 0 } }, t('tenue.reserver_titre')),
       h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'r-evt' }, t('tenue.date_evenement')), evenement),
@@ -744,7 +754,7 @@
         h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'r-debut' }, t('tenue.date_debut')), debut),
         h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'r-fin' }, t('tenue.date_fin')), fin)),
       h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'r-mode' }, t('tenue.mode_remise')), mode),
-      dispo, recap, bouton,
+      dispo, recap, bouton, raison,
       tn.essayage_possible ? h('button', { class: 'bouton bouton--ligne bouton--plein', type: 'button', onclick: function () { L.essayage(tn, p); } }, t('tenue.essayer', { prix: L.euros(p.frais_essayage_cents) })) : null,
       h('button', { class: 'lien', type: 'button', style: { justifySelf: 'center', fontSize: '13px' }, onclick: function () { L.showrooms(tn); } }, t('tenue.showroom_lien')));
 
@@ -758,19 +768,32 @@
     mode.addEventListener('change', verifier);
 
     var ok = false;
+    // Le bouton reste visible mais grisé tant que les dates ne conviennent pas, avec la raison juste en dessous.
+    function etatBouton(message) {
+      var inactif = !ok && !L.panier.contient(tn.id);
+      bouton.classList.toggle('bouton--inactif', inactif);
+      bouton.setAttribute('aria-disabled', inactif ? 'true' : 'false');
+      raison.textContent = inactif && message ? t('tenue.pour_continuer', { raison: message.charAt(0).toLowerCase() + message.slice(1) }) : '';
+    }
+    var verification = 0;
     function verifier() {
       ok = false;
+      var numero = ++verification; // seule la dernière vérification compte (réponses réseau dans le désordre)
       L.vider(recap);
-      if (!evenement.value || !debut.value || !fin.value) { dispo.className = 'disponibilite'; dispo.textContent = t('tenue.choisir_dates'); return; }
+      if (!evenement.value) { dispo.className = 'disponibilite'; dispo.textContent = t('tenue.choisir_dates'); etatBouton(t('tenue.manque_evenement')); return; }
+      if (!debut.value || !fin.value) { dispo.className = 'disponibilite'; dispo.textContent = t('tenue.choisir_dates'); etatBouton(t('tenue.manque_dates')); return; }
       var duree = Math.round((new Date(fin.value) - new Date(debut.value)) / 86400000);
-      if (debut.value > evenement.value || fin.value < evenement.value) { dispo.className = 'disponibilite disponibilite--non'; dispo.textContent = t('tenue.dates_incoherentes'); return; }
-      if (duree < tn.duree_min_jours || duree > tn.duree_max_jours) { dispo.className = 'disponibilite disponibilite--non'; dispo.textContent = t('tenue.duree_hors', { min: tn.duree_min_jours, max: tn.duree_max_jours }); return; }
+      if (debut.value > evenement.value || fin.value < evenement.value) { dispo.className = 'disponibilite disponibilite--non'; dispo.textContent = t('tenue.dates_incoherentes'); etatBouton(t('tenue.dates_incoherentes')); return; }
+      if (duree < tn.duree_min_jours || duree > tn.duree_max_jours) { dispo.className = 'disponibilite disponibilite--non'; dispo.textContent = t('tenue.duree_hors', { min: tn.duree_min_jours, max: tn.duree_max_jours }); etatBouton(t('tenue.ajuster_retour', { min: L.dateCourte(L.ajouterJours(debut.value, tn.duree_min_jours)), max: L.dateCourte(L.ajouterJours(debut.value, tn.duree_max_jours)) })); return; }
       dispo.className = 'disponibilite'; dispo.textContent = t('tenue.verification');
+      etatBouton('');
       L.sb.rpc('tenue_disponible', { p_tenue: tn.id, p_debut: debut.value, p_fin: fin.value }).then(function (r) {
-        if (r.error) { dispo.textContent = t('commun.erreur'); return; }
+        if (numero !== verification) return;
+        if (r.error) { dispo.textContent = t('commun.erreur'); etatBouton(t('commun.erreur')); return; }
         ok = r.data === true;
         dispo.className = 'disponibilite disponibilite--' + (ok ? 'oui' : 'non');
         dispo.textContent = ok ? t('tenue.disponible') : t('tenue.indisponible');
+        etatBouton(ok ? '' : t('tenue.indisponible'));
         if (ok) estimation();
       });
     }
@@ -778,14 +801,16 @@
       var pressing = tn.categorie === 'accessoire' ? 0 : Number(p.frais_pressing_cents);
       var envoi = mode.value === 'envoi' ? tn.frais_envoi_cents : 0;
       var service = Math.round(tn.prix_location_cents * Number(p.frais_service_taux));
-      var caution = Math.round(tn.valeur_declaree_cents * Number(p.caution_taux));
+      var caution = cautionTenue(tn, p);
       L.vider(recap);
       [['tenue.r_location', tn.prix_location_cents], ['tenue.r_pressing', pressing], ['tenue.r_envoi', envoi], ['tenue.r_service', service]].forEach(function (l) {
         if (l[1] || l[0] === 'tenue.r_location') recap.appendChild(h('div', { class: 'recap__ligne' }, h('span', null, t(l[0])), h('span', null, L.euros(l[1]))));
       });
       recap.appendChild(h('div', { class: 'recap__ligne recap__ligne--total' }, h('span', null, t('tenue.r_total')), h('span', null, L.euros(tn.prix_location_cents + pressing + envoi + service))));
-      recap.appendChild(h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t('tenue.r_caution')), h('span', null, L.euros(caution))));
-      recap.appendChild(h('p', { class: 'recap__ligne--note', style: { margin: '4px 0 0' } }, t('tenue.r_note')));
+      recap.appendChild(caution > 0
+        ? h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t('tenue.r_caution')), h('span', null, L.euros(caution)))
+        : h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t('tenue.r_sans_caution')), h('span', null, '')));
+      recap.appendChild(h('p', { class: 'recap__ligne--note', style: { margin: '4px 0 0' } }, t(tn.reservation_instantanee ? 'tenue.r_note_instant' : 'tenue.r_note')));
     }
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -798,12 +823,14 @@
       }
       L.panier.definirDates(nouvellesDates);
       L.panier.ajouter({ tenue_id: tn.id, titre: tn.titre, fournisseuse_id: tn.fournisseuse_id, fournisseuse_nom: (tn.fournisseuse && (tn.fournisseuse.boutique_nom || tn.fournisseuse.nom_affiche)) || '',
-        prix_location_cents: tn.prix_location_cents, categorie: tn.categorie, sous_categorie: tn.sous_categorie, couleurs: tn.couleurs, photo: (photosDe(tn)[0] || {}).chemin, mode_remise: mode.value });
-      bouton.textContent = t('tenue.deja_panier');
+        prix_location_cents: tn.prix_location_cents, categorie: tn.categorie, sous_categorie: tn.sous_categorie, couleurs: tn.couleurs, photo: (photosDe(tn)[0] || {}).chemin, mode_remise: mode.value,
+        instantanee: Boolean(tn.reservation_instantanee) });
+      bouton.textContent = t('tenue.finaliser');
+      etatBouton('');
       L.ui.toast(t('tenue.ajoute'), 'succes');
       if (window.gsap && L.motion.actif) gsap.fromTo('.panier-lien', { scale: 1 }, { scale: 1.25, duration: 0.2, yoyo: true, repeat: 1, ease: 'power2.out' });
     });
-    if (evenement.value) setTimeout(verifier, 0);
+    setTimeout(verifier, 0);
     return form;
   }
 
@@ -1020,7 +1047,7 @@
   };
 
   function etapes(actif) {
-    var noms = ['panier.e_demandes', 'panier.e_paiement', 'panier.e_caution', 'panier.e_remise'];
+    var noms = ['panier.e_demandes', 'panier.e_paiement', 'panier.e_remise'];
     return h('ol', { class: 'etapes', 'aria-label': t('panier.progression') }, noms.map(function (n, i) {
       return h('li', { class: i < actif ? 'est-fait' : i === actif ? 'est-actif' : '', 'aria-current': i === actif ? 'step' : null }, t(n));
     }));
@@ -1059,6 +1086,7 @@
       var service = Math.round(totalLocation * Number(p.frais_service_taux));
       var dates = pan.dates || {};
       var aEnvoi = pan.articles.some(function (a) { return a.mode_remise === 'envoi'; });
+      var toutInstantane = pan.articles.every(function (a) { return a.instantanee; });
       var retour = h('div');
       var form = h('form', { class: 'formulaire panneau', novalidate: true },
         h('h2', { class: 'panneau__titre' }, t('panier.vos_dates')),
@@ -1068,11 +1096,13 @@
           L.ui.champ('fin', 'tenue.date_fin', { type: 'date', required: true, value: dates.fin || '', min: L.ajouterJours(L.aujourdhui(), 2) })),
         aEnvoi ? L.ui.champ('adresse', 'panier.adresse', { tag: 'textarea', required: true, maxlength: 300, autocomplete: 'street-address' }) : null,
         pan.articles.some(function (a) { return a.mode_remise !== 'envoi'; }) ? L.ui.champ('creneau', 'panier.creneau', { type: 'datetime-local', aide: t('panier.creneau_aide') }) : null,
-        L.ui.champ('message', 'panier.message', { tag: 'textarea', maxlength: 1000, aide: t('commun.facultatif') }),
-        h('div', { 'data-mensurations': '' }),
+        h('details', { class: 'panier__options' },
+          h('summary', { style: { cursor: 'pointer', fontWeight: 600 } }, t('panier.options')),
+          L.ui.champ('message', 'panier.message', { tag: 'textarea', maxlength: 1000, aide: t('commun.facultatif') }),
+          h('div', { 'data-mensurations': '' })),
         L.ui.honeypot(), retour,
-        h('button', { class: 'bouton bouton--plein', type: 'submit' }, t('panier.envoyer')),
-        h('p', { class: 'champ__aide', style: { textAlign: 'center' } }, t('panier.envoyer_aide')));
+        h('button', { class: 'bouton bouton--plein', type: 'submit' }, t(toutInstantane ? 'panier.reserver_payer' : 'panier.envoyer')),
+        h('p', { class: 'champ__aide', style: { textAlign: 'center' } }, t(toutInstantane ? 'panier.payer_aide' : 'panier.envoyer_aide')));
       var resume = h('aside', { class: 'panier__resume panneau' },
         h('h2', { class: 'panneau__titre' }, t('panier.resume')),
         h('div', { class: 'recap' },
@@ -1103,7 +1133,13 @@
             creneau: form.creneau && form.creneau.value ? new Date(form.creneau.value).toISOString() : null
           }).then(function (r) {
             L.panier.vider();
-            location.href = 'panier.html?commande=' + r.commande_id + '&envoye=1';
+            var suivi = 'panier.html?commande=' + r.commande_id + '&envoye=1';
+            if (r.statut !== 'a_payer') { location.href = suivi; return; }
+            // Tout est accepté d'office : on enchaîne directement sur le paiement.
+            b.textContent = t('panier.redirection_paiement');
+            return L.api('checkout-creer', { commande_id: r.commande_id })
+              .then(function (pay) { location.href = pay.url || suivi; })
+              .catch(function () { location.href = suivi; });
           }).catch(function (err) {
             b.disabled = false;
             L.vider(retour).appendChild(h('p', { class: 'message message--erreur', role: 'alert' }, L.messageErreur(err)));
@@ -1125,7 +1161,7 @@
         var m = r.data || {};
         var champs = [['poitrine_cm', 'mes.poitrine'], ['taille_cm', 'mes.taille'], ['hanches_cm', 'mes.hanches'], ['longueur_cm', 'mes.longueur'], ['manche_cm', 'mes.manche'], ['hauteur_cm', 'mes.hauteur']];
         var etat = h('span', { class: 'champ__aide' });
-        var details = h('details', { class: 'panneau', style: { margin: 0, padding: '16px' }, open: !r.data || null },
+        var details = h('details', { class: 'panneau', style: { margin: 0, padding: '16px' } },
           h('summary', { style: { cursor: 'pointer', fontWeight: 600 } }, t('panier.mensurations_titre')),
           h('p', { class: 'champ__aide' }, t('panier.mensurations_aide')),
           h('div', { class: 'grille-3' }, champs.map(function (c) {
@@ -1157,8 +1193,11 @@
         if (!c) { L.ui.etatVide(zone, t('panier.commande_introuvable')); return; }
         // Retour de Stripe : le webhook peut avoir quelques secondes de retard
         var attendPaiement = L.param('paiement') === 'ok' && c.statut === 'a_payer';
-        var attendCarte = L.param('caution') === 'ok' && resas.some(function (r) { return ['a_enregistrer', 'echec'].indexOf(r.caution_statut) >= 0; });
-        if ((attendPaiement || attendCarte) && tentatives++ < 15) {
+        var sansCarte = resas.some(function (r) { return ['a_enregistrer', 'echec'].indexOf(r.caution_statut) >= 0; });
+        var attendCarte = L.param('caution') === 'ok' && sansCarte;
+        // Paiement par carte : la carte est enregistrée pour la caution juste après la confirmation (quelques secondes).
+        var attendCarteAuto = L.param('paiement') === 'ok' && c.statut === 'payee' && sansCarte && tentatives < 4;
+        if ((attendPaiement || attendCarte || attendCarteAuto) && tentatives++ < 15) {
           L.vider(zone).appendChild(h('div', { class: 'vide' }, h('span', { class: 'chargement__arche' }), h('p', null, t(attendPaiement ? 'panier.confirmation_paiement' : 'panier.confirmation_carte'))));
           setTimeout(charger, 2000);
           return;
@@ -1172,8 +1211,7 @@
     L.vider(zone);
     var actives = resas.filter(function (r) { return r.statut !== 'annulee'; });
     var refusees = resas.filter(function (r) { return r.statut === 'annulee'; });
-    var etape = c.statut === 'en_attente_reponses' ? 0 : c.statut === 'a_payer' ? 1 : c.statut === 'annulee' ? 0 :
-      actives.some(function (r) { return ['a_enregistrer', 'echec'].indexOf(r.caution_statut) >= 0; }) ? 2 : 3;
+    var etape = c.statut === 'en_attente_reponses' || c.statut === 'annulee' ? 0 : c.statut === 'a_payer' ? 1 : 2;
     zone.appendChild(etapes(etape));
     var retour = h('div', { 'aria-live': 'polite' });
     var colonne = h('div');
@@ -1208,7 +1246,7 @@
       ligneRecap('tenue.r_location', totaux.location), ligneRecap('panier.pressing_envoi', totaux.pressing), ligneRecap('tenue.r_service', totaux.service),
       totaux.deduction ? ligneRecap('panier.deduction', -totaux.deduction) : null,
       h('div', { class: 'recap__ligne recap__ligne--total' }, h('span', null, t('panier.total')), h('span', null, L.euros(totaux.location + totaux.pressing + totaux.service - totaux.deduction))),
-      h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t('tenue.r_caution')), h('span', null, L.euros(totaux.caution))),
+      h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t(totaux.caution ? 'tenue.r_caution' : 'tenue.r_sans_caution')), h('span', null, totaux.caution ? L.euros(totaux.caution) : '')),
       h('p', { class: 'recap__ligne--note' }, t('panier.evenement', { date: L.date(c.date_evenement) }))));
     resume.appendChild(retour);
 
@@ -1216,17 +1254,11 @@
       bouton.disabled = true;
       L.api(action, corps).then(function (r) {
         if (r.url) { location.href = r.url; return; }
-        if (r.identite_requise) { bouton.disabled = false; identite(); return; }
         recharger();
       }).catch(function (err) {
         bouton.disabled = false;
         L.vider(retour).appendChild(h('p', { class: 'message message--erreur', role: 'alert' }, L.messageErreur(err)));
       });
-    }
-    function identite() {
-      L.vider(retour).appendChild(h('div', { class: 'message message--alerte' },
-        h('p', null, t('panier.identite_texte')),
-        h('button', { class: 'bouton bouton--petit', type: 'button', onclick: function (e) { rediriger(e.currentTarget, 'identite-session', { commande_id: c.id }); } }, t('panier.identite_bouton'))));
     }
     var annuler = h('button', { class: 'bouton bouton--ligne bouton--plein', type: 'button', onclick: function (e) {
       var b = e.currentTarget;
@@ -1240,8 +1272,6 @@
       resume.appendChild(h('div', { class: 'actions' }, annuler));
     } else if (c.statut === 'a_payer') {
       if (refusees.length) resume.appendChild(h('p', { class: 'message message--alerte' }, t('panier.partiel')));
-      if (c.identite_requise && !(L.profil && L.profil.identite_verifiee)) identite();
-      if (L.param('identite') === 'retour') resume.appendChild(h('p', { class: 'message' }, t('panier.identite_retour')));
       resume.appendChild(h('div', { class: 'actions' },
         h('button', { class: 'bouton bouton--plein', type: 'button', onclick: function (e) { rediriger(e.currentTarget, 'checkout-creer', { commande_id: c.id }); } }, t('panier.payer')),
         annuler,

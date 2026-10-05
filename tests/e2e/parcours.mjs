@@ -1,6 +1,6 @@
 // Parcours complet en mode test (pile Supabase locale + simulateur Stripe) :
 // inscription → Connect → publication → validation → essayage → réservation multi-fournisseuses →
-// identité → paiement → caution → remise → retour → versement → avis, puis un cas de litige.
+// paiement (carte gardée pour la caution) → remise → retour → versement → avis, puis un cas de litige.
 // Usage : node tests/e2e/parcours.mjs
 import assert from 'node:assert/strict';
 import { deflateSync } from 'node:zlib';
@@ -192,35 +192,22 @@ try {
   assert.equal((await q(`select count(*)::int n from blocages where reservation_id = any($1)`, [resas.map((r) => r.id)]))[0].n, 2);
   ok('commande à payer, calendriers bloqués (pressing compris)');
 
-  etape('Stripe Identity (caution > seuil) puis paiement Checkout');
+  etape('Paiement Checkout sans vérification d\'identité, carte gardée pour la caution');
   await cPage.goto(`${BASE}/panier.html?commande=${commandeId}`);
-  await cPage.click('button:has-text("Payer")');
-  await cPage.waitForSelector('text=Vérifier mon identité');
-  await cPage.click('text=Vérifier mon identité');
-  await cPage.waitForURL(/localhost:12111\/identity/);
-  await cPage.click('#verifier');
-  await cPage.waitForURL(/identite=retour/);
-  assert.equal((await q(`select identite_verifiee from profils where id = (select cliente_id from commandes where id = $1)`, [commandeId]))[0].identite_verifiee, true);
-  await cPage.reload();
   await cPage.click('button:has-text("Payer")');
   await cPage.waitForURL(/localhost:12111\/checkout/);
   const montantAffiche = await cPage.textContent('#montant');
   await cPage.click('#payer');
   await cPage.waitForURL(/paiement=ok/);
-  await cPage.waitForSelector('text=Enregistrer ma carte', { timeout: 20000 });
+  await cPage.waitForSelector('text=Tout est prêt', { timeout: 20000 });
   const [cmd] = await q(`select * from commandes where id = $1`, [commandeId]);
   assert.equal(cmd.statut, 'payee');
+  assert.equal(cmd.identite_requise, false, 'aucune vérification d\'identité demandée');
+  assert.ok(cmd.payment_method_id, 'carte du paiement enregistrée pour la caution');
   const total = resas.reduce((s, r) => s + r.montant_location_cents + r.frais_pressing_cents + r.frais_envoi_cents + r.frais_service_cents - r.deduction_essayage_cents, 0);
   assert.equal(montantAffiche, `${(total / 100).toFixed(2)} EUR`, 'un seul Checkout pour les deux fournisseuses');
-  ok(`paiement unique de ${montantAffiche} (Bancontact + carte), webhook checkout.session.completed traité`);
-
-  etape('Carte de caution (SetupIntent), événement dans plus de 5 jours');
-  await cPage.click('text=Enregistrer ma carte');
-  await cPage.waitForURL(/localhost:12111\/checkout/);
-  await cPage.click('#payer');
-  await cPage.waitForURL(/caution=ok/);
   await attendreQue(async () => (await q(`select count(*)::int n from reservations where commande_id = $1 and caution_statut = 'carte_enregistree'`, [commandeId]))[0].n === 2, 'carte enregistrée');
-  ok('carte enregistrée, empreinte différée (événement à J+10)');
+  ok(`paiement unique de ${montantAffiche}, carte enregistrée en même temps, empreinte différée (événement à J+10)`);
 
   etape('Cron : empreinte off_session 2 jours avant la remise (+ cas d\'échec)');
   await q(`update reservations set date_debut = current_date + 1, date_evenement = current_date + 2, date_fin = current_date + 3 where commande_id = $1`, [commandeId]);
@@ -297,16 +284,17 @@ try {
   const r2 = await api('commande-creer', { articles: [{ tenue_id: tenue.id, mode_remise: 'main_propre' }], evenement: plus(20), debut: plus(19), fin: plus(21) }, 'cliente2@demo.lalla.be');
   const [resaL] = await q(`select * from reservations where commande_id = $1`, [r2.commande_id]);
   await api('reservation-repondre', { reservation_id: resaL.id, decision: 'accepter' }, 'zahra@test.lalla.be');
-  // Cliente 2 n'a pas vérifié son identité : on la marque vérifiée pour ce cas (le flux Identity est couvert plus haut)
-  await q(`update profils set identite_verifiee = true where id = $1`, [resaL.cliente_id]);
   await q(`update reservations set date_debut = current_date + 2, date_evenement = current_date + 3, date_fin = current_date + 4 where id = $1`, [resaL.id]);
   const pay = await api('checkout-creer', { commande_id: r2.commande_id }, 'cliente2@demo.lalla.be');
   const csId = pay.url.split('/').pop();
+  // Paiement Bancontact : pas de carte réutilisable, la cliente enregistre une carte pour la caution.
+  await fetch(`${mock.base}/__test/payer-bancontact`);
   await fetch(`${mock.base}/checkout/${csId}/payer`, { method: 'POST', redirect: 'manual' });
+  assert.equal((await q(`select caution_statut from reservations where id = $1`, [resaL.id]))[0].caution_statut, 'a_enregistrer', 'Bancontact : carte de caution encore à enregistrer');
   const setup = await api('caution-setup', { commande_id: r2.commande_id }, 'cliente2@demo.lalla.be');
   await fetch(`${mock.base}/checkout/${setup.url.split('/').pop()}/payer`, { method: 'POST', redirect: 'manual' });
   await attendreQue(async () => (await q(`select caution_statut from reservations where id = $1`, [resaL.id]))[0].caution_statut === 'autorisee', 'empreinte immédiate');
-  ok('événement à ≤ 5 jours : empreinte créée dès l\'enregistrement de la carte');
+  ok('Bancontact puis carte de caution : événement à ≤ 5 jours, empreinte créée dès l\'enregistrement de la carte');
   // Remise et retour express (EDL déposés en base par les parties)
   const lignes = await q(`select id from reservation_lignes where reservation_id = $1`, [resaL.id]);
   for (const type of ['remise', 'retour']) {

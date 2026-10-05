@@ -61,7 +61,12 @@ export async function demarrerStripeMock({ port = 12111, webhookUrl, secret }) {
       return;
     }
     const pid = s.payment_intent_data || {};
-    const pi = creerPI({ amount: s.amount_total, customer: s.customer, capture_method: pid.capture_method, transfer_group: pid.transfer_group, metadata: pid.metadata || {} });
+    // Paiement par carte avec setup_future_usage : la carte est rattachée au client (réutilisable pour la caution).
+    // Paiement Bancontact (piloté par /__test/payer-bancontact) : aucun moyen de paiement réutilisable.
+    const bancontact = etat.prochainPaiementBancontact; etat.prochainPaiementBancontact = false;
+    const carte = !bancontact && s.payment_method_options?.card?.setup_future_usage
+      ? sauver({ id: id('pm_carte'), object: 'payment_method', type: 'card', customer: s.customer }) : null;
+    const pi = creerPI({ amount: s.amount_total, customer: s.customer, capture_method: pid.capture_method, transfer_group: pid.transfer_group, metadata: pid.metadata || {}, payment_method: carte?.id });
     s.payment_intent = pi.id; s.payment_status = 'paid'; s.status = 'complete';
     await webhook('checkout.session.completed', s);
     if (pi.status === 'requires_capture') await webhook('payment_intent.amount_capturable_updated', pi);
@@ -108,6 +113,7 @@ export async function demarrerStripeMock({ port = 12111, webhookUrl, secret }) {
       }
       // --- Pilotage des tests
       if (chemin === '/__test/refuser-empreinte') { etat.refuserProchaineEmpreinte = true; return json(200, { ok: true }); }
+      if (chemin === '/__test/payer-bancontact') { etat.prochainPaiementBancontact = true; return json(200, { ok: true }); }
       if (chemin === '/__test/journal') return json(200, etat.journal);
 
       // --- API
@@ -115,7 +121,7 @@ export async function demarrerStripeMock({ port = 12111, webhookUrl, secret }) {
       if (chemin === '/v1/checkout/sessions' && req.method === 'POST') {
         const total = (p.line_items || []).reduce((s, l) => s + Number(l.price_data.unit_amount) * Number(l.quantity || 1), 0);
         const s = sauver({ id: id('cs'), object: 'checkout.session', mode: p.mode, customer: p.customer, metadata: p.metadata || {}, amount_total: total,
-          payment_intent_data: p.payment_intent_data, setup_intent_data: p.setup_intent_data, success_url: p.success_url, cancel_url: p.cancel_url,
+          payment_intent_data: p.payment_intent_data, payment_method_options: p.payment_method_options, setup_intent_data: p.setup_intent_data, success_url: p.success_url, cancel_url: p.cancel_url,
           payment_method_types: p.payment_method_types, client_reference_id: p.client_reference_id, payment_status: 'unpaid', status: 'open' });
         s.url = `${base}/checkout/${s.id}`;
         return json(200, s);
@@ -142,6 +148,10 @@ export async function demarrerStripeMock({ port = 12111, webhookUrl, secret }) {
         pi.status = 'canceled';
         setTimeout(() => webhook('payment_intent.canceled', pi), 50);
         return json(200, pi);
+      }
+      if ((m = chemin.match(/^\/v1\/payment_methods\/(\w+)$/))) {
+        const pm = etat.objets.get(m[1]);
+        return pm ? json(200, pm) : json(404, { error: { type: 'invalid_request_error', message: 'No such PaymentMethod' } });
       }
       if ((m = chemin.match(/^\/v1\/setup_intents\/(\w+)$/))) return json(200, etat.objets.get(m[1]));
       if (chemin === '/v1/refunds') return json(200, sauver({ id: id('re'), object: 'refund', amount: Number(p.amount || 0), payment_intent: p.payment_intent, status: 'succeeded', metadata: p.metadata || {} }));
