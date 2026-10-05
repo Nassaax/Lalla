@@ -27,8 +27,8 @@ async function session(email) {
 const plus = (j) => new Date(Date.now() + j * 86400000).toISOString().slice(0, 10);
 const [tn] = await q(`select t.id, t.fournisseuse_id, u.email from tenues t join auth.users u on u.id = t.fournisseuse_id
   where t.statut = 'validee' and t.categorie <> 'accessoire' and t.remise_main_propre and t.duree_min_jours <= 2 and t.duree_max_jours >= 2 limit 1`);
-// Caution fixée par la fournisseuse : 150 € quelle que soit la valeur déclarée
-await q(`update tenues set reservation_instantanee = true, code_postal = '4000', caution_mode = 'montant', caution_montant_cents = 15000 where id = $1`, [tn.id]);
+// Caution fixée par la fournisseuse : 150 € en espèces, quelle que soit la valeur déclarée
+await q(`update tenues set reservation_instantanee = true, code_postal = '4000', caution_mode = 'montant', caution_montant_cents = 15000, caution_moyen = 'especes' where id = $1`, [tn.id]);
 
 console.log('▶ Pré-lancement');
 const adminPL = await session('admin@demo.lalla.be');
@@ -51,10 +51,11 @@ assert.equal(resa.statut, 'acceptee', 'acceptée sans attendre');
 assert.equal(resa.statut_commande, 'a_payer');
 assert.equal(resa.creneau_propose_par, 'cliente');
 assert.equal(statutCree, 'a_payer', 'le site peut enchaîner directement sur le paiement');
-assert.equal(resa.caution_cents, 15000, 'caution fixée par la fournisseuse');
+assert.equal(resa.caution_especes_cents, 15000, 'caution fixée par la fournisseuse, en espèces');
+assert.equal(resa.caution_cents, 0, 'aucune empreinte bancaire');
 const blocages = await q(`select count(*)::int n from blocages where reservation_id = $1`, [resa.id]);
 assert.equal(blocages[0].n, 1, 'calendrier bloqué');
-ok('réservation instantanée acceptée, commande à payer d\'office, caution choisie par la fournisseuse, calendrier bloqué');
+ok('réservation instantanée acceptée, commande à payer d\'office, caution en espèces choisie par la fournisseuse, calendrier bloqué');
 await fournisseuse.api('reservation-creneau', { reservation_id: resa.id, confirmer: true });
 assert.equal((await q(`select creneau_confirme from reservations where id = $1`, [resa.id]))[0].creneau_confirme, true);
 const autre = new Date(`${plus(19)}T10:30:00Z`).toISOString();

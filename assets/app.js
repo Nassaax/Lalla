@@ -196,13 +196,18 @@
   // ===========================================================================
   // 3. API serveur (fonctions Vercel)
   // ===========================================================================
+  // Requêtes coupées par un rechargement ou un changement de page : ce n'est pas une erreur à afficher.
+  var pageQuittee = false;
+  window.addEventListener('beforeunload', function () { pageQuittee = true; });
+  window.addEventListener('pagehide', function () { pageQuittee = true; });
   L.api = function (action, corps) {
     var jeton = L.session && L.session.access_token;
     var p = L.sb && L.session ? L.sb.auth.getSession().then(function (r) { return r.data.session && r.data.session.access_token; }) : Promise.resolve(jeton);
     return p.then(function (jt) {
       var entetes = { 'Content-Type': 'application/json' };
       if (jt) entetes.Authorization = 'Bearer ' + jt;
-      return fetch('/api/v1/' + action, { method: 'POST', headers: entetes, body: JSON.stringify(corps || {}) });
+      return fetch('/api/v1/' + action, { method: 'POST', headers: entetes, body: JSON.stringify(corps || {}) })
+        .catch(function (e) { if (pageQuittee) return new Promise(function () {}); throw e; });
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (j) {
         if (!r.ok) {

@@ -148,8 +148,10 @@
     return h('article', { class: 'ligne-resa', id: 'resa-' + r.id },
       h('div', { class: 'ligne-resa__tete' }, h('h3', { class: 'ligne-resa__titre' }, titres), statut(r.statut)),
       h('p', { class: 'texte', style: { margin: 0, fontSize: '14px' } }, infos.filter(Boolean).join(' · ')),
-      h('p', { style: { margin: 0, fontSize: '13px' } }, L.euros(r.montant_location_cents) + ' · ' + t('panier.caution') + ' ' + L.euros(r.caution_cents) + ' ',
+      h('p', { style: { margin: 0, fontSize: '13px' } }, L.euros(r.montant_location_cents) + ' · ' +
+          (r.caution_cents || !r.caution_especes_cents ? t('panier.caution') + ' ' + L.euros(r.caution_cents) + ' ' : ''),
         r.caution_cents ? statut(r.caution_statut, 'caution.') : null,
+        r.caution_especes_cents ? h('span', null, (r.caution_cents ? ' · ' : '') + t('panier.caution_especes') + ' ' + L.euros(r.caution_especes_cents)) : null,
         r.numero_suivi ? h('span', { class: 'texte' }, ' · ' + t('compte.suivi') + ' : ' + r.numero_suivi) : null),
       r.statut === 'rendue' && role === 'fournisseuse' ? h('p', { class: 'champ__aide', style: { margin: 0 } }, t('litige.delai', { date: L.dateHeure(r.litige_deadline) })) : null,
       blocCreneau(r, role),
@@ -262,6 +264,7 @@
       if (type === 'remise' && r.caution_cents && r.caution_statut !== 'autorisee' && !lectureSeule) {
         contenu.appendChild(h('p', { class: 'message message--alerte' }, t('edl.caution_requise')));
       }
+      if (r.caution_especes_cents) contenu.appendChild(h('p', { class: 'message' }, t(type === 'remise' ? 'edl.caution_especes_remise' : 'edl.caution_especes_retour', { montant: L.euros(r.caution_especes_cents) })));
       contenu.appendChild(h('p', { class: 'texte' }, t('edl.intro')));
       var verrouille = lectureSeule || tous.some(function (e) { return e.type === type && (e.valide_cliente_at || e.valide_fournisseuse_at); });
       lignes.forEach(function (l) {
@@ -620,15 +623,18 @@
     var apercuCaution = h('p', { class: 'champ__aide', 'aria-live': 'polite', style: { margin: 0, fontWeight: 600 } });
     var blocCaution = h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('annonce.caution')),
       h('p', { class: 'champ__aide', style: { margin: 0 } }, t('annonce.caution_aide')),
-      h('label', { class: 'case' }, h('input', { type: 'radio', name: 'caution_mode', value: 'pourcentage', checked: v.caution_mode !== 'montant' }), h('span', null, t('annonce.caution_pct'))),
+      h('label', { class: 'case' }, h('input', { type: 'radio', name: 'caution_mode', value: 'aucune', checked: v.caution_mode === 'aucune' }), h('span', null, t('annonce.caution_aucune'))),
+      h('label', { class: 'case' }, h('input', { type: 'radio', name: 'caution_mode', value: 'pourcentage', checked: !v.caution_mode || v.caution_mode === 'pourcentage' }), h('span', null, t('annonce.caution_pct'))),
       h('label', { class: 'case' }, h('input', { type: 'radio', name: 'caution_mode', value: 'montant', checked: v.caution_mode === 'montant' }), h('span', null, t('annonce.caution_montant'))),
       L.ui.champ('caution_taux', 'annonce.caution_taux', { tag: 'select', options: tauxProposes.map(function (x) { return [String(x), x + ' %', x === tauxActuel]; }) }),
       L.ui.champ('caution_montant', 'annonce.caution_euros', { type: 'number', min: '0', max: '50000', step: '1', inputmode: 'numeric', value: v.caution_montant_cents != null ? v.caution_montant_cents / 100 : '' }),
+      L.ui.champ('caution_moyen', 'annonce.caution_moyen', { tag: 'select', aide: t('annonce.moyen_especes_aide'), options: [['carte', t('annonce.moyen_carte'), v.caution_moyen !== 'especes'], ['especes', t('annonce.moyen_especes'), v.caution_moyen === 'especes']] }),
       apercuCaution);
     function lireCaution() {
-      var mode = form.caution_mode.value === 'montant' ? 'montant' : 'pourcentage';
+      var mode = ['aucune', 'montant'].indexOf(form.caution_mode.value) >= 0 ? form.caution_mode.value : 'pourcentage';
       return {
         caution_mode: mode,
+        caution_moyen: form.caution_moyen.value === 'especes' ? 'especes' : 'carte',
         caution_taux: mode === 'pourcentage' ? Number(form.caution_taux.value) / 100 : null,
         caution_montant_cents: mode === 'montant' ? Math.max(0, Math.round(Number(form.caution_montant.value || 0) * 100)) : null
       };
@@ -637,9 +643,10 @@
       var c = lireCaution();
       form.caution_taux.closest('.champ').hidden = c.caution_mode !== 'pourcentage';
       form.caution_montant.closest('.champ').hidden = c.caution_mode !== 'montant';
+      form.caution_moyen.closest('.champ').hidden = c.caution_mode === 'aucune';
       var valeur = Math.round(Number(form.valeur.value || 0) * 100);
-      var montant = c.caution_mode === 'montant' ? Math.min(c.caution_montant_cents, valeur || c.caution_montant_cents) : Math.round(valeur * c.caution_taux);
-      apercuCaution.textContent = montant > 0 ? t('annonce.caution_apercu', { montant: L.euros(montant) }) : t('annonce.caution_sans');
+      var montant = c.caution_mode === 'aucune' ? 0 : c.caution_mode === 'montant' ? Math.min(c.caution_montant_cents, valeur || c.caution_montant_cents) : Math.round(valeur * c.caution_taux);
+      apercuCaution.textContent = montant > 0 ? t(c.caution_moyen === 'especes' ? 'annonce.caution_apercu_especes' : 'annonce.caution_apercu', { montant: L.euros(montant) }) : t('annonce.caution_sans');
     }
     var form = h('form', { class: 'formulaire', novalidate: true },
       h('div', { class: 'grille-2' },
@@ -682,7 +689,7 @@
       rendrePhotos();
     }
     form.categorie.addEventListener('change', majVisibilite);
-    ['caution_taux', 'caution_montant', 'valeur'].forEach(function (n) { form[n].addEventListener('input', majCaution); form[n].addEventListener('change', majCaution); });
+    ['caution_taux', 'caution_montant', 'caution_moyen', 'valeur'].forEach(function (n) { form[n].addEventListener('input', majCaution); form[n].addEventListener('change', majCaution); });
     $$('[name=caution_mode]', form).forEach(function (x) { x.addEventListener('change', majCaution); });
     majCaution();
     if (v.description) form.description.value = v.description;

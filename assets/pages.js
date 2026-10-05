@@ -613,6 +613,7 @@
         h('p', { class: 'texte', style: { margin: '8px 0 0' } }, noteCourte(f.note_moyenne, f.nb_avis), ' · ', lieu)),
       h('p', { class: 'fiche__prix' }, h('strong', null, L.euros(tn.prix_location_cents, true)), h('span', { class: 'texte' }, t('tenue.par_location', { min: tn.duree_min_jours, max: tn.duree_max_jours }))),
       tn.reservation_instantanee ? h('p', { class: 'eclair', style: { margin: 0 } }, '⚡ ' + t('tenue.instantanee')) : null,
+      cautionTenue(tn, p) === 0 ? h('p', { class: 'eclair', style: { margin: 0 } }, '✓ ' + t('tenue.r_sans_caution')) : tn.caution_moyen === 'especes' ? h('p', { class: 'texte', style: { margin: 0, fontSize: '14px' } }, t('tenue.r_caution_especes') + ' : ' + L.euros(cautionTenue(tn, p))) : null,
       modes,
       lienBoutique,
       tn.description ? h('div', { class: 'texte', style: { whiteSpace: 'pre-line' } }, tn.description) : null,
@@ -724,6 +725,7 @@
   /** Caution d'une annonce : même règle que lib/pricing.js (montant fixe ou pourcentage, plafonnée à la valeur). */
   function cautionTenue(tn, p) {
     var valeur = Number(tn.valeur_declaree_cents) || 0;
+    if (tn.caution_mode === 'aucune') return 0;
     if (tn.caution_mode === 'montant') return Math.min(Math.max(0, Math.round(Number(tn.caution_montant_cents) || 0)), valeur);
     var taux = tn.caution_taux == null ? Number(p.caution_taux) : Number(tn.caution_taux);
     return Math.min(Math.round(valeur * Math.min(Math.max(taux, 0), 1)), valeur);
@@ -807,8 +809,9 @@
         if (l[1] || l[0] === 'tenue.r_location') recap.appendChild(h('div', { class: 'recap__ligne' }, h('span', null, t(l[0])), h('span', null, L.euros(l[1]))));
       });
       recap.appendChild(h('div', { class: 'recap__ligne recap__ligne--total' }, h('span', null, t('tenue.r_total')), h('span', null, L.euros(tn.prix_location_cents + pressing + envoi + service))));
+      var especes = tn.caution_moyen === 'especes' && mode.value !== 'envoi';
       recap.appendChild(caution > 0
-        ? h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t('tenue.r_caution')), h('span', null, L.euros(caution)))
+        ? h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t(especes ? 'tenue.r_caution_especes' : 'tenue.r_caution')), h('span', null, L.euros(caution)))
         : h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t('tenue.r_sans_caution')), h('span', null, '')));
       recap.appendChild(h('p', { class: 'recap__ligne--note', style: { margin: '4px 0 0' } }, t(tn.reservation_instantanee ? 'tenue.r_note_instant' : 'tenue.r_note')));
     }
@@ -1231,22 +1234,24 @@
         }),
         r.statut === 'demande' ? h('p', { class: 'texte', style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, t('panier.attente_reponse', { heure: L.dateHeure(r.expire_at) })) : null,
         r.statut === 'annulee' && r.motif_annulation ? h('p', { class: 'texte', style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, r.motif_annulation) : null,
+        ['payee', 'remise'].indexOf(r.statut) >= 0 && r.caution_especes_cents ? h('p', { style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, t('panier.caution_especes') + ' : ' + L.euros(r.caution_especes_cents)) : null,
         ['payee', 'remise'].indexOf(r.statut) >= 0 && r.caution_cents ? h('p', { style: { padding: '0 18px 14px', margin: 0, fontSize: '13px' } }, t('panier.caution') + ' ' + L.euros(r.caution_cents) + ', ', h('span', { class: 'statut statut--' + r.caution_statut }, t('caution.' + r.caution_statut)),
           r.caution_statut === 'echec' ? h('button', { class: 'lien', type: 'button', style: { marginLeft: '10px' }, onclick: function (e) { rediriger(e.currentTarget, 'caution-reessayer', { reservation_id: r.id }); } }, t('panier.autoriser_caution')) : null) : null));
     });
 
     var totaux = actives.reduce(function (o, r) {
       if (['acceptee', 'demande'].indexOf(r.statut) >= 0 || c.statut === 'payee' || c.statut === 'terminee') {
-        o.location += r.montant_location_cents; o.pressing += r.frais_pressing_cents + r.frais_envoi_cents; o.service += r.frais_service_cents; o.deduction += r.deduction_essayage_cents; o.caution += r.caution_cents;
+        o.location += r.montant_location_cents; o.pressing += r.frais_pressing_cents + r.frais_envoi_cents; o.service += r.frais_service_cents; o.deduction += r.deduction_essayage_cents; o.caution += r.caution_cents; o.especes += r.caution_especes_cents || 0;
       }
       return o;
-    }, { location: 0, pressing: 0, service: 0, deduction: 0, caution: 0 });
+    }, { location: 0, pressing: 0, service: 0, deduction: 0, caution: 0, especes: 0 });
     resume.appendChild(h('h2', { class: 'panneau__titre' }, t('panier.resume')));
     resume.appendChild(h('div', { class: 'recap' },
       ligneRecap('tenue.r_location', totaux.location), ligneRecap('panier.pressing_envoi', totaux.pressing), ligneRecap('tenue.r_service', totaux.service),
       totaux.deduction ? ligneRecap('panier.deduction', -totaux.deduction) : null,
       h('div', { class: 'recap__ligne recap__ligne--total' }, h('span', null, t('panier.total')), h('span', null, L.euros(totaux.location + totaux.pressing + totaux.service - totaux.deduction))),
-      h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t(totaux.caution ? 'tenue.r_caution' : 'tenue.r_sans_caution')), h('span', null, totaux.caution ? L.euros(totaux.caution) : '')),
+      totaux.caution || !totaux.especes ? h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t(totaux.caution ? 'tenue.r_caution' : 'tenue.r_sans_caution')), h('span', null, totaux.caution ? L.euros(totaux.caution) : '')) : null,
+      totaux.especes ? h('div', { class: 'recap__ligne recap__ligne--note' }, h('span', null, t('tenue.r_caution_especes')), h('span', null, L.euros(totaux.especes))) : null,
       h('p', { class: 'recap__ligne--note' }, t('panier.evenement', { date: L.date(c.date_evenement) }))));
     resume.appendChild(retour);
 

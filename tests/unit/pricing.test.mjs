@@ -29,6 +29,17 @@ test('caution choisie par la fournisseuse : montant fixe, sans caution, pourcent
   assert.equal(plafond.caution_cents, 120000);
 });
 
+test('sans caution explicite, caution en espèces (main propre seulement)', () => {
+  const aucune = calculerReservation({ pieces: [{ ...caftan, caution_mode: 'aucune', caution_montant_cents: 20000 }], mode_remise: 'main_propre' }, p);
+  assert.equal(aucune.caution_cents, 0); assert.equal(aucune.caution_especes_cents, 0);
+  const especes = { ...caftan, caution_mode: 'montant', caution_montant_cents: 20000, caution_moyen: 'especes' };
+  const main = calculerReservation({ pieces: [especes, mdamma], mode_remise: 'main_propre' }, p);
+  assert.equal(main.caution_especes_cents, 20000, 'part en espèces');
+  assert.equal(main.caution_cents, 20000, 'part bancaire (mdamma, 50 % de 400 €)');
+  const envoi = calculerReservation({ pieces: [especes], mode_remise: 'envoi', frais_envoi_cents: 900 }, p);
+  assert.equal(envoi.caution_especes_cents, 0); assert.equal(envoi.caution_cents, 20000, 'envoi : empreinte bancaire');
+});
+
 test('accessoire sans pressing, envoi facturé seulement en mode envoi', () => {
   const r = calculerReservation({ pieces: [caftan, mdamma], mode_remise: 'envoi', frais_envoi_cents: 1200 }, p);
   assert.equal(r.frais_pressing_cents, 1500);
