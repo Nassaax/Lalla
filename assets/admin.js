@@ -262,11 +262,16 @@
     var envoyer = function (cle, valeur) { return L.api('admin-parametres', { cle: cle, valeur: valeur }); };
     var bascule = h('button', { class: 'bouton' + (ouvert ? ' bouton--ligne' : ''), type: 'button' }, ouvert ? 'Repasser en pré-lancement' : 'Ouvrir les réservations');
     bascule.addEventListener('click', function () {
-      var message = ouvert ? 'Fermer les réservations ? Les commandes déjà payées ne sont pas touchées.' : 'Ouvrir les réservations ? Vérifiez d\'abord que Stripe est configuré en mode réel. Toutes les inscrites seront prévenues.';
-      if (!window.confirm(message)) return;
-      bascule.disabled = true;
-      envoyer('reservations_ouvertes', !ouvert).then(function () { L.ui.toast(ouvert ? 'Site repassé en pré-lancement' : 'Réservations ouvertes', 'succes'); recharger(); })
-        .catch(function (e) { bascule.disabled = false; L.ui.toast(L.messageErreur(e), 'erreur'); });
+      var message = ouvert ? 'Fermer les réservations ? Les commandes déjà payées ne sont pas touchées.' : 'Ouvrir les réservations ? Les clientes pourront réserver et payer, et toutes les inscrites seront prévenues. En mode réel, vérifiez d\'abord que Stripe utilise les clés de production.';
+      // Confirmation dans le site (les boîtes natives peuvent être bloquées par Safari sur iPad).
+      var valider = h('button', { class: 'bouton', type: 'button' }, ouvert ? 'Oui, repasser en pré-lancement' : 'Oui, ouvrir les réservations');
+      var m = L.ui.modale(h('div', { class: 'formulaire' }, h('p', { class: 'texte' }, message),
+        h('div', { class: 'actions', style: { margin: 0 } }, valider, h('button', { class: 'bouton bouton--ligne', type: 'button', onclick: function () { m.fermer(); } }, 'Annuler'))), { titre: 'Lancement' });
+      valider.addEventListener('click', function () {
+        valider.disabled = true;
+        envoyer('reservations_ouvertes', !ouvert).then(function () { m.fermer(); L.ui.toast(ouvert ? 'Site repassé en pré-lancement' : 'Réservations ouvertes', 'succes'); recharger(); })
+          .catch(function (e) { valider.disabled = false; L.ui.toast(L.messageErreur(e), 'erreur'); });
+      });
     });
     return panneau('Lancement', h('div', { class: 'formulaire' },
       h('p', { class: 'message ' + (ouvert ? 'message--succes' : 'message--alerte') }, ouvert
