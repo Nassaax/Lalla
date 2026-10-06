@@ -1161,13 +1161,13 @@
 
 
   ajouter('fr', {
-    'jourj.surtitre': 'Hub fêtes & mariages', 'jourj.titre': 'Compléter mon jour J',
-    'jourj.chapeau': 'Maquillage, henné, photo, musique : des prestataires près de chez vous, à réserver au même endroit.',
+    'jourj.surtitre': 'Hub fêtes & mariages', 'jourj.titre': 'Se préparer pour la fête',
+    'jourj.chapeau': 'Maquillage, coiffure, henné pour vous préparer ; photo, musique ou sono si c\'est vous qui recevez. Des prestataires près de chez vous.',
     'jourj.voir': 'Voir le Hub', 'jourj.maquillage': 'Maquillage et coiffure', 'jourj.photo': 'Photographes', 'jourj.henne': 'Henné', 'jourj.musique': 'Musique et DJ'
   });
   ajouter('nl', {
-    'jourj.surtitre': 'Feest- & huwelijkshub', 'jourj.titre': 'Mijn grote dag vervolledigen',
-    'jourj.chapeau': 'Make-up, henna, foto, muziek: dienstverleners bij u in de buurt, te boeken op één plek.',
+    'jourj.surtitre': 'Feest- & huwelijkshub', 'jourj.titre': 'Klaarmaken voor het feest',
+    'jourj.chapeau': 'Make-up, kapsel, henna om u klaar te maken; foto, muziek of geluid als u zelf ontvangt. Dienstverleners bij u in de buurt.',
     'jourj.voir': 'Bekijk de hub', 'jourj.maquillage': 'Make-up en kapsels', 'jourj.photo': 'Fotografen', 'jourj.henne': 'Henna', 'jourj.musique': 'Muziek en dj',
     'meta.histoire.titre': 'Ons verhaal: waarom LALLAT bestaat | {brand}',
     'meta.histoire.desc': 'LALLAT laat de mooiste Marokkaanse kledij circuleren en brengt de dienstverleners van uw feest samen, in heel België. Ons verhaal en onze engagementen.',
@@ -1187,7 +1187,7 @@
     'histoire.v3_titre': 'Nabijheid', 'histoire.v3_texte': 'Particulieren, ontwerpsters en professionals van hier, in heel België. Je past, je ontmoet elkaar, je beveelt aan.',
     'histoire.v4_titre': 'Alle vrouwen', 'histoire.v4_texte': 'Met of zonder hoofddoek, alle maten, elk budget, elk feest. Iedereen moet haar outfit vinden en zich thuis voelen.',
     'histoire.invitees_surtitre': 'De gemeenschap', 'histoire.invitees_titre': 'Word een LALLAT-gaste.',
-    'histoire.invitees_texte': 'Deel uw outfit van de grote dag met #LallatInvitée: we zetten de mooiste in de kijker op onze Instagram.',
+    'histoire.invitees_texte': 'Deel uw feestoutfit met #LallatInvitée: we zetten de mooiste in de kijker op onze Instagram.',
     'histoire.cta_tenues': 'Mijn outfit vinden', 'histoire.cta_proposer': 'Mijn kledij aanbieden'
   });
   // ---------------------------------------------------------------------------
@@ -1217,8 +1217,8 @@
     'hub.b.surtitre': 'Feest- & huwelijkshub', 'hub.b.titre': 'Op zoek naar een bepaalde dienstverlener of bepaald materiaal?',
     'hub.b.texte': 'Visagisten, fotografen, negafa\'s, dj\'s, geluid, decoratie: bekijk de Feest- & huwelijkshub.',
     'hub.b.prestataires': 'Dienstverleners', 'hub.b.materiel': 'Materiaal',
-    'hub.beaute_surtitre': 'Schoonheid van de bruid', 'hub.beaute_titre': 'Zorg voor uzelf voor de grote dag',
-    'hub.beaute_texte': 'Rituelen, oliën, gezichts- en haarverzorging: een selectie voor de weken voor het huwelijk, bij onze partnerwinkel.',
+    'hub.beaute_surtitre': 'Zich klaarmaken', 'hub.beaute_titre': 'Zorg voor uzelf voor het feest',
+    'hub.beaute_texte': 'Rituelen, oliën, gezichts- en haarverzorging: een selectie voor de weken voor een feest, bij onze partnerwinkel.',
     'hub.beaute_cta': 'De winkel ontdekken',
     'hub.pro_surtitre': 'Bent u dienstverlener?', 'hub.pro_titre': 'Sluit u aan bij de gids en ontvang gerichte aanvragen.', 'hub.pro_cta': 'Mijn zaak vermelden',
     'hub.theme_musique': 'Muziek en dj', 'hub.theme_maquillage': 'Make-up en kapsels', 'hub.theme_sono': 'Geluid en verlichting', 'hub.theme_photo': 'Fotografen', 'hub.theme_henne': 'Henna',
@@ -1599,7 +1599,7 @@
     'index.occ.soiree': 'Stukken die indruk maken',
     'index.r.ou_aide': 'Uw postcode',
     'index.hero.titre': 'De jurk van uw dromen, <em>uitgeleend bij u in de buurt.</em>',
-    'index.hero.texte': 'Huur kaftans, takchita\'s en bruidskledij bij geverifieerde particulieren, negafa\'s en ontwerpsters, in heel België.',
+    'index.hero.texte': 'Uitgenodigd op een huwelijk, een henna of het Aïd? Huur kaftans en takchita\'s bij geverifieerde particulieren, negafa\'s en ontwerpsters, in heel België.',
     'index.r.tenue': 'Kledij',
     'index.r.ou': 'Waar',
     'index.r.date': 'Datum van het feest',

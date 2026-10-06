@@ -81,7 +81,7 @@
   <section class="plan" id="sa">
     <div class="rayons" id="rayons-a"></div>
     <div id="intro">
-      <div class="centre t1 serif ombre"><span class="ligne"><span id="a1">Le jour J,</span></span></div>
+      <div class="centre t1 serif ombre"><span class="ligne"><span id="a1">Une belle fête,</span></span></div>
       <div class="centre t2 ital ombre"><span class="ligne"><span id="a2" class="or">c'est toute une équipe.</span></span></div>
       <svg class="filet" viewBox="0 0 500 20"><path id="filet-a" d="M0 10 H210 M290 10 H500" stroke="#E9C77A" stroke-width="2" fill="none"/><polygon id="losange-a" points="250,0 260,10 250,20 240,10" fill="#E9C77A"/></svg>
     </div>
@@ -124,7 +124,7 @@
         <div class="liste-cadre"><div class="liste" id="liste"></div></div>
         <div id="feuille">
           <div class="l1">Votre sélection</div>
-          <div class="l2"><span class="n" id="feuille-n">4 prestataires</span><span class="m">1&nbsp;430&nbsp;€</span></div>
+          <div class="l2"><span class="n" id="feuille-n">4 prestataires</span><span class="m">980&nbsp;€</span></div>
           <div class="btn" id="btn-reserver">Réserver mes dates<span class="reflet" id="reflet"></span></div>
         </div>
         <div id="ondes"></div>
@@ -168,8 +168,8 @@
     <div class="coche">${COCHE_B}</div><div class="leg">${leg}</div></div>`).join('');
 
   // Cartes de l'application
-  const CARTES = [['p-maquillage', 'Maquillage mariée avec essai', '180 €', 'la prestation', '50% 25%'], ['p-photo', 'Reportage photo de mariage', '650 €', 'la prestation', '50% 55%'],
-    ['p-henne', 'Soirée henné, mariée et invitées', '150 €', 'la prestation', '60% 50%'], ['p-musique', 'Musiciens et DJ, chaabi et oriental', '450 €', 'la prestation', '62% 50%'],
+  const CARTES = [['p-maquillage', 'Maquillage de soirée', '60 €', 'la prestation', '50% 25%'], ['p-photo', 'Photographe pour votre fête', '350 €', 'la prestation', '50% 55%'],
+    ['p-henne', 'Henné pour vous et vos invitées', '120 €', 'la prestation', '60% 50%'], ['p-musique', 'Musiciens et DJ, chaabi et oriental', '450 €', 'la prestation', '62% 50%'],
     ['p-sono', 'Sono 2 000 W avec micros', '90 €', 'la location', '50% 42%'], ['v-mariage', 'Negafa et tenues de mariée', '390 €', 'la prestation', '50% 20%']];
   $('#liste').innerHTML = CARTES.map(([img, nom, prix, unite, pos], i) => `<div class="carte" id="carte${i}"><div class="img"><img src="images/${img}.jpg" alt="" style="object-position:${pos}">
     <span class="pastille">${i < 4 ? 'Prestataire' : i === 4 ? 'Matériel' : 'Prestataire'}</span><div class="ok">${COCHE}</div><div class="cadre"></div></div>
