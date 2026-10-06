@@ -3,6 +3,7 @@
 // Usage : node marque/demarchage/rendre.mjs
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -27,7 +28,8 @@ for (const [doc, nom] of Object.entries(DOSSIERS)) {
   const pages = p.locator('.page');
   const n = await pages.count();
   for (let i = 0; i < n; i++) await pages.nth(i).screenshot({ path: path.join(dossier, `${String(i + 1).padStart(2, '0')}.png`) });
-  await p.pdf({ path: path.join(ici, `${nom}.pdf`), width: '1080px', height: '1350px', printBackground: true });
+  // Le PDF est assemblé à partir des images : il est identique à ce qu'on voit (l'impression navigateur déforme les ombres)
+  execFileSync('convert', [...Array.from({ length: n }, (_, i) => path.join(dossier, `${String(i + 1).padStart(2, '0')}.png`)), '-compress', 'jpeg', '-quality', '90', '-density', '144', path.join(ici, `${nom}.pdf`)]);
   console.log(`${nom} : ${n} pages`);
   await p.close();
 }
