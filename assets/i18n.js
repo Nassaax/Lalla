@@ -22,6 +22,7 @@
   ajouter('fr', {
     'promesse': 'Portez l\'exceptionnel, le temps d\'une fête.',
     'nav.catalogue': 'Catalogue',
+    'onglet.navigation': 'Navigation rapide', 'onglet.accueil': 'Accueil', 'onglet.explorer': 'Explorer', 'onglet.favoris': 'Favoris', 'onglet.panier': 'Panier', 'onglet.compte': 'Compte',
     'nav.collections': 'Collections',
     'nav.comment': 'Comment ça marche',
     'nav.proposer': 'Proposer une tenue',
@@ -172,6 +173,7 @@
   ajouter('nl', {
     'promesse': 'Draag het uitzonderlijke, de tijd van een feest.',
     'nav.catalogue': 'Catalogus',
+    'onglet.navigation': 'Snelle navigatie', 'onglet.accueil': 'Home', 'onglet.explorer': 'Ontdekken', 'onglet.favoris': 'Favorieten', 'onglet.panier': 'Mandje', 'onglet.compte': 'Account',
     'nav.collections': 'Collecties',
     'nav.comment': 'Hoe werkt het',
     'nav.proposer': 'Kledij aanbieden',

@@ -1,6 +1,6 @@
 // LALLAT, service worker : application installable et page hors connexion.
 // Les données (Supabase, /api, Stripe) ne sont jamais mises en cache.
-const VERSION = 'lalla-v1';
+const VERSION = 'lalla-v2';
 const COQUILLE = ['/offline.html', '/assets/style.css', '/assets/config.js', '/assets/i18n.js', '/assets/app.js', '/assets/pages.js', '/assets/compte.js', '/assets/visuels.js', '/assets/icones/icone-192.png'];
 
 self.addEventListener('install', (e) => {

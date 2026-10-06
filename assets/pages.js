@@ -244,7 +244,7 @@
     var zone = $('[data-apercu]');
     if (!zone) return;
     var mur = $('[data-apercu-mur]'), connecte = $('[data-apercu-connecte]'), note = $('[data-apercu-note]');
-    L.ui.chargement(zone);
+    L.ui.squelette(zone, 6);
     rechercher({ p_tri: 'recent', p_limite: 6 }).catch(function () { return []; }).then(function (liste) {
       L.vider(zone);
       if (liste.length) {
@@ -361,7 +361,7 @@
     }
 
     function charger(ajout) {
-      if (!ajout) L.ui.chargement(grille);
+      if (!ajout) L.ui.squelette(grille, 8);
       plus.hidden = true;
       var p = {
         p_categorie: etat.categorie || null, p_occasion: etat.occasion || null, p_taille: etat.taille || null,
@@ -524,7 +524,7 @@
     var zone = $('[data-fiche]');
     if (!L.estUuid(id)) { L.ui.etatVide(zone, t('tenue.introuvable'), h('a', { class: 'bouton', href: 'catalogue.html' }, t('nav.catalogue'))); return; }
     if (!L.sb) { L.ui.etatVide(zone, t('commun.erreur')); return; }
-    L.ui.chargement(zone);
+    L.ui.squelette(zone, 1, 'fiche');
     Promise.all([
       L.sb.from('tenues').select('*, tenue_photos(id, type, chemin, ordre), fournisseuse:profils!tenues_fournisseuse_id_fkey(id, nom_affiche, boutique_nom, type_fournisseuse, note_moyenne, nb_avis, avatar_chemin, ville, commune, compte_valide, badge_confiance, identite_verifiee, taux_reponse, delai_reponse_h, created_at)').eq('id', id).maybeSingle(),
       L.parametres(),

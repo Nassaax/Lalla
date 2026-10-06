@@ -51,7 +51,7 @@ async function statique(req, res, url) {
   let p = decodeURIComponent(url.pathname);
   if (p.endsWith('/')) p += 'index.html';
   const fichier = path.join(racine, p);
-  if (!fichier.startsWith(racine) || /\/(\.|node_modules|lib|supabase|scripts|tests)\b/.test(p)) { res.statusCode = 404; res.end('Not found'); return; }
+  if (!fichier.startsWith(racine) || (/\/\./.test(p) || /^\/(node_modules|lib|supabase|scripts|tests|app|marque)\b/.test(p))) { res.statusCode = 404; res.end('Not found'); return; }
   try {
     const contenu = await readFile(fichier);
     res.setHeader('Content-Type', TYPES[path.extname(fichier)] || 'application/octet-stream');

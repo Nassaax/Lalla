@@ -46,10 +46,10 @@
     // Bannière de consentement prête mais désactivée : aucun traceur n'est chargé par défaut.
     consentement: { actif: false },
     cdn: {
-      gsap: 'https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/',
-      lenis: 'https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js',
-      supabase: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js',
-      compression: 'https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js'
+      gsap: 'assets/vendor/',
+      lenis: 'assets/vendor/lenis.min.js',
+      supabase: 'assets/vendor/supabase.js',
+      compression: 'assets/vendor/browser-image-compression.js'
     }
   };
   if (typeof module === 'object' && module && module.exports) module.exports = CONFIG;

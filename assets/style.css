@@ -1,3 +1,8 @@
+/* Polices hébergées sur le site (variables, latin) : aucun appel à un service externe. */
+@font-face { font-family: 'Bodoni Moda'; font-style: normal; font-display: swap; font-weight: 400 900; src: url(polices/bodoni-moda.woff2) format('woff2-variations'), url(polices/bodoni-moda.woff2) format('woff2'); }
+@font-face { font-family: 'Bodoni Moda'; font-style: italic; font-display: swap; font-weight: 400 900; src: url(polices/bodoni-moda-italique.woff2) format('woff2-variations'), url(polices/bodoni-moda-italique.woff2) format('woff2'); }
+@font-face { font-family: 'Jost'; font-style: normal; font-display: swap; font-weight: 100 900; src: url(polices/jost.woff2) format('woff2-variations'), url(polices/jost.woff2) format('woff2'); }
+
 /* ==========================================================================
    LALLAT — design system
    Luxe marocain contemporain : ivoire, noir profond, or sobre, touche d'émeraude.
@@ -969,3 +974,48 @@ a.puce { text-decoration: none; display: inline-flex; align-items: center; color
 .reservation-boite--lancement { display: grid; gap: 14px; }
 .reservation-boite--lancement .texte { margin: 0; }
 .bandeau-lancement strong { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 16px; color: #F4DFC2; }
+
+/* ==========================================================================
+   Fluidité « application »
+   ========================================================================== */
+/* Passage d'une page à l'autre en fondu, l'en-tête et la barre d'onglets restent en place */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .2s; animation-timing-function: ease-out; }
+.entete { view-transition-name: entete; }
+.onglets { view-transition-name: onglets; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+
+/* Cartes grisées pendant le chargement */
+.squelette { background: var(--ivoire-fonce); position: relative; overflow: hidden; border-radius: 6px; }
+.squelette::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .55), transparent); animation: squelette 1.3s ease-in-out infinite; }
+.arche.squelette { border-radius: 0; }
+.squelette--ligne { height: 12px; margin-top: 12px; width: 80%; }
+.squelette--titre { height: 30px; margin-top: 14px; width: 75%; }
+.squelette--bloc { height: 120px; margin-top: 22px; }
+.squelette-carte { pointer-events: none; }
+.squelette-fiche { display: grid; gap: 28px; padding: 20px 0 64px; }
+.squelette-fiche .arche { max-width: 520px; width: 100%; }
+@media (min-width: 900px) { .squelette-fiche { grid-template-columns: 1.1fr 1fr; align-items: start; } }
+@keyframes squelette { to { transform: translateX(100%); } }
+.mouvement-reduit .squelette::after { animation: none; }
+@media (prefers-reduced-motion: reduce) { .squelette::after { animation: none; } }
+
+/* Barre d'onglets (téléphone et tablette) */
+.onglets { display: none; }
+@media (max-width: 1023px) {
+  .onglets { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; z-index: 60; left: 0; right: 0; bottom: 0;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); background: rgba(250, 246, 240, .96); border-top: 1px solid var(--ligne);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); }
+  .onglets__lien { display: grid; justify-items: center; gap: 2px; padding: 4px 0; min-height: 48px; color: var(--encre); opacity: .62; text-decoration: none; font-size: 10.5px; letter-spacing: .02em; -webkit-tap-highlight-color: transparent; transition: opacity .2s, color .2s; }
+  .onglets__lien:active { transform: scale(.94); }
+  .onglets__lien.est-actif { opacity: 1; color: var(--bordeaux); font-weight: 600; }
+  .onglets__icone { position: relative; display: block; width: 24px; height: 24px; }
+  .onglets__icone .icone { width: 24px; height: 24px; }
+  .onglets__compteur { position: absolute; top: -4px; right: -9px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px; background: var(--bordeaux); color: var(--ivoire-clair); font-size: 10px; font-weight: 600; line-height: 17px; text-align: center; }
+  .a-onglets body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .a-onglets .toasts { bottom: calc(80px + env(safe-area-inset-bottom)); }
+  .a-onglets .consentement { bottom: calc(76px + env(safe-area-inset-bottom)); }
+  /* Panier et compte déjà présents dans la barre du bas */
+  .a-onglets .entete .panier-lien, .a-onglets .entete .nav__compte { display: none; }
+  .menu-ouvert .onglets { display: none; }
+}

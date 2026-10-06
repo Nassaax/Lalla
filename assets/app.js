@@ -323,6 +323,28 @@
     L.vider(el).appendChild(h('div', { class: 'chargement', role: 'status' }, h('span', { class: 'chargement__arche', 'aria-hidden': 'true' }), h('span', { class: 'sr' }, t('commun.chargement'))));
   };
 
+  /** Cartes grisées pendant le chargement (catalogue, accueil) ou silhouette de fiche. */
+  L.ui.squelette = function (el, nombre, type) {
+    L.vider(el);
+    el.appendChild(h('span', { class: 'sr', role: 'status' }, t('commun.chargement')));
+    if (type === 'fiche') {
+      el.appendChild(h('div', { class: 'squelette-fiche', 'aria-hidden': 'true' },
+        h('div', { class: 'arche squelette' }),
+        h('div', { class: 'squelette-fiche__texte' },
+          h('div', { class: 'squelette squelette--ligne', style: { width: '30%' } }),
+          h('div', { class: 'squelette squelette--titre' }),
+          h('div', { class: 'squelette squelette--ligne', style: { width: '45%' } }),
+          h('div', { class: 'squelette squelette--bloc' }))));
+      return;
+    }
+    for (var i = 0; i < (nombre || 6); i++) {
+      el.appendChild(h('div', { class: 'carte squelette-carte', 'aria-hidden': 'true' },
+        h('div', { class: 'arche squelette' }),
+        h('div', { class: 'squelette squelette--ligne' }),
+        h('div', { class: 'squelette squelette--ligne', style: { width: '55%' } })));
+    }
+  };
+
   L.ui.etatVide = function (el, message, action) {
     L.vider(el).appendChild(h('div', { class: 'vide' }, L.ui.motifSvg('vide__motif'), h('p', null, message), action || null));
   };
@@ -428,6 +450,63 @@
       else if (y < dernierY - 4 || y < 240) zone.classList.remove('est-cache');
       dernierY = y;
     }, { passive: true });
+  };
+
+  /** Barre d'onglets en bas de l'écran sur téléphone et tablette (comme une application). */
+  var ICONES_ONGLETS = {
+    accueil: '<path d="M4 11.5 12 5l8 6.5V20h-5.5v-5h-5v5H4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>',
+    explorer: '<circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+    favoris: '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>',
+    panier: '<path d="M6 8h12l-1 12H7L6 8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+    compte: '<circle cx="12" cy="8.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 20c1-3.6 3.8-5.5 7-5.5s6 1.9 7 5.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+  };
+  L.ui.onglets = function (page) {
+    if (['admin', 'tenue'].indexOf(page) >= 0 || $('.onglets')) return;
+    var vue = L.param('vue');
+    var actif = page === 'index' ? 'accueil' : page === 'catalogue' ? 'explorer' : page === 'panier' ? 'panier'
+      : page === 'compte' ? (vue === 'favoris' ? 'favoris' : 'compte') : null;
+    var compteur = h('span', { class: 'onglets__compteur', 'aria-hidden': 'true' });
+    function majCompteur() { var n = L.panier.nb(); compteur.textContent = n ? String(n) : ''; compteur.hidden = !n; }
+    function onglet(cle, href, libelle, extra) {
+      return h('a', { href: href, class: 'onglets__lien' + (actif === cle ? ' est-actif' : ''), 'aria-current': actif === cle ? 'page' : null },
+        h('span', { class: 'onglets__icone' }, L.ui.icone(ICONES_ONGLETS[cle]), extra || null),
+        h('span', { class: 'onglets__libelle', 'data-i18n': libelle }, t(libelle)));
+    }
+    var barre = h('nav', { class: 'onglets', 'aria-label': t('onglet.navigation') },
+      onglet('accueil', 'index.html', 'onglet.accueil'),
+      onglet('explorer', 'catalogue.html', 'onglet.explorer'),
+      onglet('favoris', 'compte.html?vue=favoris', 'onglet.favoris'),
+      onglet('panier', 'panier.html', 'onglet.panier', compteur),
+      onglet('compte', 'compte.html', 'onglet.compte'));
+    // Pas encore connectée : le compte et les favoris ouvrent la connexion sur place
+    barre.addEventListener('click', function (e) {
+      var a = e.target.closest('a');
+      if (!a || L.session || !/compte\.html/.test(a.getAttribute('href'))) return;
+      e.preventDefault();
+      var href = a.getAttribute('href');
+      L.auth.pret.then(function () {
+        if (L.session) location.href = href;
+        else L.ui.authentification('connexion', { ensuite: function () { location.href = href; } });
+      });
+    });
+    majCompteur();
+    document.addEventListener('lalla:panier', majCompteur);
+    document.body.appendChild(barre);
+    document.documentElement.classList.add('a-onglets');
+  };
+
+  /**
+   * Préchargement des pages : le navigateur commence à charger la page dès que le doigt
+   * se pose sur un lien (règles de spéculation ; ignorées par les navigateurs qui ne les connaissent pas).
+   */
+  L.prechargement = function () {
+    if (!(window.HTMLScriptElement && HTMLScriptElement.supports && HTMLScriptElement.supports('speculationrules'))) return;
+    var regles = h('script', { type: 'speculationrules' });
+    regles.textContent = JSON.stringify({ prefetch: [{
+      where: { and: [{ href_matches: '/*' }, { not: { href_matches: '/admin.html*' } }, { not: { href_matches: '/api/*' } }, { not: { selector_matches: '[target=_blank], [download]' } }] },
+      eagerness: 'moderate'
+    }] });
+    document.head.appendChild(regles);
   };
 
   L.ui.pied = function () {
@@ -952,6 +1031,8 @@
     L.motion.init();
     L.ui.entete();
     L.ui.pied();
+    L.ui.onglets(document.body.getAttribute('data-page'));
+    L.prechargement();
     I.appliquer(document);
     L.auth.init();
     L.ui.consentement();
