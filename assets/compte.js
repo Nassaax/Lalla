@@ -131,11 +131,13 @@
     var actions = h('div', { class: 'actions', style: { marginTop: 0 } });
     var aDejaAvis = (r.avis || []).some(function (a) { return a.auteur_id === etat.profil.id; });
     if (role === 'cliente' && ['demande', 'acceptee'].indexOf(r.statut) >= 0) actions.appendChild(h('a', { class: 'bouton bouton--petit', href: 'panier.html?commande=' + r.commande_id }, r.statut === 'acceptee' ? t('panier.payer') : t('commun.voir')));
-    if (['payee'].indexOf(r.statut) >= 0) actions.appendChild(h('button', { class: 'bouton bouton--petit', type: 'button', onclick: function () { etatDesLieux(r, 'remise', role); } }, t('edl.remise')));
-    if (r.statut === 'remise') actions.appendChild(h('button', { class: 'bouton bouton--petit', type: 'button', onclick: function () { etatDesLieux(r, 'retour', role); } }, t('edl.retour')));
-    if (['rendue', 'cloturee', 'litige'].indexOf(r.statut) >= 0) actions.appendChild(h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () { etatDesLieux(r, 'retour', role, true); } }, t('edl.voir')));
+    // Prestation : ni remise ni retour d'objet, donc pas d'état des lieux
+    var prestation = r.nature === 'prestation';
+    if (!prestation && ['payee'].indexOf(r.statut) >= 0) actions.appendChild(h('button', { class: 'bouton bouton--petit', type: 'button', onclick: function () { etatDesLieux(r, 'remise', role); } }, t('edl.remise')));
+    if (!prestation && r.statut === 'remise') actions.appendChild(h('button', { class: 'bouton bouton--petit', type: 'button', onclick: function () { etatDesLieux(r, 'retour', role); } }, t('edl.retour')));
+    if (!prestation && ['rendue', 'cloturee', 'litige'].indexOf(r.statut) >= 0) actions.appendChild(h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () { etatDesLieux(r, 'retour', role, true); } }, t('edl.voir')));
     if (['rendue', 'cloturee'].indexOf(r.statut) >= 0 && !aDejaAvis) actions.appendChild(h('button', { class: 'bouton bouton--or bouton--petit', type: 'button', onclick: function () { laisserAvis(r, role); } }, t('avis.laisser')));
-    if (role === 'fournisseuse' && r.statut === 'rendue' && new Date(r.litige_deadline) > new Date()) actions.appendChild(h('button', { class: 'bouton bouton--danger bouton--petit', type: 'button', onclick: function () { ouvrirLitige(r); } }, t('litige.ouvrir')));
+    if (role === (prestation ? 'cliente' : 'fournisseuse') && r.statut === 'rendue' && new Date(r.litige_deadline) > new Date()) actions.appendChild(h('button', { class: 'bouton bouton--danger bouton--petit', type: 'button', onclick: function () { ouvrirLitige(r); } }, t(prestation ? 'resa.signaler' : 'litige.ouvrir')));
     if (role === 'fournisseuse' && r.mode_remise === 'envoi' && ['payee', 'remise'].indexOf(r.statut) >= 0) actions.appendChild(h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () { saisirSuivi(r); } }, t('compte.suivi')));
     actions.appendChild(h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () {
       if (role === 'cliente') L.contacter(r.fournisseuse_id); else L.contacter(null, null, r.cliente_id);
@@ -143,7 +145,8 @@
     if (r.mode_remise === 'main_propre' && ['payee', 'remise'].indexOf(r.statut) >= 0) actions.appendChild(h('button', { class: 'bouton bouton--ligne bouton--petit', type: 'button', onclick: function () { infosRemise(r, role); } }, t('remise.infos')));
     if (['demande', 'acceptee', 'payee'].indexOf(r.statut) >= 0) actions.appendChild(h('button', { class: 'lien', type: 'button', onclick: function () { annuler(r, role); } }, t('compte.annuler')));
     if (role === 'cliente' && ['payee', 'remise'].indexOf(r.statut) >= 0 && r.caution_statut === 'echec') actions.appendChild(h('a', { class: 'bouton bouton--danger bouton--petit', href: 'panier.html?commande=' + r.commande_id + '&etape=caution' }, t('panier.autoriser_caution')));
-    var infos = [t('commun.du_au', { debut: L.date(r.date_debut), fin: L.date(r.date_fin) })];
+    var infos = [prestation ? t('resa.prestation_le', { date: L.date(r.date_evenement) }) + (r.creneau_remise ? ', ' + new Date(r.creneau_remise).toLocaleTimeString(I.langue === 'nl' ? 'nl-BE' : 'fr-BE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Brussels' }) : '') : t('commun.du_au', { debut: L.date(r.date_debut), fin: L.date(r.date_fin) })];
+    if (prestation && r.adresse_prestation) infos.push(t('resa.lieu', { lieu: r.adresse_prestation }));
     if (role === 'cliente') infos.push(f.boutique_nom || f.nom_affiche || '');
     return h('article', { class: 'ligne-resa', id: 'resa-' + r.id },
       h('div', { class: 'ligne-resa__tete' }, h('h3', { class: 'ligne-resa__titre' }, titres), statut(r.statut)),
@@ -514,14 +517,17 @@
         }).catch(function (err) { L.ui.toast(L.messageErreur(err), 'erreur'); });
       });
     });
+    // Prestation : la cliente signale un problème et peut demander un remboursement (au plus le prix payé)
+    var prestation = r.nature === 'prestation';
+    var plafond = prestation ? r.montant_location_cents : r.caution_cents;
     var form = h('form', { class: 'formulaire' },
-      h('p', { class: 'texte' }, t('litige.intro', { date: L.dateHeure(r.litige_deadline) })),
-      L.ui.champ('motif', 'litige.motif', { tag: 'select', required: true, options: ['degat', 'tache', 'perte', 'retard', 'non_conforme', 'autre'].map(function (m) { return [m, t('litige.m_' + m)]; }) }),
+      h('p', { class: 'texte' }, t(prestation ? 'litige.intro_prestation' : 'litige.intro', { date: L.dateHeure(r.litige_deadline) })),
+      L.ui.champ('motif', 'litige.motif', { tag: 'select', required: true, options: (prestation ? ['non_realisee', 'retard', 'non_conforme', 'autre'] : ['degat', 'tache', 'perte', 'retard', 'non_conforme', 'autre']).map(function (m) { return [m, t('litige.m_' + m)]; }) }),
       L.ui.champ('description', 'litige.description', { tag: 'textarea', required: true, minlength: 10, maxlength: 2000 }),
-      L.ui.champ('montant', t('litige.montant', { max: L.euros(r.caution_cents) }), { type: 'number', min: '0', step: '1', max: String(r.caution_cents / 100) }),
+      L.ui.champ('montant', t('litige.montant', { max: L.euros(plafond) }), { type: 'number', min: '0', step: '1', max: String(plafond / 100) }),
       liste, h('div', { class: 'retour' }),
       h('button', { class: 'bouton bouton--danger', type: 'submit' }, t('litige.envoyer')));
-    var m = L.ui.modale(form, { titre: t('litige.ouvrir'), large: true });
+    var m = L.ui.modale(form, { titre: t(prestation ? 'resa.signaler' : 'litige.ouvrir'), large: true });
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (!form.checkValidity()) { form.reportValidity(); return; }
@@ -564,7 +570,7 @@
   function devenirFournisseuse(contenu) {
     var form = h('form', { class: 'formulaire' },
       h('p', { class: 'chapeau' }, t('devenir.intro')),
-      h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'creatrice'].map(function (ty, i) { return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'type', value: ty, checked: i === 0 }), h('span', null, t('type.' + ty))); })),
+      h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'creatrice', 'prestataire', 'loueur'].map(function (ty, i) { return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'type', value: ty, checked: i === 0 }), h('span', null, t('type.' + ty))); })),
       L.ui.champ('code_postal', 'profil.code_postal', { required: true, inputmode: 'numeric', maxlength: 4, pattern: '[0-9]{4}', autocomplete: 'postal-code', value: etat.profil.code_postal || '', aide: t('profil.code_postal_aide') }),
       h('div', { class: 'retour' }),
       h('button', { class: 'bouton', type: 'submit' }, t('devenir.activer')));
@@ -579,6 +585,12 @@
   }
 
   var TYPES_PHOTOS = [['face', 'annonce.p_face'], ['dos', 'annonce.p_dos'], ['broderie', 'annonce.p_broderie'], ['portee', 'annonce.p_portee']];
+  // Libellés des 4 emplacements photo selon l'univers (même stockage, sens adapté)
+  var LIBELLES_PHOTOS = {
+    materiel: { face: 'annonce.p_principale', dos: 'annonce.p_angle', broderie: 'annonce.p_detail', portee: 'annonce.p_situation' },
+    prestation: { face: 'annonce.p_principale', dos: 'annonce.p_realisation', broderie: 'annonce.p_realisation', portee: 'annonce.p_realisation' }
+  };
+  function universDe(categorie) { return L.universDe(categorie); }
 
   /** Formulaire d'annonce. En mode série, il se réinitialise après chaque publication (sans recharger). */
   function formulaireTenue(contenu, tn, serie) {
@@ -588,17 +600,22 @@
     var retour = h('div');
     var compteurSerie = h('span', { class: 'texte' });
     var nbSerie = 0;
-    var v = tn || { categorie: 'caftan', couleurs: [], occasions: [], duree_min_jours: 2, duree_max_jours: 4, remise_main_propre: true, ville: etat.profil.ville || 'Bruxelles' };
+    // Type de fournisseuse : un loueur de matériel ou une prestataire commencent dans leur univers
+    var universDefaut = etat.profil.type_fournisseuse === 'prestataire' ? 'prestation' : etat.profil.type_fournisseuse === 'loueur' ? 'materiel' : 'tenue';
+    var v = tn || { categorie: C.univers[universDefaut][0], couleurs: [], occasions: [], duree_min_jours: universDefaut === 'materiel' ? 1 : 2, duree_max_jours: 4, remise_main_propre: true, ville: etat.profil.ville || 'Bruxelles', attributs: {} };
+    var univers = universDe(v.categorie);
     var depot = h('div', { class: 'depot-photos' });
     function rendrePhotos() {
       L.vider(depot);
       var cat = form ? form.categorie.value : v.categorie;
+      var u = universDe(cat);
       TYPES_PHOTOS.forEach(function (tp) {
-        var requis = cat !== 'accessoire' || tp[0] === 'face' || tp[0] === 'portee';
+        var requis = u !== 'tenue' ? tp[0] === 'face' : (cat !== 'accessoire' || tp[0] === 'face' || tp[0] === 'portee');
+        var libelle = t((LIBELLES_PHOTOS[u] || {})[tp[0]] || tp[1]);
         var existant = aEnvoyer[tp[0]] ? URL.createObjectURL(aEnvoyer[tp[0]]) : photos[tp[0]] ? L.img.url(photos[tp[0]].chemin) : null;
-        var input = h('input', { type: 'file', accept: 'image/*', 'aria-label': t(tp[1]) });
+        var input = h('input', { type: 'file', accept: 'image/*', 'aria-label': libelle });
         var label = h('label', { class: 'depot' + (existant ? ' depot--rempli' : '') }, existant ? h('img', { src: existant, alt: '' }) : null,
-          h('span', { class: 'depot__libelle' }, t(tp[1]), requis && !existant ? h('span', { class: 'depot__requis' }, ' *') : null), input);
+          h('span', { class: 'depot__libelle' }, libelle, requis && !existant ? h('span', { class: 'depot__requis' }, ' *') : null), input);
         input.addEventListener('change', function () {
           if (!input.files[0]) return;
           label.classList.add('depot--envoi');
@@ -615,6 +632,48 @@
       return L.ui.champ(c[0], t(c[1]) + ' (cm)', { type: 'number', step: '0.5', min: '10', max: '220', inputmode: 'decimal', value: v[c[0]] || '' });
     }));
     var ensembleZone = h('div');
+    // Univers de l'annonce (tenue, matériel, prestation) et critères propres à chaque catégorie
+    var choixUnivers = h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('annonce.univers')),
+      h('div', { class: 'choix-pastilles' }, Object.keys(C.univers).map(function (u) {
+        return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'univers', value: u, checked: u === univers, disabled: Boolean(tn) && u !== univers }), h('span', null, t('univers.' + u)));
+      })));
+    var zoneCriteres = h('fieldset', { class: 'filtres__groupe' });
+    function rendreCriteres() {
+      var cat = form.categorie.value;
+      var liste = C.criteres[cat] || [];
+      L.vider(zoneCriteres);
+      zoneCriteres.hidden = !liste.length;
+      if (!liste.length) return;
+      var valeurs = (v.categorie === cat && v.attributs) || {};
+      zoneCriteres.appendChild(h('legend', null, t('annonce.criteres')));
+      zoneCriteres.appendChild(h('p', { class: 'champ__aide', style: { margin: 0 } }, t('annonce.criteres_aide')));
+      var grille = h('div', { class: 'grille-2' });
+      liste.forEach(function (c) {
+        var nom = 'crit_' + c.cle;
+        var libelle = t('crit.' + c.cle) + (c.unite ? ' (' + t('unite.' + c.unite) + ')' : '') + (c.requis ? ' *' : '');
+        if (c.type === 'oui_non') {
+          zoneCriteres.appendChild(h('label', { class: 'case' }, h('input', { type: 'checkbox', name: nom, checked: valeurs[c.cle] === true }), h('span', null, t('crit.' + c.cle))));
+        } else if (c.type === 'choix') {
+          grille.appendChild(L.ui.champ(nom, libelle, { tag: 'select', options: [['', '…', !valeurs[c.cle]]].concat(c.options.map(function (o) { return [o, t('opt.' + o), valeurs[c.cle] === o]; })) }));
+        } else if (c.type === 'nombre') {
+          grille.appendChild(L.ui.champ(nom, libelle, { type: 'number', min: '0', max: '100000', step: '1', inputmode: 'numeric', value: valeurs[c.cle] != null ? valeurs[c.cle] : '' }));
+        } else {
+          grille.appendChild(L.ui.champ(nom, libelle, { maxlength: 120, value: valeurs[c.cle] || '' }));
+        }
+      });
+      zoneCriteres.insertBefore(grille, zoneCriteres.children[2] || null);
+    }
+    function lireCriteres() {
+      var out = {}, manque = null;
+      (C.criteres[form.categorie.value] || []).forEach(function (c) {
+        var el = form['crit_' + c.cle];
+        if (!el) return;
+        var val = c.type === 'oui_non' ? el.checked : c.type === 'nombre' ? (el.value === '' ? null : Number(el.value)) : el.value.trim();
+        if (val === '' || val === null) { if (c.requis && !manque) manque = t('crit.' + c.cle); return; }
+        out[c.cle] = val;
+      });
+      return { attributs: out, manque: manque };
+    }
     // Caution choisie par la fournisseuse : pourcentage de la valeur déclarée ou montant fixe (0 = sans caution).
     var tauxActuel = Math.round(Number(v.caution_taux != null ? v.caution_taux : 0.5) * 100);
     var tauxProposes = [0, 10, 20, 30, 40, 50, 75, 100];
@@ -649,11 +708,13 @@
       apercuCaution.textContent = montant > 0 ? t(c.caution_moyen === 'especes' ? 'annonce.caution_apercu_especes' : 'annonce.caution_apercu', { montant: L.euros(montant) }) : t('annonce.caution_sans');
     }
     var form = h('form', { class: 'formulaire', novalidate: true },
+      choixUnivers,
       h('div', { class: 'grille-2' },
-        L.ui.champ('categorie', 'cat.f_categorie', { tag: 'select', options: C.categories.map(function (c) { return [c, t('cat.' + c), v.categorie === c]; }) }),
+        L.ui.champ('categorie', 'cat.f_categorie', { tag: 'select', options: C.univers[univers].map(function (c) { return [c, t('cat.' + c), v.categorie === c]; }) }),
         L.ui.champ('sous_categorie', 'annonce.sous_categorie', { tag: 'select', options: C.sousCategories.map(function (c) { return [c, t('scat.' + c), v.sous_categorie === c]; }) })),
       L.ui.champ('titre', 'annonce.titre', { required: true, minlength: 3, maxlength: 90, value: v.titre || '', placeholder: t('annonce.titre_ph') }),
       L.ui.champ('description', 'annonce.description', { tag: 'textarea', maxlength: 2500 }),
+      zoneCriteres,
       h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('cat.f_couleur')), couleurs),
       h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('cat.f_occasion')), occasions),
       h('div', { class: 'grille-2' },
@@ -664,17 +725,17 @@
         L.ui.champ('prix', 'annonce.prix', { type: 'number', required: true, min: '5', max: '5000', step: '1', inputmode: 'numeric', value: v.prix_location_cents ? v.prix_location_cents / 100 : '' }),
         L.ui.champ('valeur', 'annonce.valeur', { type: 'number', required: true, min: '10', max: '50000', step: '1', inputmode: 'numeric', value: v.valeur_declaree_cents ? v.valeur_declaree_cents / 100 : '', aide: t('annonce.valeur_aide') })),
       blocCaution,
-      h('div', { class: 'grille-2' },
+      h('div', { class: 'grille-2', 'data-durees': '' },
         L.ui.champ('duree_min', 'annonce.duree_min', { type: 'number', min: '1', max: '30', value: v.duree_min_jours }),
         L.ui.champ('duree_max', 'annonce.duree_max', { type: 'number', min: '1', max: '30', value: v.duree_max_jours })),
-      h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('tenue.mode_remise')),
-        h('label', { class: 'case' }, h('input', { type: 'checkbox', name: 'main_propre', checked: v.remise_main_propre }), h('span', null, t('tenue.main_propre'))),
-        h('label', { class: 'case' }, h('input', { type: 'checkbox', name: 'essayage', checked: v.essayage_possible }), h('span', null, t('tenue.essayage_possible'))),
-        h('label', { class: 'case' }, h('input', { type: 'checkbox', name: 'envoi', checked: v.envoi_assure }), h('span', null, t('annonce.envoi'))),
+      h('fieldset', { class: 'filtres__groupe' }, h('legend', { 'data-legende-remise': '' }, t('tenue.mode_remise')),
+        h('label', { class: 'case', 'data-si': 'tenue materiel' }, h('input', { type: 'checkbox', name: 'main_propre', checked: v.remise_main_propre }), h('span', { 'data-libelle-main': '' }, t('tenue.main_propre'))),
+        h('label', { class: 'case', 'data-si': 'tenue' }, h('input', { type: 'checkbox', name: 'essayage', checked: v.essayage_possible }), h('span', null, t('tenue.essayage_possible'))),
+        h('label', { class: 'case', 'data-si': 'tenue materiel' }, h('input', { type: 'checkbox', name: 'envoi', checked: v.envoi_assure }), h('span', { 'data-libelle-envoi': '' }, t('annonce.envoi'))),
         h('label', { class: 'case' }, h('input', { type: 'checkbox', name: 'instantanee', checked: v.reservation_instantanee }), h('span', null, '⚡ ' + t('annonce.instantanee'))),
         h('p', { class: 'champ__aide', style: { margin: '0 0 0 32px' } }, t('annonce.instantanee_aide')),
         L.ui.champ('frais_envoi', 'annonce.frais_envoi', { type: 'number', min: '0', max: '100', step: '0.5', value: v.frais_envoi_cents ? v.frais_envoi_cents / 100 : '' })),
-      h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('annonce.photos')), h('p', { class: 'champ__aide', style: { margin: 0 } }, t('annonce.photos_aide')), depot),
+      h('fieldset', { class: 'filtres__groupe' }, h('legend', null, t('annonce.photos')), h('p', { class: 'champ__aide', style: { margin: 0 }, 'data-aide-photos': '' }, t('annonce.photos_aide')), depot),
       ensembleZone,
       retour,
       h('div', { class: 'actions' },
@@ -683,40 +744,74 @@
         tn ? h('button', { class: 'bouton bouton--danger', type: 'button', onclick: archiver }, t('annonce.archiver')) : null,
         serie ? compteurSerie : null));
     function majVisibilite() {
-      var acc = form.categorie.value === 'accessoire';
+      var cat = form.categorie.value;
+      var u = universDe(cat);
+      var acc = cat === 'accessoire';
+      var tenue = u === 'tenue', prestation = u === 'prestation';
       form.sous_categorie.closest('.champ').hidden = !acc;
-      mesures.closest('fieldset').hidden = acc;
+      mesures.closest('fieldset').hidden = !tenue || acc;
+      form.taille_indicative.closest('.champ').hidden = !tenue;
+      couleurs.closest('fieldset').hidden = prestation;
+      form.valeur.closest('.champ').hidden = prestation;
+      blocCaution.hidden = prestation;
+      $('[data-durees]', form).hidden = prestation;
+      $$('[data-si]', form).forEach(function (el) { el.hidden = el.getAttribute('data-si').split(' ').indexOf(u) < 0; });
+      form.frais_envoi.closest('.champ').hidden = prestation;
+      $('[data-legende-remise]', form).textContent = t(prestation ? 'annonce.reservation' : 'tenue.mode_remise');
+      $('[data-aide-photos]', form).textContent = t(tenue ? 'annonce.photos_aide' : 'annonce.photos_aide_hub');
+      $('[data-libelle-main]', form).textContent = t(u === 'materiel' ? 'tenue.date_retrait' : 'tenue.main_propre');
+      $('[data-libelle-envoi]', form).textContent = t(u === 'materiel' ? 'annonce.livraison' : 'annonce.envoi');
+      form.prix.closest('.champ').querySelector('.champ__libelle').textContent = t(prestation ? 'annonce.prix_prestation' : 'annonce.prix');
+      form.titre.placeholder = t(prestation ? 'annonce.titre_ph_prestation' : u === 'materiel' ? 'annonce.titre_ph_materiel' : 'annonce.titre_ph');
+      rendreCriteres();
       rendrePhotos();
     }
     form.categorie.addEventListener('change', majVisibilite);
+    $$('[name=univers]', form).forEach(function (r) {
+      r.addEventListener('change', function () {
+        var u = form.univers.value;
+        L.vider(form.categorie);
+        C.univers[u].forEach(function (c) { form.categorie.appendChild(h('option', { value: c }, t('cat.' + c))); });
+        majVisibilite();
+      });
+    });
     ['caution_taux', 'caution_montant', 'caution_moyen', 'valeur'].forEach(function (n) { form[n].addEventListener('input', majCaution); form[n].addEventListener('change', majCaution); });
     $$('[name=caution_mode]', form).forEach(function (x) { x.addEventListener('change', majCaution); });
     majCaution();
     if (v.description) form.description.value = v.description;
     majVisibilite();
-    if (tn && tn.categorie !== 'accessoire') blocEnsemble(ensembleZone, tn);
+    if (tn && universDe(tn.categorie) === 'tenue' && tn.categorie !== 'accessoire') blocEnsemble(ensembleZone, tn);
 
     var bouton = null;
     form.addEventListener('click', function (e) { if (e.target.type === 'submit') bouton = e.target.name; });
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var soumettre = bouton !== 'brouillon';
-      if (!form.titre.value || !form.prix.value || !form.valeur.value) { form.reportValidity(); return; }
       var cat = form.categorie.value;
+      var u = universDe(cat), tenue = u === 'tenue', prestation = u === 'prestation';
+      if (!form.titre.value || !form.prix.value || (!prestation && !form.valeur.value)) { form.reportValidity(); return; }
+      var crit = lireCriteres();
+      if (crit.manque) { erreur(retour, { message: crit.manque + ' : ' + t('commun.requis').toLowerCase() }); return; }
+      var prixCents = Math.round(Number(form.prix.value) * 100);
       var valeurs = {
         fournisseuse_id: etat.profil.id, categorie: cat, sous_categorie: cat === 'accessoire' ? form.sous_categorie.value : null,
         titre: form.titre.value.trim(), description: form.description.value.trim(),
         couleurs: $$('[name=couleurs]:checked', form).map(function (x) { return x.value; }),
         occasions: $$('[name=occasions]:checked', form).map(function (x) { return x.value; }),
-        taille_indicative: form.taille_indicative.value, code_postal: form.code_postal.value,
-        prix_location_cents: Math.round(Number(form.prix.value) * 100), valeur_declaree_cents: Math.round(Number(form.valeur.value) * 100),
-        duree_min_jours: Number(form.duree_min.value) || 1, duree_max_jours: Number(form.duree_max.value) || 4,
-        remise_main_propre: form.main_propre.checked, essayage_possible: form.essayage.checked, envoi_assure: form.envoi.checked, reservation_instantanee: form.instantanee ? form.instantanee.checked : false,
-        frais_envoi_cents: form.envoi.checked ? Math.round(Number(form.frais_envoi.value || 0) * 100) : 0
+        taille_indicative: tenue ? form.taille_indicative.value : null, code_postal: form.code_postal.value,
+        prix_location_cents: prixCents,
+        // Prestation : pas d'objet confié, la valeur déclarée reprend le prix (aucune caution)
+        valeur_declaree_cents: prestation ? Math.max(prixCents, 1000) : Math.round(Number(form.valeur.value) * 100),
+        duree_min_jours: prestation ? 1 : Number(form.duree_min.value) || 1, duree_max_jours: prestation ? 1 : Number(form.duree_max.value) || 4,
+        remise_main_propre: prestation ? true : form.main_propre.checked, essayage_possible: tenue && form.essayage.checked,
+        envoi_assure: !prestation && form.envoi.checked, reservation_instantanee: form.instantanee ? form.instantanee.checked : false,
+        frais_envoi_cents: !prestation && form.envoi.checked ? Math.round(Number(form.frais_envoi.value || 0) * 100) : 0,
+        couleurs: prestation ? [] : $$('[name=couleurs]:checked', form).map(function (x) { return x.value; }),
+        attributs: crit.attributs
       };
-      Object.assign(valeurs, lireCaution());
-      ['poitrine_cm', 'taille_cm', 'hanches_cm', 'longueur_cm', 'manche_cm'].forEach(function (c) { valeurs[c] = cat === 'accessoire' || !form[c].value ? null : Number(form[c].value); });
-      if (cat !== 'accessoire' && ['poitrine_cm', 'taille_cm', 'hanches_cm', 'longueur_cm', 'manche_cm'].some(function (c) { return valeurs[c] == null; })) { erreur(retour, { message: t('annonce.mesures_requises') }); return; }
+      Object.assign(valeurs, prestation ? { caution_mode: 'aucune', caution_moyen: 'carte', caution_taux: null, caution_montant_cents: null } : lireCaution());
+      ['poitrine_cm', 'taille_cm', 'hanches_cm', 'longueur_cm', 'manche_cm'].forEach(function (c) { valeurs[c] = !tenue || cat === 'accessoire' || !form[c].value ? null : Number(form[c].value); });
+      if (tenue && cat !== 'accessoire' && ['poitrine_cm', 'taille_cm', 'hanches_cm', 'longueur_cm', 'manche_cm'].some(function (c) { return valeurs[c] == null; })) { erreur(retour, { message: t('annonce.mesures_requises') }); return; }
       var boutons = $$('[type=submit]', form);
       boutons.forEach(function (b) { b.disabled = true; });
       var enregistrement = tn

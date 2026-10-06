@@ -182,6 +182,42 @@ export async function seed() {
     for (const tn of tenues) for (const a of acc) verifier(await sb.from('ensembles').insert({ tenue_id: tn.id, accessoire_id: a.id }), 'ensemble');
   }
 
+  console.log('Hub des fêtes…');
+  // Prestataires et loueur de matériel : même mécanique de réservation, critères propres à chaque catégorie
+  const HUB = [
+    { cle: 'presta1', prenom: 'Zineb', nom: 'Amrani', type: 'prestataire', ville: 'Bruxelles', boutique: 'Zineb Beauty', annonces: [
+      { categorie: 'maquillage', titre: 'Maquillage mariée avec essai', prix: 180, attributs: { nb_personnes_max: 1, duree_min: 90, essai: true, deplacement: true, faux_cils: true } },
+      { categorie: 'henne', titre: 'Soirée henné : mariée et invitées', prix: 150, attributs: { style_henne: 'marocain', zones: 'mains_pieds', nb_personnes_max: 8, deplacement: true } }] },
+    { cle: 'presta2', prenom: 'Karim', nom: 'Ziani', type: 'prestataire', ville: 'Liège', boutique: 'Studio Lumière', annonces: [
+      { categorie: 'photographie', titre: 'Reportage photo de mariage', prix: 650, attributs: { heures: 6, nb_photos: 300, delai_livraison: 30, album: true, deplacement: true } },
+      { categorie: 'dj', titre: 'DJ chaabi et oriental, sono comprise', prix: 450, attributs: { heures: 5, styles: 'chaabi, andalou, moderne', materiel_inclus: true, eclairage_inclus: true } }] },
+    { cle: 'loueur1', prenom: 'Youssef', nom: 'Kabbaj', type: 'loueur', ville: 'Anvers', boutique: 'Fêtes & Lumières', annonces: [
+      { categorie: 'sono', titre: 'Sono 2 000 W avec deux micros', prix: 90, valeur: 1500, caution: 300, attributs: { puissance_w: 2000, nb_enceintes: 2, micro: true, table_mixage: true, installation: false } },
+      { categorie: 'mobilier', titre: 'Amaria dorée pour l\'entrée des mariés', prix: 250, valeur: 2500, caution: 500, attributs: { type_mobilier: 'amaria', quantite: 1, installation: true } }] }
+  ];
+  for (const [n, f] of HUB.entries()) {
+    const email = `${f.cle}@${DOMAINE}`;
+    const id = await creerUtilisateur(email, { prenom: f.prenom, nom: f.nom, type_fournisseuse: f.type, ville: f.ville });
+    ids[f.cle] = id;
+    const acct = (await compteStripe(email)) || `acct_demo_${f.cle}`;
+    verifier(await sb.from('profils').update({
+      nom_affiche: f.prenom, ville: f.ville, est_fournisseuse: true, type_fournisseuse: f.type, compte_valide: true,
+      stripe_onboarding_complet: true, boutique_nom: f.boutique
+    }).eq('id', id), 'profil hub');
+    verifier(await sb.from('profils_prives').update({ stripe_account_id: acct, telephone: '+32 470 00 01 ' + String(10 + n) }).eq('id', id), 'privé hub');
+    for (const [k, a] of f.annonces.entries()) {
+      const prestation = f.type === 'prestataire';
+      const ligne = verifier(await sb.from('tenues').insert({
+        fournisseuse_id: id, categorie: a.categorie, titre: a.titre, description: 'Annonce de démonstration.',
+        occasions: ['mariage', 'henne'], prix_location_cents: a.prix * 100, valeur_declaree_cents: (a.valeur || a.prix) * 100,
+        duree_min_jours: 1, duree_max_jours: prestation ? 1 : 3, remise_main_propre: true, ville: f.ville, statut: 'validee',
+        attributs: a.attributs, reservation_instantanee: prestation,
+        caution_mode: prestation ? 'aucune' : 'montant', caution_montant_cents: prestation ? null : a.caution * 100
+      }).select('id').single(), `annonce ${a.titre}`);
+      verifier(await sb.from('tenue_photos').insert([{ tenue_id: ligne.id, type: 'face', ordre: 0, chemin: `placeholder:couronne:or:face:${n * 10 + k}` }]), 'photo hub');
+    }
+  }
+
   console.log('Showrooms…');
   const dans = (j, h) => { const d = new Date(); d.setDate(d.getDate() + j); d.setHours(h, 0, 0, 0); return d.toISOString(); };
   verifier(await sb.from('showrooms').insert([

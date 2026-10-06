@@ -40,6 +40,20 @@ test('sans caution explicite, caution en espèces (main propre seulement)', () =
   assert.equal(envoi.caution_especes_cents, 0); assert.equal(envoi.caution_cents, 20000, 'envoi : empreinte bancaire');
 });
 
+test('hub des fêtes : matériel sans pressing avec caution, prestation sans pressing ni caution', () => {
+  const sono = { prix_location_cents: 8000, valeur_declaree_cents: 60000, categorie: 'sono', univers: 'materiel', caution_mode: 'montant', caution_montant_cents: 20000 };
+  const m = calculerReservation({ pieces: [sono], mode_remise: 'main_propre' }, p);
+  assert.equal(m.frais_pressing_cents, 0);
+  assert.equal(m.caution_cents, 20000);
+  assert.equal(m.commission_cents, 1200);
+  const maquillage = { prix_location_cents: 15000, valeur_declaree_cents: 15000, categorie: 'maquillage', univers: 'prestation', caution_mode: 'pourcentage' };
+  const pr = calculerReservation({ pieces: [maquillage], mode_remise: 'main_propre' }, p);
+  assert.equal(pr.frais_pressing_cents, 0);
+  assert.equal(pr.caution_cents, 0);
+  assert.equal(pr.total_cliente_cents, 15000 + 750);
+  assert.equal(pr.montant_transfert_cents, 15000 - 2250);
+});
+
 test('accessoire sans pressing, envoi facturé seulement en mode envoi', () => {
   const r = calculerReservation({ pieces: [caftan, mdamma], mode_remise: 'envoi', frais_envoi_cents: 1200 }, p);
   assert.equal(r.frais_pressing_cents, 1500);

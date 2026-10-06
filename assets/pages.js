@@ -74,7 +74,7 @@
       h('div', { class: 'carte__infos' },
         h('div', { class: 'carte__ligne1' }, h('h3', { class: 'carte__titre' }, tn.titre), h('span', { class: 'carte__note' }, noteCourte(tn.note_moyenne, tn.nb_avis))),
         h('p', { class: 'carte__meta' }, chezQui(tn)),
-        h('p', { class: 'carte__prix' }, h('strong', null, L.euros(tn.prix_location_cents, true)), ' ', t('carte.la_location'),
+        h('p', { class: 'carte__prix' }, h('strong', null, L.euros(tn.prix_location_cents, true)), ' ', t((tn.univers || L.universDe(tn.categorie)) === 'prestation' ? 'tenue.par_prestation' : 'carte.la_location'),
           tn.reservation_instantanee ? [' · ', h('span', { class: 'carte__eclair' }, '⚡ ' + t('carte.instantanee'))] : null)),
       options.extra || null);
     carte.addEventListener('click', function (e) {
@@ -245,7 +245,7 @@
     if (!zone) return;
     var mur = $('[data-apercu-mur]'), connecte = $('[data-apercu-connecte]'), note = $('[data-apercu-note]');
     L.ui.squelette(zone, 6);
-    rechercher({ p_tri: 'recent', p_limite: 6 }).catch(function () { return []; }).then(function (liste) {
+    rechercher({ p_tri: 'recent', p_limite: 6, p_univers: 'tenue' }).catch(function () { return []; }).then(function (liste) {
       L.vider(zone);
       if (liste.length) {
         note.setAttribute('data-i18n', 'index.ap.note_reel');
@@ -316,8 +316,33 @@
     zoneFiltres.setAttribute('data-lenis-prevent', '');
     $('.tiroir__panneau', tiroir).setAttribute('data-lenis-prevent', '');
 
-    construireFiltres(form, etat);
-    construirePuces($('[data-puces]'), etat, function (cat) { etat.categorie = cat; synchroniserForm(form, etat); appliquer(); });
+    // Onglets d'univers (Tenues, Matériel, Prestations) au-dessus des catégories
+    var zonePuces = $('[data-puces]');
+    var onglets = h('div', { class: 'univers-onglets', role: 'tablist', 'aria-label': t('cat.f_categorie') });
+    zonePuces.parentNode.insertBefore(onglets, zonePuces);
+    function construireOnglets() {
+      L.vider(onglets);
+      Object.keys(C.univers).forEach(function (u) {
+        onglets.appendChild(h('button', { type: 'button', role: 'tab', class: 'univers-onglet', 'aria-selected': String(etat.univers === u), onclick: function () {
+          if (etat.univers === u) return;
+          // Changement d'univers : on garde le lieu, les dates et la recherche, pas les filtres propres à l'univers
+          var garder = { univers: u, q: etat.q, cp: etat.cp, rayon: etat.rayon, ville: etat.ville, debut: etat.debut, fin: u === 'prestation' ? null : etat.fin, tri: etat.tri };
+          etat = garder;
+          majUnivers();
+          appliquer();
+        } }, t('univers.' + u)));
+      });
+    }
+    function majUnivers() {
+      construireOnglets();
+      construireFiltres(form, etat);
+      construirePuces(zonePuces, etat, function (cat) { etat.categorie = cat; synchroniserForm(form, etat); appliquer(); });
+      var u = etat.univers;
+      var titre = $('main h1'), chapeau = $('main .chapeau');
+      if (titre) titre.textContent = t(u === 'tenue' ? 'cat.titre' : 'cat.titre_' + u);
+      if (chapeau) chapeau.textContent = t(u === 'tenue' ? 'cat.chapeau' : 'cat.intro_' + u);
+    }
+    majUnivers();
 
     function ouvrirTiroir(o) {
       if (mq.matches) return;
@@ -331,9 +356,9 @@
     tiroir.addEventListener('click', function (e) { if (e.target === tiroir) ouvrirTiroir(false); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && tiroir.classList.contains('est-ouvert')) ouvrirTiroir(false); });
 
-    form.addEventListener('change', L.debounce(function () { etat = lireFormulaire(form); appliquer(); }, 250));
-    form.addEventListener('submit', function (e) { e.preventDefault(); etat = lireFormulaire(form); appliquer(); ouvrirTiroir(false); });
-    $('[data-reinitialiser]').addEventListener('click', function () { etat = {}; synchroniserForm(form, etat); appliquer(); });
+    form.addEventListener('change', L.debounce(function () { etat = Object.assign(lireFormulaire(form), { univers: etat.univers }); appliquer(); }, 250));
+    form.addEventListener('submit', function (e) { e.preventDefault(); etat = Object.assign(lireFormulaire(form), { univers: etat.univers }); appliquer(); ouvrirTiroir(false); });
+    $('[data-reinitialiser]').addEventListener('click', function () { etat = { univers: etat.univers }; synchroniserForm(form, etat); appliquer(); });
     $('[data-tri]').addEventListener('change', function (e) { etat.tri = e.target.value; appliquer(); });
     $('[data-tri]').value = etat.tri || 'pertinence';
     plus.addEventListener('click', function () { page++; charger(true); });
@@ -356,6 +381,7 @@
     function appliquer() {
       page = 0;
       ecrireFiltresUrl(etat);
+      $$('.univers-onglet', onglets).forEach(function (o, i) { o.setAttribute('aria-selected', String(Object.keys(C.univers)[i] === etat.univers)); });
       $$('.puce', $('[data-puces]')).forEach(function (p) { p.setAttribute('aria-pressed', String((p.dataset.cat || '') === (etat.categorie || ''))); });
       charger(false);
     }
@@ -371,7 +397,8 @@
         p_type_fournisseuse: etat.boutique || null,
         p_tri: etat.tri === 'distance' && !/^[0-9]{4}$/.test(etat.cp || '') ? 'pertinence' : (etat.tri || 'pertinence'), p_limite: PAR_PAGE, p_decalage: page * PAR_PAGE,
         p_code_postal: /^[0-9]{4}$/.test(etat.cp || '') ? etat.cp : null, p_rayon_km: etat.rayon && /^[0-9]{4}$/.test(etat.cp || '') ? Number(etat.rayon) : null,
-        p_instantanee: etat.instant === '1' ? true : null
+        p_instantanee: etat.instant === '1' ? true : null,
+        p_univers: etat.univers
       };
       var etatFlip = ajout || !window.Flip || !L.motion.actif ? null : window.Flip.getState($$('.carte', grille));
       Promise.all([rechercher(p), L.auth.pret]).then(function (res) {
@@ -385,8 +412,8 @@
         grille.classList.toggle('s-apercu__grille--voilee', limite);
         if (limite) murTitre.textContent = t('cat.mur_titre', { n: total - liste.length });
         noteExemples.hidden = true;
-        var sansFiltre = Object.keys(etat).every(function (k) { return k === 'tri' || !etat[k]; });
-        if (!liste.length && !ajout && sansFiltre) {
+        var sansFiltre = Object.keys(etat).every(function (k) { return k === 'tri' || k === 'univers' || !etat[k]; });
+        if (!liste.length && !ajout && sansFiltre && etat.univers === 'tenue') {
           // Catalogue encore vide : exemples illustrés, clairement signalés.
           compte.textContent = '';
           noteExemples.hidden = false;
@@ -396,7 +423,7 @@
           return;
         }
         if (!liste.length && !ajout) {
-          L.ui.etatVide(grille, t('commun.aucun_resultat'), h('button', { class: 'bouton bouton--ligne', type: 'button', onclick: function () { etat = {}; synchroniserForm(form, etat); appliquer(); } }, t('cat.reinitialiser')));
+          L.ui.etatVide(grille, t('commun.aucun_resultat'), h('button', { class: 'bouton bouton--ligne', type: 'button', onclick: function () { etat = { univers: etat.univers }; synchroniserForm(form, etat); appliquer(); } }, t('cat.reinitialiser')));
           return;
         }
         var nouvelles = liste.map(function (tn) { return L.carteTenue(tn); });
@@ -415,32 +442,35 @@
       });
     }
 
-    document.addEventListener('lalla:langue', function () { construireFiltres(form, etat); construirePuces($('[data-puces]'), etat, function (cat) { etat.categorie = cat; synchroniserForm(form, etat); appliquer(); }); charger(false); });
+    document.addEventListener('lalla:langue', function () { majUnivers(); charger(false); });
     appliquer();
   };
 
   function num(v) { var n = Number(v); return v === '' || v == null || !isFinite(n) || n <= 0 ? null : n; }
 
-  var CLES_FILTRES = ['categorie', 'occasion', 'taille', 'couleur', 'prix_max', 'ville', 'debut', 'fin', 'poitrine', 'tour_taille', 'hanches', 'longueur', 'q', 'tri', 'boutique', 'cp', 'rayon', 'instant'];
+  var CLES_FILTRES = ['univers', 'categorie', 'occasion', 'taille', 'couleur', 'prix_max', 'ville', 'debut', 'fin', 'poitrine', 'tour_taille', 'hanches', 'longueur', 'q', 'tri', 'boutique', 'cp', 'rayon', 'instant'];
 
   function lireFiltresUrl() {
     var s = new URLSearchParams(location.search), e = {};
     CLES_FILTRES.forEach(function (k) { if (s.get(k)) e[k] = s.get(k); });
     if (s.get('boutiques')) e.boutique = 'negafa';
-    if (e.categorie && C.categories.indexOf(e.categorie) < 0) delete e.categorie;
+    if (e.categorie && !C.univers[L.universDe(e.categorie)]) delete e.categorie;
+    if (e.categorie) e.univers = L.universDe(e.categorie);
+    if (!C.univers[e.univers]) e.univers = 'tenue';
     return e;
   }
 
   function ecrireFiltresUrl(e) {
     var s = new URLSearchParams();
     CLES_FILTRES.forEach(function (k) { if (e[k]) s.set(k, e[k]); });
+    if (s.get('univers') === 'tenue') s.delete('univers');
     var q = s.toString();
     history.replaceState(null, '', location.pathname + (q ? '?' + q : ''));
   }
 
   function construirePuces(zone, etat, surChoix) {
     L.vider(zone);
-    [''].concat(C.categories).forEach(function (cat) {
+    [''].concat(C.univers[etat.univers || 'tenue']).forEach(function (cat) {
       zone.appendChild(h('button', { type: 'button', class: 'puce', 'data-cat': cat, 'aria-pressed': String((etat.categorie || '') === cat), onclick: function () { surChoix(cat || null); } },
         cat ? t('cat.' + cat) : t('cat.tous')));
     });
@@ -452,14 +482,15 @@
     form.appendChild(h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-q' }, t('cat.recherche')),
       h('input', { id: 'f-q', name: 'q', type: 'search', class: 'champ__controle', value: etat.q || '', placeholder: t('cat.recherche_ph') })));
     form.appendChild(groupe('cat.f_categorie', h('select', { name: 'categorie', class: 'champ__controle', 'aria-label': t('cat.f_categorie') },
-      [h('option', { value: '' }, t('cat.tous'))].concat(C.categories.map(function (c) { return h('option', { value: c, selected: etat.categorie === c }, t('cat.' + c)); })))));
+      [h('option', { value: '' }, t('cat.tous'))].concat(C.univers[etat.univers || 'tenue'].map(function (c) { return h('option', { value: c, selected: etat.categorie === c }, t('cat.' + c)); })))));
+    var u = etat.univers || 'tenue';
     form.appendChild(groupe('cat.f_occasion', h('div', { class: 'choix-pastilles' },
       [['', t('occ.toutes')]].concat(C.occasions.map(function (o) { return [o, t('occ.' + o)]; })).map(function (o) {
         return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'occasion', value: o[0], checked: (etat.occasion || '') === o[0] }), h('span', null, o[1]));
       }))));
-    form.appendChild(groupe('cat.f_date', h('div', { class: 'grille-2' },
-      h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-debut' }, t('cat.du')), h('input', { id: 'f-debut', name: 'debut', type: 'date', class: 'champ__controle', min: L.aujourdhui(), value: etat.debut || '' })),
-      h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-fin' }, t('cat.au')), h('input', { id: 'f-fin', name: 'fin', type: 'date', class: 'champ__controle', min: L.aujourdhui(), value: etat.fin || '' })))));
+    form.appendChild(groupe(u === 'prestation' ? 'tenue.date_prestation' : 'cat.f_date', h('div', { class: 'grille-2' },
+      h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-debut' }, t(u === 'prestation' ? 'tenue.date_evenement' : 'cat.du')), h('input', { id: 'f-debut', name: 'debut', type: 'date', class: 'champ__controle', min: L.aujourdhui(), value: etat.debut || '' })),
+      u === 'prestation' ? null : h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-fin' }, t('cat.au')), h('input', { id: 'f-fin', name: 'fin', type: 'date', class: 'champ__controle', min: L.aujourdhui(), value: etat.fin || '' })))));
     form.appendChild(groupe('cat.f_pres', h('div', { class: 'grille-2' },
       h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'f-cp' }, t('cat.code_postal')),
         h('input', { id: 'f-cp', name: 'cp', inputmode: 'numeric', maxlength: '4', pattern: '[0-9]{4}', class: 'champ__controle', value: etat.cp || '', placeholder: '1000' })),
@@ -471,11 +502,11 @@
       [['', t('cat.toutes_villes')]].concat(C.villes.map(function (v) { return [v, L.zone(v)]; })).map(function (v) {
         return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'ville', value: v[0], checked: (etat.ville || '') === v[0] }), h('span', null, v[1]));
       }))));
-    form.appendChild(groupe('mes.taille_indicative', h('div', { class: 'choix-pastilles' },
+    if (u === 'tenue') form.appendChild(groupe('mes.taille_indicative', h('div', { class: 'choix-pastilles' },
       [['', t('cat.toutes_tailles')]].concat(C.tailles.filter(function (x) { return x !== 'unique'; }).map(function (x) { return [x, x === 'enfant' ? t('cat.enfant') : x]; })).map(function (v) {
         return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'taille', value: v[0], checked: (etat.taille || '') === v[0] }), h('span', null, v[1]));
       }))));
-    form.appendChild(groupe('cat.f_mesures', h('div', null,
+    if (u === 'tenue') form.appendChild(groupe('cat.f_mesures', h('div', null,
       h('p', { class: 'champ__aide', style: { margin: '0 0 10px' } }, t('cat.mesures_aide')),
       h('div', { class: 'grille-2' },
         mesure('poitrine', 'mes.poitrine', etat.poitrine), mesure('tour_taille', 'mes.taille', etat.tour_taille),
@@ -487,11 +518,11 @@
       couleurs.appendChild(h('label', { class: 'couleur-pastille', title: t('coul.' + k), style: { background: C.couleurs[k] } },
         h('input', { type: 'radio', name: 'couleur', value: k, checked: etat.couleur === k, 'aria-label': t('coul.' + k) })));
     });
-    form.appendChild(groupe('cat.f_couleur', couleurs));
+    if (u !== 'prestation') form.appendChild(groupe('cat.f_couleur', couleurs));
     form.appendChild(groupe('cat.f_budget', h('div', { class: 'champ' },
       h('label', { class: 'champ__libelle', for: 'f-prix' }, t('cat.budget_max')),
       h('input', { id: 'f-prix', name: 'prix_max', type: 'number', inputmode: 'numeric', min: '10', step: '5', class: 'champ__controle', value: etat.prix_max || '', placeholder: '150' }))));
-    form.appendChild(groupe('cat.f_vendeuse', h('div', { class: 'choix-pastilles' },
+    if (u === 'tenue') form.appendChild(groupe('cat.f_vendeuse', h('div', { class: 'choix-pastilles' },
       [['', t('cat.toutes')], ['negafa', t('type.negafa')], ['creatrice', t('type.creatrice')], ['particuliere', t('type.particuliere')]].map(function (v) {
         return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'boutique', value: v[0], checked: (etat.boutique || '') === v[0] }), h('span', null, v[1]));
       }))));
@@ -587,15 +618,16 @@
       L.sb.rpc('distance_cp', { a: cp, b: tn.code_postal }).then(function (r) { if (r.data != null) lieu.textContent += ' · ' + t('carte.km', { n: r.data }); });
     }
 
-    var mesures = tn.categorie === 'accessoire' ? null : h('table', { class: 'mesures' },
+    var univers = tn.univers || L.universDe(tn.categorie);
+    var mesures = univers !== 'tenue' || tn.categorie === 'accessoire' ? caracteristiques(tn) : h('table', { class: 'mesures' },
       h('caption', { class: 'sr' }, t('tenue.mesures')),
       h('tbody', null, [['mes.taille_indicative', tn.taille_indicative || ''], ['mes.poitrine', tn.poitrine_cm], ['mes.taille', tn.taille_cm], ['mes.hanches', tn.hanches_cm], ['mes.longueur', tn.longueur_cm], ['mes.manche', tn.manche_cm]].map(function (l) {
         return h('tr', null, h('th', { scope: 'row' }, t(l[0])), h('td', null, typeof l[1] === 'number' || /^\d/.test(String(l[1])) ? String(Number(l[1])) + ' cm' : l[1]));
       })));
 
     var modes = h('div', { class: 'etiquettes' },
-      tn.remise_main_propre ? h('span', { class: 'etiquette' }, t('tenue.main_propre')) : null,
-      tn.envoi_assure ? h('span', { class: 'etiquette' }, t('tenue.envoi', { prix: L.euros(tn.frais_envoi_cents) })) : null,
+      tn.remise_main_propre && univers !== 'prestation' ? h('span', { class: 'etiquette' }, t(univers === 'materiel' ? 'tenue.date_retrait' : 'tenue.main_propre')) : null,
+      tn.envoi_assure && univers !== 'prestation' ? h('span', { class: 'etiquette' }, univers === 'materiel' ? t('annonce.livraison') + ' (+' + L.euros(tn.frais_envoi_cents) + ')' : t('tenue.envoi', { prix: L.euros(tn.frais_envoi_cents) })) : null,
       tn.essayage_possible ? h('span', { class: 'etiquette etiquette--emeraude' }, t('tenue.essayage_possible')) : null,
       (tn.occasions || []).map(function (o) { return h('span', { class: 'etiquette' }, t('occ.' + o)); }));
 
@@ -611,15 +643,15 @@
       h('div', { style: { position: 'relative' } }, h('p', { class: 'surtitre' }, libelleCategorie(tn)), h('h1', { class: 'fiche__titre', style: { paddingRight: '48px' } }, tn.titre),
         h('div', { style: { position: 'absolute', top: '0', right: '0', color: 'var(--encre)' } }, L.favoris.bouton(tn.id)),
         h('p', { class: 'texte', style: { margin: '8px 0 0' } }, noteCourte(f.note_moyenne, f.nb_avis), ' · ', lieu)),
-      h('p', { class: 'fiche__prix' }, h('strong', null, L.euros(tn.prix_location_cents, true)), h('span', { class: 'texte' }, t('tenue.par_location', { min: tn.duree_min_jours, max: tn.duree_max_jours }))),
+      h('p', { class: 'fiche__prix' }, h('strong', null, L.euros(tn.prix_location_cents, true)), h('span', { class: 'texte' }, univers === 'prestation' ? ' ' + t('tenue.par_prestation') : t('tenue.par_location', { min: tn.duree_min_jours, max: tn.duree_max_jours }))),
       tn.reservation_instantanee ? h('p', { class: 'eclair', style: { margin: 0 } }, '⚡ ' + t('tenue.instantanee')) : null,
-      cautionTenue(tn, p) === 0 ? h('p', { class: 'eclair', style: { margin: 0 } }, '✓ ' + t('tenue.r_sans_caution')) : tn.caution_moyen === 'especes' ? h('p', { class: 'texte', style: { margin: 0, fontSize: '14px' } }, t('tenue.r_caution_especes') + ' : ' + L.euros(cautionTenue(tn, p))) : null,
+      univers === 'prestation' ? null : cautionTenue(tn, p) === 0 ? h('p', { class: 'eclair', style: { margin: 0 } }, '✓ ' + t('tenue.r_sans_caution')) : tn.caution_moyen === 'especes' ? h('p', { class: 'texte', style: { margin: 0, fontSize: '14px' } }, t('tenue.r_caution_especes') + ' : ' + L.euros(cautionTenue(tn, p))) : null,
       modes,
       lienBoutique,
       tn.description ? h('div', { class: 'texte', style: { whiteSpace: 'pre-line' } }, tn.description) : null,
       (tn.couleurs || []).length ? h('p', { class: 'texte' }, t('tenue.couleurs') + ' : ' + tn.couleurs.map(function (c) { return t('coul.' + c); }).join(', ')) : null,
       mesures,
-      h('p', { class: 'mention-retouche' }, h('span', null, h('strong', null, t('tenue.retouche_titre')), ' ', t('tenue.retouche_texte'))),
+      univers === 'tenue' ? h('p', { class: 'mention-retouche' }, h('span', null, h('strong', null, t('tenue.retouche_titre')), ' ', t('tenue.retouche_texte'))) : null,
       boite,
       h('div', { class: 'actions' }, partage),
       h('button', { type: 'button', class: 'lien-discret', onclick: function () { L.ui.signaler('tenue', tn.id); } }, t('signal.annonce')));
@@ -628,7 +660,7 @@
 
     // Barre d'action mobile
     var cta = h('div', { class: 'fiche__cta-mobile' },
-      h('div', null, h('strong', { style: { fontFamily: 'var(--serif)', fontSize: '1.5rem' } }, L.euros(tn.prix_location_cents, true)), ' ', h('small', { class: 'texte' }, t('commun.par_jour'))),
+      h('div', null, h('strong', { style: { fontFamily: 'var(--serif)', fontSize: '1.5rem' } }, L.euros(tn.prix_location_cents, true)), ' ', h('small', { class: 'texte' }, t(univers === 'prestation' ? 'tenue.par_prestation' : 'commun.par_jour'))),
       h('button', { class: 'bouton', type: 'button', onclick: function () { boite.scrollIntoView({ behavior: L.motion.actif ? 'smooth' : 'auto', block: 'center' }); } }, t('tenue.reserver')));
     document.body.appendChild(cta);
     if ('IntersectionObserver' in window) {
@@ -638,8 +670,21 @@
     L.motion.jouerFlip(arche);
     if (window.gsap && L.motion.actif) gsap.from(infos.children, { opacity: 0, y: 18, duration: 0.8, stagger: 0.05, ease: 'power3.out', delay: 0.15 });
 
-    completerLook(tn);
+    if (univers === 'tenue') completerLook(tn);
     avisFournisseuse(f.id);
+  }
+
+  /** Caractéristiques d'une annonce de matériel ou de prestation (critères de sa catégorie). */
+  function caracteristiques(tn) {
+    var liste = (C.criteres || {})[tn.categorie] || [];
+    var a = tn.attributs || {};
+    var lignes = liste.filter(function (c) { return a[c.cle] != null && a[c.cle] !== '' && a[c.cle] !== false; }).map(function (c) {
+      var v = a[c.cle];
+      var texte = c.type === 'oui_non' ? '✓' : c.type === 'choix' ? t('opt.' + v) : String(v) + (c.unite ? ' ' + t('unite.' + c.unite) : '');
+      return h('tr', null, h('th', { scope: 'row' }, t('crit.' + c.cle)), h('td', null, texte));
+    });
+    if (!lignes.length) return null;
+    return h('table', { class: 'mesures' }, h('caption', { class: 'sr' }, t('tenue.caracteristiques')), h('tbody', null, lignes));
   }
 
   /** Bloc « Proposée par » : photo, type, commune, note, badges, réactivité, contact. */
@@ -735,6 +780,7 @@
   /** Boîte de réservation : dates, disponibilité, estimation, ajout au panier, essayage. */
   function boiteReservation(tn, p) {
     if (p.reservations_ouvertes !== true) return boitePreLancement(tn, p);
+    if ((tn.univers || L.universDe(tn.categorie)) === 'prestation') return boitePrestation(tn, p);
     var panier = L.panier.lire();
     var dates = panier.dates || {};
     var dispo = h('p', { class: 'disponibilite', 'aria-live': 'polite' }, t('tenue.choisir_dates'));
@@ -827,11 +873,81 @@
       L.panier.definirDates(nouvellesDates);
       L.panier.ajouter({ tenue_id: tn.id, titre: tn.titre, fournisseuse_id: tn.fournisseuse_id, fournisseuse_nom: (tn.fournisseuse && (tn.fournisseuse.boutique_nom || tn.fournisseuse.nom_affiche)) || '',
         prix_location_cents: tn.prix_location_cents, categorie: tn.categorie, sous_categorie: tn.sous_categorie, couleurs: tn.couleurs, photo: (photosDe(tn)[0] || {}).chemin, mode_remise: mode.value,
-        instantanee: Boolean(tn.reservation_instantanee) });
+        instantanee: Boolean(tn.reservation_instantanee), univers: tn.univers || L.universDe(tn.categorie) });
       bouton.textContent = t('tenue.finaliser');
       etatBouton('');
       L.ui.toast(t('tenue.ajoute'), 'succes');
       if (window.gsap && L.motion.actif) gsap.fromTo('.panier-lien', { scale: 1 }, { scale: 1.25, duration: 0.2, yoyo: true, repeat: 1, ease: 'power2.out' });
+    });
+    setTimeout(verifier, 0);
+    return form;
+  }
+
+  /** Réservation d'une prestation : la date de la fête, l'heure et le lieu ; pas de durée ni de caution. */
+  function boitePrestation(tn, p) {
+    var panier = L.panier.lire();
+    var dates = panier.dates || {};
+    var dispo = h('p', { class: 'disponibilite', 'aria-live': 'polite' }, t('tenue.manque_date_prestation'));
+    var recap = h('div', { class: 'recap' });
+    var evenement = h('input', { type: 'date', name: 'evenement', class: 'champ__controle', min: L.ajouterJours(L.aujourdhui(), 2), value: dates.evenement || '', required: true, id: 'r-evt' });
+    var heure = h('input', { type: 'time', name: 'heure', class: 'champ__controle', value: panier.heure_prestation || '', id: 'r-heure', step: '900' });
+    var lieu = h('input', { type: 'text', name: 'lieu', class: 'champ__controle', value: panier.lieu_prestation || '', id: 'r-lieu', maxlength: '300', autocomplete: 'street-address' });
+    var bouton = h('button', { class: 'bouton bouton--plein', type: 'submit' }, t(tn.reservation_instantanee ? 'tenue.ajouter_instantane' : 'tenue.reserver_prestation'));
+    var raison = h('p', { class: 'champ__aide', 'aria-live': 'polite', style: { margin: 0, textAlign: 'center' } });
+    if (L.panier.contient(tn.id)) bouton.textContent = t('tenue.finaliser');
+    var form = h('form', { class: 'reservation-boite', novalidate: true },
+      h('h2', { style: { fontSize: '1.6rem', margin: 0 } }, t('tenue.reserver_prestation')),
+      h('div', { class: 'grille-2' },
+        h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'r-evt' }, t('tenue.date_prestation')), evenement),
+        h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'r-heure' }, t('tenue.heure')), heure)),
+      h('div', { class: 'champ' }, h('label', { class: 'champ__libelle', for: 'r-lieu' }, t('tenue.lieu')), lieu, h('p', { class: 'champ__aide' }, t('tenue.lieu_aide'))),
+      dispo, recap, bouton, raison);
+    var ok = false, verification = 0;
+    function etatBouton(message) {
+      var inactif = !ok && !L.panier.contient(tn.id);
+      bouton.classList.toggle('bouton--inactif', inactif);
+      bouton.setAttribute('aria-disabled', inactif ? 'true' : 'false');
+      raison.textContent = inactif && message ? t('tenue.pour_continuer', { raison: message.charAt(0).toLowerCase() + message.slice(1) }) : '';
+    }
+    function verifier() {
+      ok = false;
+      var numero = ++verification;
+      L.vider(recap);
+      if (!evenement.value) { dispo.className = 'disponibilite'; dispo.textContent = t('tenue.manque_date_prestation'); etatBouton(t('tenue.manque_date_prestation')); return; }
+      dispo.className = 'disponibilite'; dispo.textContent = t('tenue.verification');
+      etatBouton('');
+      L.sb.rpc('tenue_disponible', { p_tenue: tn.id, p_debut: evenement.value, p_fin: evenement.value }).then(function (r) {
+        if (numero !== verification) return;
+        if (r.error) { dispo.textContent = t('commun.erreur'); etatBouton(t('commun.erreur')); return; }
+        ok = r.data === true;
+        dispo.className = 'disponibilite disponibilite--' + (ok ? 'oui' : 'non');
+        dispo.textContent = ok ? t('tenue.disponible') : t('tenue.indisponible');
+        etatBouton(ok ? '' : t('tenue.indisponible'));
+        if (!ok) return;
+        var service = Math.round(tn.prix_location_cents * Number(p.frais_service_taux));
+        recap.appendChild(h('div', { class: 'recap__ligne' }, h('span', null, t('tenue.r_prestation')), h('span', null, L.euros(tn.prix_location_cents))));
+        recap.appendChild(h('div', { class: 'recap__ligne' }, h('span', null, t('tenue.r_service')), h('span', null, L.euros(service))));
+        recap.appendChild(h('div', { class: 'recap__ligne recap__ligne--total' }, h('span', null, t('tenue.r_total')), h('span', null, L.euros(tn.prix_location_cents + service))));
+        recap.appendChild(h('p', { class: 'recap__ligne--note', style: { margin: '4px 0 0' } }, t(tn.reservation_instantanee ? 'tenue.r_note_instant' : 'tenue.r_note_prestation')));
+      });
+    }
+    evenement.addEventListener('change', verifier);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (L.panier.contient(tn.id)) { location.href = 'panier.html'; return; }
+      if (!ok) { verifier(); return; }
+      var pan = L.panier.lire();
+      var d = pan.dates || {};
+      if (pan.articles.length && d.evenement && d.evenement !== evenement.value) L.ui.toast(t('tenue.dates_panier_maj'));
+      // La date de la fête est commune au panier ; une prestation seule n'a pas de durée de location
+      L.panier.definirDates({ evenement: evenement.value, debut: d.debut && d.debut <= evenement.value ? d.debut : evenement.value, fin: d.fin && d.fin >= evenement.value ? d.fin : evenement.value });
+      L.panier.ajouter({ tenue_id: tn.id, titre: tn.titre, fournisseuse_id: tn.fournisseuse_id, fournisseuse_nom: (tn.fournisseuse && (tn.fournisseuse.boutique_nom || tn.fournisseuse.nom_affiche)) || '',
+        prix_location_cents: tn.prix_location_cents, categorie: tn.categorie, couleurs: tn.couleurs, photo: (photosDe(tn)[0] || {}).chemin, mode_remise: 'main_propre',
+        instantanee: Boolean(tn.reservation_instantanee), univers: 'prestation' });
+      L.panier.prestation({ heure: heure.value, lieu: lieu.value.trim() });
+      bouton.textContent = t('tenue.finaliser');
+      etatBouton('');
+      L.ui.toast(t('tenue.ajoute'), 'succes');
     });
     setTimeout(verifier, 0);
     return form;
@@ -1079,10 +1195,11 @@
           h('div', { class: 'groupe-fournisseuse__tete' }, h('strong', null, arts[0].fournisseuse_nom || t('role.fournisseuse')), h('span', { class: 'texte' }, t('panier.une_demande'))),
           arts.map(function (a) {
             totalLocation += a.prix_location_cents;
-            if (a.categorie !== 'accessoire') pressing += Number(p.frais_pressing_cents);
+            var ua = a.univers || L.universDe(a.categorie);
+            if (ua === 'tenue' && a.categorie !== 'accessoire') pressing += Number(p.frais_pressing_cents);
             return h('div', { class: 'article' },
               h('a', { class: 'article__visuel', href: 'tenue.html?id=' + a.tenue_id }, h('div', { class: 'arche' }, L.img.element(a.photo || L.placeholderPour({ id: a.tenue_id, categorie: a.categorie, sous_categorie: a.sous_categorie, couleurs: a.couleurs }, 'face'), ''))),
-              h('div', null, h('p', { class: 'article__titre' }, a.titre), h('p', { class: 'article__meta' }, L.libelleCategorie(a) + ' · ' + L.euros(a.prix_location_cents) + ' · ' + t(a.mode_remise === 'envoi' ? 'panier.envoi' : 'tenue.main_propre'))),
+              h('div', null, h('p', { class: 'article__titre' }, a.titre), h('p', { class: 'article__meta' }, L.libelleCategorie(a) + ' · ' + L.euros(a.prix_location_cents) + (ua === 'prestation' ? '' : ' · ' + t(a.mode_remise === 'envoi' ? (ua === 'materiel' ? 'annonce.livraison' : 'panier.envoi') : (ua === 'materiel' ? 'tenue.date_retrait' : 'tenue.main_propre'))))),
               h('button', { class: 'lien', type: 'button', 'aria-label': t('panier.retirer') + ' ' + a.titre, onclick: function () { L.panier.retirer(a.tenue_id); rendre(p); } }, t('panier.retirer')));
           })));
       });
@@ -1090,15 +1207,21 @@
       var dates = pan.dates || {};
       var aEnvoi = pan.articles.some(function (a) { return a.mode_remise === 'envoi'; });
       var toutInstantane = pan.articles.every(function (a) { return a.instantanee; });
+      // Prestations : la date de la fête, l'heure et le lieu ; locations : récupération et retour
+      var estPrestation = function (a) { return (a.univers || L.universDe(a.categorie)) === 'prestation'; };
+      var aPrestation = pan.articles.some(estPrestation);
+      var aLocation = pan.articles.some(function (a) { return !estPrestation(a); });
       var retour = h('div');
       var form = h('form', { class: 'formulaire panneau', novalidate: true },
         h('h2', { class: 'panneau__titre' }, t('panier.vos_dates')),
-        h('div', { class: 'grille-3' },
-          L.ui.champ('evenement', 'tenue.date_evenement', { type: 'date', required: true, value: dates.evenement || '', min: L.ajouterJours(L.aujourdhui(), 2) }),
-          L.ui.champ('debut', 'tenue.date_debut', { type: 'date', required: true, value: dates.debut || '', min: L.ajouterJours(L.aujourdhui(), 1) }),
-          L.ui.champ('fin', 'tenue.date_fin', { type: 'date', required: true, value: dates.fin || '', min: L.ajouterJours(L.aujourdhui(), 2) })),
+        h('div', { class: aLocation ? 'grille-3' : 'grille-2' },
+          L.ui.champ('evenement', aLocation ? 'tenue.date_evenement' : 'panier.date_prestation', { type: 'date', required: true, value: dates.evenement || '', min: L.ajouterJours(L.aujourdhui(), 2) }),
+          aLocation ? L.ui.champ('debut', 'tenue.date_debut', { type: 'date', required: true, value: dates.debut || '', min: L.ajouterJours(L.aujourdhui(), 1) }) : null,
+          aLocation ? L.ui.champ('fin', 'tenue.date_fin', { type: 'date', required: true, value: dates.fin || '', min: L.ajouterJours(L.aujourdhui(), 2) }) : null,
+          aPrestation ? L.ui.champ('heure_prestation', 'panier.heure_prestation', { type: 'time', step: '900', value: pan.heure_prestation || '' }) : null),
+        aPrestation ? L.ui.champ('lieu_prestation', 'panier.lieu_prestation', { maxlength: 300, value: pan.lieu_prestation || '', autocomplete: 'street-address', aide: t('tenue.lieu_aide') }) : null,
         aEnvoi ? L.ui.champ('adresse', 'panier.adresse', { tag: 'textarea', required: true, maxlength: 300, autocomplete: 'street-address' }) : null,
-        pan.articles.some(function (a) { return a.mode_remise !== 'envoi'; }) ? L.ui.champ('creneau', 'panier.creneau', { type: 'datetime-local', aide: t('panier.creneau_aide') }) : null,
+        pan.articles.some(function (a) { return a.mode_remise !== 'envoi' && !estPrestation(a); }) ? L.ui.champ('creneau', 'panier.creneau', { type: 'datetime-local', aide: t('panier.creneau_aide') }) : null,
         h('details', { class: 'panier__options' },
           h('summary', { style: { cursor: 'pointer', fontWeight: 600 } }, t('panier.options')),
           L.ui.champ('message', 'panier.message', { tag: 'textarea', maxlength: 1000, aide: t('commun.facultatif') }),
@@ -1109,7 +1232,7 @@
       var resume = h('aside', { class: 'panier__resume panneau' },
         h('h2', { class: 'panneau__titre' }, t('panier.resume')),
         h('div', { class: 'recap' },
-          ligneRecap('tenue.r_location', totalLocation), ligneRecap('tenue.r_pressing', pressing), ligneRecap('tenue.r_service', service),
+          ligneRecap(aLocation ? 'tenue.r_location' : 'tenue.r_prestation', totalLocation), pressing ? ligneRecap('tenue.r_pressing', pressing) : null, ligneRecap('tenue.r_service', service),
           h('div', { class: 'recap__ligne recap__ligne--total' }, h('span', null, t('tenue.r_total')), h('span', null, L.euros(totalLocation + pressing + service))),
           h('p', { class: 'recap__ligne--note' }, t('panier.resume_note'))));
       if (p.reservations_ouvertes !== true) {
@@ -1128,12 +1251,17 @@
         L.auth.exiger('inscription').then(function () {
           var b = form.querySelector('[type=submit]');
           b.disabled = true;
-          L.panier.definirDates({ evenement: form.evenement.value, debut: form.debut.value, fin: form.fin.value });
+          // Prestations seules : pas de durée, récupération et retour le jour de la fête
+          var debutV = form.debut ? form.debut.value : form.evenement.value, finV = form.fin ? form.fin.value : form.evenement.value;
+          L.panier.definirDates({ evenement: form.evenement.value, debut: debutV, fin: finV });
+          if (form.heure_prestation) L.panier.prestation({ heure: form.heure_prestation.value, lieu: form.lieu_prestation.value.trim() });
           return L.api('commande-creer', {
             articles: L.panier.lire().articles.map(function (a) { return { tenue_id: a.tenue_id, mode_remise: a.mode_remise }; }),
-            evenement: form.evenement.value, debut: form.debut.value, fin: form.fin.value,
+            evenement: form.evenement.value, debut: debutV, fin: finV,
             adresse_envoi: form.adresse ? form.adresse.value : null, message: form.message.value, site_web: form.site_web.value,
-            creneau: form.creneau && form.creneau.value ? new Date(form.creneau.value).toISOString() : null
+            creneau: form.creneau && form.creneau.value ? new Date(form.creneau.value).toISOString() : null,
+            creneau_prestation: form.heure_prestation && form.heure_prestation.value ? new Date(form.evenement.value + 'T' + form.heure_prestation.value).toISOString() : null,
+            adresse_prestation: form.lieu_prestation ? form.lieu_prestation.value.trim() || null : null
           }).then(function (r) {
             L.panier.vider();
             var suivi = 'panier.html?commande=' + r.commande_id + '&envoye=1';

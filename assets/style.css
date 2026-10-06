@@ -1019,3 +1019,19 @@ a.puce { text-decoration: none; display: inline-flex; align-items: center; color
   .a-onglets .entete .panier-lien, .a-onglets .entete .nav__compte { display: none; }
   .menu-ouvert .onglets { display: none; }
 }
+
+/* Catalogue : onglets d'univers (Tenues, Matériel, Prestations) */
+.univers-onglets { display: flex; gap: 4px; margin: 0 0 16px; border-bottom: 1px solid var(--ligne); overflow-x: auto; scrollbar-width: none; }
+.univers-onglets::-webkit-scrollbar { display: none; }
+.univers-onglet { flex: 0 0 auto; background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 12px 16px; font: inherit; font-family: var(--serif); font-size: 1.15rem; color: var(--encre); opacity: .6; cursor: pointer; transition: opacity .2s, border-color .2s; }
+.univers-onglet[aria-selected="true"] { opacity: 1; border-bottom-color: var(--bordeaux); color: var(--bordeaux); }
+.univers-onglet:hover { opacity: 1; }
+
+/* Accueil : « Votre fête de A à Z » */
+.hub-az { display: grid; gap: 16px; }
+@media (min-width: 768px) { .hub-az { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+.hub-az__carte { display: grid; gap: 8px; padding: 26px 22px; border: 1px solid var(--ligne); border-radius: var(--rayon-l); background: var(--ivoire-clair); text-decoration: none; color: inherit; transition: transform .3s var(--ease), border-color .3s; }
+.hub-az__carte:hover { transform: translateY(-3px); border-color: var(--or); }
+.hub-az__carte h3 { margin: 0; font-size: 1.6rem; }
+.hub-az__carte p { margin: 0; }
+.hub-az__lien { color: var(--bordeaux); font-weight: 600; font-size: 14px; }

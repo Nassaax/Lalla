@@ -345,6 +345,12 @@
     }
   };
 
+  /** Univers d'une catégorie : tenue, materiel ou prestation (voir config.univers). */
+  L.universDe = function (categorie) {
+    var u = C.univers || {};
+    return Object.keys(u).filter(function (k) { return u[k].indexOf(categorie) >= 0; })[0] || 'tenue';
+  };
+
   L.ui.etatVide = function (el, message, action) {
     L.vider(el).appendChild(h('div', { class: 'vide' }, L.ui.motifSvg('vide__motif'), h('p', null, message), action || null));
   };
@@ -747,7 +753,7 @@
       var retour = h('div');
       var typeBloc = h('div', { class: 'champ', hidden: true },
         h('span', { class: 'champ__libelle' }, t('auth.type')),
-        h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'creatrice'].map(function (ty, i) {
+        h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'creatrice', 'prestataire', 'loueur'].map(function (ty, i) {
           return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'type', value: ty, checked: i === 0 }), h('span', null, t('type.' + ty)));
         })));
       var form = h('form', { class: 'formulaire', novalidate: true },
@@ -908,6 +914,13 @@
       L.panier.ecrire(p);
     },
     definirDates: function (dates) { var p = L.panier.lire(); p.dates = dates; L.panier.ecrire(p); },
+    /** Heure et lieu des prestations (communs au panier, comme la date de la fête). */
+    prestation: function (o) {
+      var p = L.panier.lire();
+      if (o.heure) p.heure_prestation = o.heure;
+      if (o.lieu) p.lieu_prestation = o.lieu;
+      L.panier.ecrire(p);
+    },
     vider: function () { L.panier.ecrire({ articles: [], dates: null }); }
   };
 

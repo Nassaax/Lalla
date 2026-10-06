@@ -34,6 +34,29 @@
       beauteMariee: 'https://exemple.com/boutique-beaute'
     },
     categories: ['caftan', 'takchita', 'mariee', 'homme', 'enfant', 'accessoire'],
+    // Hub des fêtes : trois univers d'annonces, chacun avec ses catégories (même mécanique de réservation)
+    univers: {
+      tenue: ['caftan', 'takchita', 'mariee', 'homme', 'enfant', 'accessoire'],
+      materiel: ['sono', 'eclairage', 'decoration', 'mobilier', 'vaisselle'],
+      prestation: ['maquillage', 'coiffure', 'photographie', 'videographie', 'henne', 'negafa', 'dj', 'traiteur', 'patisserie']
+    },
+    // Critères propres à chaque catégorie (matériel et prestations) : type nombre | oui_non | choix | texte
+    criteres: {
+      sono: [{ cle: 'puissance_w', type: 'nombre', unite: 'W', requis: true }, { cle: 'nb_enceintes', type: 'nombre' }, { cle: 'micro', type: 'oui_non' }, { cle: 'table_mixage', type: 'oui_non' }, { cle: 'installation', type: 'oui_non' }],
+      eclairage: [{ cle: 'type_eclairage', type: 'choix', options: ['projecteurs', 'jeux_lumiere', 'guirlandes', 'neon', 'bougies_led'], requis: true }, { cle: 'nb_elements', type: 'nombre' }, { cle: 'installation', type: 'oui_non' }],
+      decoration: [{ cle: 'style', type: 'choix', options: ['oriental', 'moderne', 'boheme', 'luxe'], requis: true }, { cle: 'contenu', type: 'texte' }, { cle: 'dimensions', type: 'texte' }, { cle: 'installation', type: 'oui_non' }],
+      mobilier: [{ cle: 'type_mobilier', type: 'choix', options: ['amaria', 'trone', 'salon_marocain', 'tables', 'chaises', 'estrade'], requis: true }, { cle: 'quantite', type: 'nombre' }, { cle: 'dimensions', type: 'texte' }, { cle: 'installation', type: 'oui_non' }],
+      vaisselle: [{ cle: 'type_vaisselle', type: 'choix', options: ['service_the', 'plateaux', 'verres', 'couverts', 'assiettes', 'nappes'], requis: true }, { cle: 'quantite', type: 'nombre' }, { cle: 'nb_personnes', type: 'nombre' }],
+      maquillage: [{ cle: 'nb_personnes_max', type: 'nombre', requis: true }, { cle: 'duree_min', type: 'nombre', unite: 'min' }, { cle: 'essai', type: 'oui_non' }, { cle: 'deplacement', type: 'oui_non' }, { cle: 'faux_cils', type: 'oui_non' }],
+      coiffure: [{ cle: 'nb_personnes_max', type: 'nombre', requis: true }, { cle: 'duree_min', type: 'nombre', unite: 'min' }, { cle: 'essai', type: 'oui_non' }, { cle: 'deplacement', type: 'oui_non' }],
+      photographie: [{ cle: 'heures', type: 'nombre', unite: 'h', requis: true }, { cle: 'nb_photos', type: 'nombre' }, { cle: 'delai_livraison', type: 'nombre', unite: 'jours' }, { cle: 'album', type: 'oui_non' }, { cle: 'drone', type: 'oui_non' }, { cle: 'deplacement', type: 'oui_non' }],
+      videographie: [{ cle: 'heures', type: 'nombre', unite: 'h', requis: true }, { cle: 'film_minutes', type: 'nombre', unite: 'min' }, { cle: 'delai_livraison', type: 'nombre', unite: 'jours' }, { cle: 'drone', type: 'oui_non' }, { cle: 'deplacement', type: 'oui_non' }],
+      henne: [{ cle: 'style_henne', type: 'choix', options: ['marocain', 'soudanais', 'indien', 'khaliji'], requis: true }, { cle: 'zones', type: 'choix', options: ['mains', 'mains_pieds'] }, { cle: 'nb_personnes_max', type: 'nombre' }, { cle: 'deplacement', type: 'oui_non' }],
+      negafa: [{ cle: 'nb_tenues', type: 'nombre', requis: true }, { cle: 'equipe', type: 'nombre' }, { cle: 'amaria', type: 'oui_non' }, { cle: 'deplacement', type: 'oui_non' }],
+      dj: [{ cle: 'heures', type: 'nombre', unite: 'h', requis: true }, { cle: 'styles', type: 'texte' }, { cle: 'materiel_inclus', type: 'oui_non' }, { cle: 'eclairage_inclus', type: 'oui_non' }],
+      traiteur: [{ cle: 'cuisine', type: 'choix', options: ['marocaine', 'orientale', 'internationale'], requis: true }, { cle: 'nb_personnes_min', type: 'nombre' }, { cle: 'nb_personnes_max', type: 'nombre' }, { cle: 'service_inclus', type: 'oui_non' }, { cle: 'halal', type: 'oui_non' }],
+      patisserie: [{ cle: 'type_patisserie', type: 'choix', options: ['gateaux_marocains', 'piece_montee', 'sale', 'sucre_sale'], requis: true }, { cle: 'nb_personnes', type: 'nombre' }, { cle: 'livraison', type: 'oui_non' }]
+    },
     sousCategories: ['mdamma', 'bijoux', 'couronne'],
     occasions: ['mariage', 'fiancailles', 'henne', 'aid', 'soiree', 'bapteme'],
     tailles: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', 'unique', 'enfant'],
