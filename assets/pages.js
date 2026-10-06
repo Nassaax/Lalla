@@ -1120,7 +1120,22 @@
       if (p.nb_avis) ld.aggregateRating = { '@type': 'AggregateRating', ratingValue: p.note_moyenne, reviewCount: p.nb_avis };
       document.head.appendChild(h('script', { type: 'application/ld+json', text: JSON.stringify(ld) }));
       var grille = h('div', { class: 'grille-cartes' });
-      tenues.forEach(function (tn) { var c = L.carteTenue(tn); c.setAttribute('data-reveal', ''); grille.appendChild(c); });
+      tenues.forEach(function (tn) { var c = L.carteTenue(tn); c.setAttribute('data-reveal', ''); c.setAttribute('data-univers', tn.univers || L.universDe(tn.categorie)); grille.appendChild(c); });
+      // Une même fournisseuse peut proposer tenues, prestations et matériel : filtre simple seulement si nécessaire
+      var parUnivers = {};
+      tenues.forEach(function (tn) { var u = tn.univers || L.universDe(tn.categorie); parUnivers[u] = (parUnivers[u] || 0) + 1; });
+      var universPresents = Object.keys(C.univers).filter(function (u) { return parUnivers[u]; });
+      var filtreUnivers = null;
+      if (universPresents.length > 1) {
+        filtreUnivers = h('div', { class: 'puces', style: { margin: '0 0 20px' } });
+        [''].concat(universPresents).forEach(function (u) {
+          filtreUnivers.appendChild(h('button', { type: 'button', class: 'puce', 'aria-pressed': String(u === ''), onclick: function (e) {
+            $$('.puce', filtreUnivers).forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+            e.currentTarget.setAttribute('aria-pressed', 'true');
+            $$('.carte', grille).forEach(function (c) { c.hidden = Boolean(u) && c.getAttribute('data-univers') !== u; });
+          } }, u ? t('univers.' + u) + ' (' + parUnivers[u] + ')' : t('profil.tout') + ' (' + tenues.length + ')'));
+        });
+      }
       var initiale = (nom[0] || '·').toUpperCase();
       var langues = (p.langues || []).map(function (l) { return t('langue.' + l); }).join(', ');
       var faits = [
@@ -1148,7 +1163,7 @@
               h('button', { class: 'bouton', type: 'button', onclick: function () { L.contacter(p.id); } }, t('msg.contacter_nom', { nom: nom })),
               h('button', { class: 'lien-discret', type: 'button', onclick: function () { L.ui.signaler('profil', p.id); } }, t('signal.profil'))))),
         h('section', { class: 'section', style: { paddingTop: '48px' } }, h('h2', null, t('profil.annonces', { nom: nom })),
-          tenues.length ? grille : h('p', { class: 'texte' }, t('boutique.vide'))),
+          filtreUnivers, tenues.length ? grille : h('p', { class: 'texte' }, t('boutique.vide'))),
         avis.length ? h('section', { class: 'section', style: { paddingTop: 0 } }, h('h2', null, t('boutique.avis_titre')), h('div', { class: 'avis-liste' }, avis.map(rendreAvis))) : null));
       L.motion.reveler(zone);
       if (window.gsap && L.motion.actif) L.motion.titreLignes($('h1', zone), 0.1);

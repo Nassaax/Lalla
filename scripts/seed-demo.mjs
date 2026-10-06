@@ -5,6 +5,7 @@
 // Option : STRIPE_SECRET_KEY=sk_test_… SEED_STRIPE=1 crée de vrais comptes Connect Express de test.
 // Refuse de s'exécuter avec une clé Stripe live.
 import { createClient } from '@supabase/supabase-js';
+import '../assets/config.js';
 
 const URL_SB = process.env.SUPABASE_URL;
 const CLE = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -72,7 +73,7 @@ async function creerUtilisateur(email, meta) {
   const existant = await sb.auth.admin.listUsers({ page: 1, perPage: 1000 });
   const u = (existant.data?.users || []).find((x) => x.email === email);
   if (u) return u.id;
-  const r = verifier(await sb.auth.admin.createUser({ email, password: MOT_DE_PASSE_DEMO, email_confirm: true, user_metadata: { ...meta, cgu: true } }), `utilisateur ${email}`);
+  const r = verifier(await sb.auth.admin.createUser({ email, password: MOT_DE_PASSE_DEMO, email_confirm: true, user_metadata: { ...meta, cgu: true, cgu_version: globalThis.LALLA_CONFIG.cguVersion } }), `utilisateur ${email}`);
   return r.user.id;
 }
 

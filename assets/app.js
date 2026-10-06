@@ -168,7 +168,7 @@
         options: {
           emailRedirectTo: location.origin + '/compte.html',
           data: {
-            prenom: d.prenom, nom: d.nom, langue: I.langue, cgu: true, ville: d.ville || null,
+            prenom: d.prenom, nom: d.nom, langue: I.langue, cgu: true, cgu_version: C.cguVersion, ville: d.ville || null,
             type_fournisseuse: d.typeFournisseuse || null, partenaire: d.partenaire ? 'true' : 'false'
           }
         }
@@ -349,6 +349,37 @@
   L.universDe = function (categorie) {
     var u = C.univers || {};
     return Object.keys(u).filter(function (k) { return u[k].indexOf(categorie) >= 0; })[0] || 'tenue';
+  };
+
+  /**
+   * Conditions générales : tout membre connecté doit avoir accepté la version en vigueur.
+   * Comptes créés avant cette version : acceptation demandée à la connexion (pas sur les pages légales).
+   */
+  L.ui.verifierCgu = function () {
+    var page = document.body.getAttribute('data-page');
+    if (!L.session || page === 'legal' || $('.modale-cgu')) return;
+    L.sb.from('profils_prives').select('cgu_version').eq('id', L.session.user.id).maybeSingle().then(function (r) {
+      if (r.error || (r.data && r.data.cgu_version === C.cguVersion)) return;
+      var accepte = false;
+      var retour = h('div');
+      var form = h('form', { class: 'formulaire modale-cgu' },
+        h('p', { class: 'texte' }, t('cgu.intro')),
+        h('ul', { class: 'cgu-points' }, ['cgu.p1', 'cgu.p2', 'cgu.p3', 'cgu.p4'].map(function (k) { return h('li', null, t(k)); })),
+        h('label', { class: 'case' }, h('input', { type: 'checkbox', name: 'ok', required: true }), h('span', { html: t('auth.cgu') })),
+        retour,
+        h('button', { class: 'bouton bouton--plein', type: 'submit' }, t('cgu.accepter')),
+        h('button', { class: 'lien', type: 'button', style: { justifySelf: 'center' }, onclick: function () { L.auth.deconnexion(); } }, t('cgu.refuser')));
+      var m = L.ui.modale(form, { titre: t('cgu.titre'), surFermeture: function () { if (!accepte) setTimeout(L.ui.verifierCgu, 300); } });
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!form.ok.checked) { L.vider(retour).appendChild(h('p', { class: 'message message--erreur' }, t('auth.erreur_cgu'))); return; }
+        L.sb.from('profils_prives').update({ cgu_version: C.cguVersion, consentement_cgu_at: new Date().toISOString() }).eq('id', L.session.user.id).then(function (u) {
+          if (u.error) { L.vider(retour).appendChild(h('p', { class: 'message message--erreur' }, L.messageErreur(u.error))); return; }
+          accepte = true;
+          m.fermer();
+        });
+      });
+    });
   };
 
   L.ui.etatVide = function (el, message, action) {
@@ -1048,6 +1079,7 @@
     L.prechargement();
     I.appliquer(document);
     L.auth.init();
+    L.auth.surChangement(function (session) { if (session) L.ui.verifierCgu(); });
     L.ui.consentement();
     var page = document.body.getAttribute('data-page');
     var fn = L.pages[page];

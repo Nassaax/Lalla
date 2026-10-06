@@ -146,7 +146,23 @@ try {
   assert.equal(b2.d, plus(19)); assert.equal(b2.f, plus(21));
   ok('matériel : caution de 300 €, pas de pressing, blocage du 1er au dernier jour sans battement');
 
-  assert.deepEqual([...ctx.erreurs, ...ctxC.erreurs], [], 'aucune erreur console');
+  etape('Conditions générales : compte existant sans acceptation');
+  await q(`update profils_prives set cgu_version = null where email = 'cliente3@demo.lalla.be'`);
+  await assert.rejects(api('commande-creer', { articles: [{ tenue_id: sono.id, mode_remise: 'main_propre' }], evenement: plus(40), debut: plus(39), fin: plus(41) }, 'cliente3@demo.lalla.be'), /conditions générales/);
+  const ctxG = await contexte(b, { largeur: 390, hauteur: 844, mobile: true });
+  const gPage = await ctxG.newPage();
+  await connecter(gPage, 'cliente3@demo.lalla.be');
+  await gPage.waitForSelector('.modale-cgu');
+  await gPage.check('.modale-cgu [name=ok]', { force: true });
+  await gPage.click('.modale-cgu button[type=submit]');
+  await gPage.waitForSelector('.modale-cgu', { state: 'detached' });
+  const [cgu] = await q(`select cgu_version, consentement_cgu_at from profils_prives where email = 'cliente3@demo.lalla.be'`);
+  assert.equal(cgu.cgu_version, globalThis.LALLA_CONFIG.cguVersion); assert.ok(cgu.consentement_cgu_at);
+  await gPage.reload(); await gPage.waitForTimeout(1500);
+  assert.equal(await gPage.$('.modale-cgu'), null, 'plus de demande après acceptation');
+  ok('réservation refusée sans acceptation, fenêtre d\'acceptation à la connexion, version enregistrée');
+
+  assert.deepEqual([...ctx.erreurs, ...ctxC.erreurs, ...ctxG.erreurs], [], 'aucune erreur console');
   ok('zéro erreur console');
 } catch (e) {
   echec = true;

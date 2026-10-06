@@ -22,6 +22,8 @@
       'Liège': 'Luik', 'Limbourg': 'Limburg', 'Luxembourg': 'Luxemburg', 'Namur': 'Namen'
     },
     langues: ['fr', 'nl'],
+    // Version des conditions générales : la changer oblige chaque membre à les accepter de nouveau.
+    cguVersion: '2026-10-06',
     // Photos de l'accueil : déposez vos fichiers dans assets/photos/ et indiquez leur chemin ici
     // (ex. 'assets/photos/accueil.jpg'). Tant qu'un chemin est vide, un aplat de tissu sobre est affiché.
     photos: {
@@ -34,11 +36,11 @@
       beauteMariee: 'https://exemple.com/boutique-beaute'
     },
     categories: ['caftan', 'takchita', 'mariee', 'homme', 'enfant', 'accessoire'],
-    // Hub des fêtes : trois univers d'annonces, chacun avec ses catégories (même mécanique de réservation)
+    // Hub des fêtes : trois univers d'annonces, par ordre d'importance (tenues d'abord, matériel en complément)
     univers: {
       tenue: ['caftan', 'takchita', 'mariee', 'homme', 'enfant', 'accessoire'],
-      materiel: ['sono', 'eclairage', 'decoration', 'mobilier', 'vaisselle'],
-      prestation: ['maquillage', 'coiffure', 'photographie', 'videographie', 'henne', 'negafa', 'dj', 'traiteur', 'patisserie']
+      prestation: ['maquillage', 'coiffure', 'photographie', 'videographie', 'henne', 'negafa', 'dj', 'traiteur', 'patisserie'],
+      materiel: ['sono', 'eclairage', 'decoration', 'mobilier', 'vaisselle']
     },
     // Critères propres à chaque catégorie (matériel et prestations) : type nombre | oui_non | choix | texte
     criteres: {

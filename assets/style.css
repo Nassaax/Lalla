@@ -1029,9 +1029,14 @@ a.puce { text-decoration: none; display: inline-flex; align-items: center; color
 
 /* Accueil : « Votre fête de A à Z » */
 .hub-az { display: grid; gap: 16px; }
-@media (min-width: 768px) { .hub-az { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+@media (min-width: 768px) { .hub-az { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
+.hub-az__plus { margin: 20px 0 0; text-align: center; color: var(--encre); font-size: 15px; }
 .hub-az__carte { display: grid; gap: 8px; padding: 26px 22px; border: 1px solid var(--ligne); border-radius: var(--rayon-l); background: var(--ivoire-clair); text-decoration: none; color: inherit; transition: transform .3s var(--ease), border-color .3s; }
 .hub-az__carte:hover { transform: translateY(-3px); border-color: var(--or); }
 .hub-az__carte h3 { margin: 0; font-size: 1.6rem; }
 .hub-az__carte p { margin: 0; }
 .hub-az__lien { color: var(--bordeaux); font-weight: 600; font-size: 14px; }
+.cgu-points { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14px; line-height: 1.5; }
+.legal__resume { margin: 28px 0; padding: 22px 24px; border: 1px solid var(--or); border-radius: var(--rayon-l); background: var(--ivoire-clair); }
+.legal__resume h2 { margin-top: 0; font-size: 1.4rem; }
+.legal__resume ol { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
