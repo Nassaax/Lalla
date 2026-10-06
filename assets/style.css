@@ -1063,3 +1063,26 @@ a.puce { text-decoration: none; display: inline-flex; align-items: center; color
 .legal__resume { margin: 28px 0; padding: 22px 24px; border: 1px solid var(--or); border-radius: var(--rayon-l); background: var(--ivoire-clair); }
 .legal__resume h2 { margin-top: 0; font-size: 1.4rem; }
 .legal__resume ol { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
+
+/* Notre histoire */
+.histoire-points { display: grid; gap: 18px; }
+@media (min-width: 900px) { .histoire-points { grid-template-columns: repeat(3, 1fr); gap: 28px; } }
+.histoire-point { padding: 30px 26px; border: 1px solid var(--ligne); border-radius: var(--rayon-l); background: var(--ivoire-clair); }
+.histoire-point__num { display: block; font: 400 2.6rem/1 var(--serif); color: var(--or); margin-bottom: 14px; }
+.histoire-point h3 { margin: 0 0 10px; font-size: 1.5rem; }
+.histoire-point p { margin: 0; }
+.histoire-liste { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 12px; }
+.histoire-liste li { position: relative; padding-left: 34px; color: var(--encre); }
+.histoire-liste li::before { content: ''; position: absolute; left: 0; top: .2em; width: 20px; height: 20px; border-radius: 50%; background: var(--or) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4L18 8'/%3E%3C/svg%3E") center / 14px no-repeat; }
+.histoire-nom { max-width: 900px; text-align: center; }
+.histoire-nom .citation { margin: 0 auto; }
+.histoire-valeurs { display: grid; gap: 18px; }
+@media (min-width: 768px) { .histoire-valeurs { grid-template-columns: repeat(2, 1fr); gap: 28px; } }
+.histoire-valeur { padding: 28px 26px; border-left: 3px solid var(--or); background: var(--ivoire-clair); border-radius: 0 var(--rayon) var(--rayon) 0; }
+.histoire-valeur h3 { margin: 0 0 8px; font-size: 1.45rem; }
+.histoire-valeur p { margin: 0; }
+.histoire-insta { color: inherit; }
+/* Fiche tenue : compléter mon jour J */
+.jourj { padding-top: 0; }
+.jourj .hub-themes { margin-bottom: 0; }
+.actions--centre { justify-content: center; }

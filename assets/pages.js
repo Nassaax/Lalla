@@ -670,7 +670,7 @@
     L.motion.jouerFlip(arche);
     if (window.gsap && L.motion.actif) gsap.from(infos.children, { opacity: 0, y: 18, duration: 0.8, stagger: 0.05, ease: 'power3.out', delay: 0.15 });
 
-    if (univers === 'tenue') completerLook(tn);
+    if (univers === 'tenue') { completerLook(tn); completerJourJ(tn); }
     avisFournisseuse(f.id);
   }
 
@@ -1042,6 +1042,34 @@
     if (tn.fournisseuse && tn.fournisseuse.nb_avis) ld.aggregateRating = { '@type': 'AggregateRating', ratingValue: tn.fournisseuse.note_moyenne, reviewCount: tn.fournisseuse.nb_avis };
     var s = $('#ld-produit') || document.head.appendChild(h('script', { type: 'application/ld+json', id: 'ld-produit' }));
     s.textContent = JSON.stringify(ld);
+  }
+
+  /** « Compléter mon jour J » : prestataires réservables près de la tenue, sinon les métiers du Hub en images. */
+  var THEMES_JOURJ = [['maquillage', 'presta-maquillage', '50% 30%'], ['photographie', 'presta-photo', '50% 60%'], ['henne', 'presta-henne', '50% 50%'], ['dj', 'presta-musique', '62% 50%']];
+  function completerJourJ(tn) {
+    var zone = $('[data-jourj]');
+    if (!zone) return;
+    var grille = $('[data-jourj-grille]', zone);
+    zone.hidden = false;
+    Promise.all([
+      rechercher({ p_univers: 'prestation', p_ville: tn.ville, p_limite: 4 }).catch(function () { return []; }),
+      rechercher({ p_univers: 'prestation', p_limite: 6 }).catch(function () { return []; })
+    ]).then(function (res) {
+      var ids = res[0].map(function (x) { return x.id; });
+      var liste = res[0].concat(res[1].filter(function (x) { return ids.indexOf(x.id) < 0; })).slice(0, 4);
+      L.vider(grille);
+      if (liste.length) {
+        var g = grille.appendChild(h('div', { class: 'grille-cartes' }));
+        liste.forEach(function (p) { var c = L.carteTenue(p); c.setAttribute('data-reveal', ''); g.appendChild(c); });
+        L.motion.reveler(g);
+        return;
+      }
+      grille.appendChild(h('div', { class: 'hub-themes hub-themes--4' }, THEMES_JOURJ.map(function (th) {
+        return h('a', { class: 'hub-theme', href: 'catalogue.html?univers=prestation&categorie=' + th[0] },
+          h('img', { src: 'assets/photos/' + th[1] + '.webp', alt: '', loading: 'lazy', style: { objectPosition: th[2] } }),
+          h('span', null, t('jourj.' + { maquillage: 'maquillage', photographie: 'photo', henne: 'henne', dj: 'musique' }[th[0]])));
+      })));
+    });
   }
 
   /** « Compléter le look » : accessoires de la même fournisseuse d'abord, puis des autres. */
@@ -1567,6 +1595,14 @@
         .catch(function (err) { b.disabled = false; L.vider(retour).appendChild(h('p', { class: 'message message--erreur', role: 'alert' }, L.messageErreur(err))); });
     });
   }
+
+  // ===========================================================================
+  // Notre histoire
+  // ===========================================================================
+  L.pages.histoire = function () {
+    var insta = $('[data-instagram]');
+    if (insta && C.brand.instagram) { insta.href = 'https://instagram.com/' + encodeURIComponent(C.brand.instagram); insta.textContent = '@' + C.brand.instagram; }
+  };
 
   // ===========================================================================
   // Pages légales : sommaire

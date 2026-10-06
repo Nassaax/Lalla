@@ -562,6 +562,7 @@
           h('li', null, h('a', { href: 'compte.html', 'data-i18n': 'nav.compte' }, t('nav.compte'))))),
       h('div', null, h('h2', { class: 'pied__titre', 'data-i18n': 'footer.aide' }, t('footer.aide')),
         h('ul', { class: 'pied__liens' },
+          h('li', null, h('a', { href: 'notre-histoire.html', 'data-i18n': 'footer.histoire' }, t('footer.histoire'))),
           h('li', null, h('a', { href: 'aide.html', 'data-i18n': 'footer.centre_aide' }, t('footer.centre_aide'))),
           h('li', null, h('a', { href: 'conditions.html', 'data-i18n': 'footer.conditions' }, t('footer.conditions'))),
           h('li', null, h('a', { href: 'mentions-legales.html', 'data-i18n': 'footer.mentions' }, t('footer.mentions'))),

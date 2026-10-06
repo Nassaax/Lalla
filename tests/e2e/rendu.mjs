@@ -15,7 +15,7 @@ const [boutique] = await q(`select id from profils where type_fournisseuse = 'ne
 const dossier = path.join(racine, '.tmp/captures');
 mkdirSync(dossier, { recursive: true });
 
-const PUBLIQUES = ['index.html', 'catalogue.html', `tenue.html?id=${tenue.id}`, `boutique.html?id=${boutique.id}`, 'panier.html', 'partenaires.html',
+const PUBLIQUES = ['index.html', 'catalogue.html', `tenue.html?id=${tenue.id}`, `boutique.html?id=${boutique.id}`, 'panier.html', 'partenaires.html', 'notre-histoire.html',
   'conditions.html', 'mentions-legales.html', 'confidentialite.html', 'compte.html', 'aide.html'];
 const CONNECTEES = [
   ['cliente1@demo.lalla.be', ['compte.html?vue=reservations', 'compte.html?vue=mensurations', 'compte.html?vue=profil']],

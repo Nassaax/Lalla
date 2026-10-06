@@ -183,6 +183,7 @@
     'langue.nl': 'Nederlands',
     'langue.changer': 'Changer de langue',
     'footer.texte': 'Location de tenues marocaines entre particulières, negafas et créatrices, partout en Belgique.',
+    'footer.histoire': 'Notre histoire',
     'footer.plateforme': 'Plateforme',
     'footer.aide': 'Informations',
     'footer.conditions': 'Conditions générales',
@@ -478,6 +479,7 @@
     'langue.nl': 'Nederlands',
     'langue.changer': 'Taal wijzigen',
     'footer.texte': 'Verhuur van Marokkaanse kledij tussen particulieren, negafa\'s en ontwerpsters, in heel België.',
+    'footer.histoire': 'Ons verhaal',
     'footer.plateforme': 'Platform',
     'footer.aide': 'Informatie',
     'footer.conditions': 'Algemene voorwaarden',
@@ -1157,6 +1159,37 @@
     'profil.autres_roles': 'Andere activiteiten', 'profil.devenir_partenaire': 'Mijn zaak vermelden in de Feest- & huwelijkshub'
   });
 
+
+  ajouter('fr', {
+    'jourj.surtitre': 'Hub fêtes & mariages', 'jourj.titre': 'Compléter mon jour J',
+    'jourj.chapeau': 'Maquillage, henné, photo, musique : des prestataires près de chez vous, à réserver au même endroit.',
+    'jourj.voir': 'Voir le Hub', 'jourj.maquillage': 'Maquillage et coiffure', 'jourj.photo': 'Photographes', 'jourj.henne': 'Henné', 'jourj.musique': 'Musique et DJ'
+  });
+  ajouter('nl', {
+    'jourj.surtitre': 'Feest- & huwelijkshub', 'jourj.titre': 'Mijn grote dag vervolledigen',
+    'jourj.chapeau': 'Make-up, henna, foto, muziek: dienstverleners bij u in de buurt, te boeken op één plek.',
+    'jourj.voir': 'Bekijk de hub', 'jourj.maquillage': 'Make-up en kapsels', 'jourj.photo': 'Fotografen', 'jourj.henne': 'Henna', 'jourj.musique': 'Muziek en dj',
+    'meta.histoire.titre': 'Ons verhaal: waarom LALLAT bestaat | {brand}',
+    'meta.histoire.desc': 'LALLAT laat de mooiste Marokkaanse kledij circuleren en brengt de dienstverleners van uw feest samen, in heel België. Ons verhaal en onze engagementen.',
+    'histoire.surtitre': 'Ons verhaal', 'histoire.titre': 'Een kaftan hoort niet in een kast te slapen.',
+    'histoire.chapeau': 'LALLAT ontstond uit een eenvoudig idee: de mooiste kledij van onze feesten verdient het om meer dan één keer gedragen te worden, en de vrouwen die ze dragen verdienen het om alles op één plek te vinden.',
+    'histoire.constat_surtitre': 'De vaststelling', 'histoire.constat_titre': 'Drie dingen die ons altijd opvielen',
+    'histoire.p1_titre': 'Prachtige kledij, één avond gedragen', 'histoire.p1_texte': 'Kaftans, takchita\'s, bruidskledij: handgemaakte stukken die veel kosten en vaak na één feest in een hoes belanden.',
+    'histoire.p2_titre': 'Een nieuw feest, een nieuwe outfit', 'histoire.p2_texte': 'Verloving, henna, huwelijk, Aïd: elk seizoen brengt uitnodigingen. Telkens stralen zonder je te ruïneren is een puzzel.',
+    'histoire.p3_titre': 'Dienstverleners via mond-tot-mondreclame', 'histoire.p3_texte': 'Negafa, hennaya, visagiste, fotograaf: je zoekt contacten, zonder vermelde prijzen of beoordelingen, en je duimt.',
+    'histoire.reponse_surtitre': 'Ons antwoord', 'histoire.reponse_titre': 'Een platform om kledij te laten circuleren en het hele feest samen te brengen',
+    'histoire.reponse_texte': 'Op LALLAT verhuren vrouwen met kledij die aan wie ernaar zoekt. En in de Feest- & huwelijkshub boekt u op één plek de visagiste, de hennaya, de fotograaf of de geluidsinstallatie, met vermelde prijzen.',
+    'histoire.r1': 'Veilige online betaling', 'histoire.r2': 'Waarborg en plaatsbeschrijving voor kledij', 'histoire.r3': 'Dienstverlener betaald zodra de prestatie geleverd is', 'histoire.r4': 'Beoordelingen na elke verhuur en elke prestatie',
+    'histoire.nom_surtitre': 'Waarom « LALLAT »', 'histoire.nom_titre': '« Lalla » is de respectvolle manier om een vrouw aan te spreken in Marokko. LALLAT is het meervoud: een platform voor hen, allemaal.',
+    'histoire.valeurs_surtitre': 'Onze engagementen', 'histoire.valeurs_titre': 'Wat elke beslissing leidt',
+    'histoire.v1_titre': 'Overdracht', 'histoire.v1_texte': 'Kledij die circuleert, is een traditie die leeft. Elke verhuur verlengt het verhaal van een stuk en het vakmanschap van wie het maakte.',
+    'histoire.v2_titre': 'Vertrouwen', 'histoire.v2_texte': 'Advertenties nagelezen door ons team, veilige betaling, beoordelingen gekoppeld aan een echte boeking. En bij een probleem beslist ons team.',
+    'histoire.v3_titre': 'Nabijheid', 'histoire.v3_texte': 'Particulieren, ontwerpsters en professionals van hier, in heel België. Je past, je ontmoet elkaar, je beveelt aan.',
+    'histoire.v4_titre': 'Alle vrouwen', 'histoire.v4_texte': 'Met of zonder hoofddoek, alle maten, elk budget, elk feest. Iedereen moet haar outfit vinden en zich thuis voelen.',
+    'histoire.invitees_surtitre': 'De gemeenschap', 'histoire.invitees_titre': 'Word een LALLAT-gaste.',
+    'histoire.invitees_texte': 'Deel uw outfit van de grote dag met #LallatInvitée: we zetten de mooiste in de kijker op onze Instagram.',
+    'histoire.cta_tenues': 'Mijn outfit vinden', 'histoire.cta_proposer': 'Mijn kledij aanbieden'
+  });
   // ---------------------------------------------------------------------------
   // Hub mariage
   // ---------------------------------------------------------------------------
