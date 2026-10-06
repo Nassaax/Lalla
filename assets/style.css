@@ -1028,14 +1028,21 @@ a.puce { text-decoration: none; display: inline-flex; align-items: center; color
 .univers-onglet:hover { opacity: 1; }
 
 /* Accueil : « Votre fête de A à Z » */
-.hub-az { display: grid; gap: 16px; }
-@media (min-width: 768px) { .hub-az { grid-template-columns: repeat(2, 1fr); gap: 24px; } }
-.hub-az__plus { margin: 20px 0 0; text-align: center; color: var(--encre); font-size: 15px; }
-.hub-az__carte { display: grid; gap: 8px; padding: 26px 22px; border: 1px solid var(--ligne); border-radius: var(--rayon-l); background: var(--ivoire-clair); text-decoration: none; color: inherit; transition: transform .3s var(--ease), border-color .3s; }
-.hub-az__carte:hover { transform: translateY(-3px); border-color: var(--or); }
-.hub-az__carte h3 { margin: 0; font-size: 1.6rem; }
-.hub-az__carte p { margin: 0; }
-.hub-az__lien { color: var(--bordeaux); font-weight: 600; font-size: 14px; }
+/* Bandeau Hub fêtes & mariages (accueil) */
+.hub-bandeau { display: grid; gap: 22px; align-items: center; padding: clamp(26px, 4.5vw, 48px); border-radius: var(--rayon-l); background: var(--bordeaux); color: #F3E7DC; }
+.hub-bandeau .surtitre { color: var(--or-clair); margin: 0 0 8px; }
+.hub-bandeau h2 { margin: 0; color: #FFF7EE; font-size: clamp(1.6rem, 3.2vw, 2.4rem); }
+.hub-bandeau p { margin: 10px 0 0; }
+.hub-bandeau__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.hub-bandeau__actions .bouton { flex: 1 1 150px; justify-content: center; }
+.hub-bandeau__second { --fond: transparent; --texte: #FFF7EE; border-color: rgba(255, 247, 238, .7); }
+.hub-bandeau__second:hover { --fond: rgba(255, 247, 238, .12); --texte: #fff; border-color: #fff; }
+@media (min-width: 900px) { .hub-bandeau { grid-template-columns: 1fr auto; gap: 40px; } .hub-bandeau__actions { flex-wrap: nowrap; } .hub-bandeau__actions .bouton { flex: 0 0 auto; min-width: 160px; } }
+/* Page Hub : sections réservables */
+.hub-bloc + .hub-bloc { margin-top: clamp(48px, 7vw, 80px); }
+.hub-bloc { scroll-margin-top: calc(var(--entete-h) + 16px); }
+.grille-cartes > .vide { grid-column: 1 / -1; }
+.hub-ancres { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
 .cgu-points { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14px; line-height: 1.5; }
 .legal__resume { margin: 28px 0; padding: 22px 24px; border: 1px solid var(--or); border-radius: var(--rayon-l); background: var(--ivoire-clair); }
 .legal__resume h2 { margin-top: 0; font-size: 1.4rem; }

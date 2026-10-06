@@ -153,10 +153,6 @@
     "resa.lieu": "Lieu : {lieu}",
     "resa.signaler": "Signaler un problème",
     "litige.m_non_realisee": "Prestation non réalisée",
-    "hub.az.surtitre": "Le hub de vos fêtes",
-    "hub.az.titre": "Votre fête de A à Z",
-    "hub.az.texte": "La tenue de vos rêves… et toutes les mains qui la subliment. Réservez au même endroit, payez en toute sécurité.",
-    "hub.az.voir": "Découvrir",
     "cgu.titre": "Nos conditions générales",
     "cgu.intro": "Avant de continuer, merci de prendre connaissance des points essentiels de nos conditions générales :",
     "cgu.p1": "LALLAT est une plateforme de mise en relation : la location ou la prestation est conclue directement entre le membre qui propose et celui qui réserve.",
@@ -165,8 +161,6 @@
     "cgu.p4": "Le paiement passe par la plateforme ; une caution en espèces se règle directement entre membres, sans intervention de LALLAT.",
     "cgu.accepter": "J'accepte et je continue",
     "cgu.refuser": "Je refuse et je me déconnecte",
-    "hub.az.materiel": "Besoin de matériel ? Sono, éclairage, décoration, amaria…",
-    "hub.az.materiel_lien": "Voir le matériel",
     "profil.tout": "Tout",
     "cat.titre_materiel": "Le matériel",
     "cat.titre_prestation": "Les prestations",
@@ -176,7 +170,7 @@
     'nav.collections': 'Collections',
     'nav.comment': 'Comment ça marche',
     'nav.proposer': 'Proposer une tenue',
-    'nav.partenaires': 'Annuaire des pros',
+    'nav.partenaires': 'Hub fêtes & mariages',
     'nav.compte': 'Mon espace',
     'nav.connexion': 'Connexion',
     'nav.panier': 'Panier',
@@ -245,7 +239,7 @@
     'auth.je_suis': 'Je souhaite',
     'auth.role_cliente': 'Louer des tenues',
     'auth.role_fournisseuse': 'Proposer mes tenues',
-    'auth.role_partenaire': 'Référencer mon activité (hub mariage)',
+    'auth.role_partenaire': 'Référencer mon activité (Hub fêtes & mariages)',
     'auth.type': 'Vous êtes',
     'auth.cgu': 'J\'ai lu et j\'accepte les <a href="conditions.html" target="_blank">conditions générales</a> (LALLAT est une plateforme de mise en relation) et la <a href="confidentialite.html" target="_blank">politique de confidentialité</a>.',
     'auth.mdp_regle': '8 caractères minimum',
@@ -454,10 +448,6 @@
     "resa.lieu": "Plaats: {lieu}",
     "resa.signaler": "Een probleem melden",
     "litige.m_non_realisee": "Dienst niet geleverd",
-    "hub.az.surtitre": "De hub van uw feesten",
-    "hub.az.titre": "Uw feest van A tot Z",
-    "hub.az.texte": "De kledij van uw dromen… en alle handen die ze laten stralen. Boek op één plek, betaal veilig.",
-    "hub.az.voir": "Ontdekken",
     "cgu.titre": "Onze algemene voorwaarden",
     "cgu.intro": "Neem voor u verdergaat kennis van de belangrijkste punten van onze algemene voorwaarden:",
     "cgu.p1": "LALLAT is een platform dat leden met elkaar in contact brengt: de huur of dienst wordt rechtstreeks gesloten tussen het lid dat aanbiedt en het lid dat boekt.",
@@ -466,8 +456,6 @@
     "cgu.p4": "De betaling verloopt via het platform; een waarborg in contanten wordt rechtstreeks tussen leden geregeld, zonder tussenkomst van LALLAT.",
     "cgu.accepter": "Ik aanvaard en ga verder",
     "cgu.refuser": "Ik weiger en meld me af",
-    "hub.az.materiel": "Materiaal nodig? Geluid, verlichting, decoratie, amaria…",
-    "hub.az.materiel_lien": "Bekijk het materiaal",
     "profil.tout": "Alles",
     "cat.titre_materiel": "Het materiaal",
     "cat.titre_prestation": "De diensten",
@@ -477,7 +465,7 @@
     'nav.collections': 'Collecties',
     'nav.comment': 'Hoe werkt het',
     'nav.proposer': 'Kledij aanbieden',
-    'nav.partenaires': 'Gids van professionals',
+    'nav.partenaires': 'Feest- & huwelijkshub',
     'nav.compte': 'Mijn ruimte',
     'nav.connexion': 'Inloggen',
     'nav.panier': 'Winkelmand',
@@ -545,7 +533,7 @@
     'auth.je_suis': 'Ik wil',
     'auth.role_cliente': 'Kledij huren',
     'auth.role_fournisseuse': 'Mijn kledij aanbieden',
-    'auth.role_partenaire': 'Mijn zaak vermelden (huwelijkshub)',
+    'auth.role_partenaire': 'Mijn zaak vermelden (Feest- & huwelijkshub)',
     'auth.type': 'U bent',
     'auth.cgu': 'Ik heb de <a href="conditions.html" target="_blank">algemene voorwaarden</a> (LALLAT is een platform dat leden in contact brengt) en het <a href="confidentialite.html" target="_blank">privacybeleid</a> gelezen en aanvaard.',
     'auth.mdp_regle': 'Minstens 8 tekens',
@@ -1067,7 +1055,7 @@
     'profil.exporter': 'Télécharger mes données', 'profil.supprimer': 'Supprimer mon compte',
     'profil.supprimer_texte': 'Cette action est définitive. Vos annonces, mensurations et coordonnées seront supprimées. L\'historique comptable est conservé de façon anonyme.',
     'profil.supprimer_saisir': 'Tapez SUPPRIMER pour confirmer',
-    'profil.autres_roles': 'Autres activités', 'profil.devenir_partenaire': 'Référencer mon activité au hub mariage'
+    'profil.autres_roles': 'Autres activités', 'profil.devenir_partenaire': 'Référencer mon activité au Hub fêtes & mariages'
   });
   ajouter('nl', {
     'meta.mentions.titre': 'Wettelijke vermeldingen | {brand}', 'meta.mentions.desc': 'Wettelijke vermeldingen van het platform.',
@@ -1166,13 +1154,15 @@
     'profil.exporter': 'Mijn gegevens downloaden', 'profil.supprimer': 'Mijn account verwijderen',
     'profil.supprimer_texte': 'Deze actie is definitief. Uw advertenties, afmetingen en gegevens worden verwijderd. De boekhoudkundige geschiedenis wordt anoniem bewaard.',
     'profil.supprimer_saisir': 'Typ SUPPRIMER om te bevestigen',
-    'profil.autres_roles': 'Andere activiteiten', 'profil.devenir_partenaire': 'Mijn zaak vermelden in de huwelijkshub'
+    'profil.autres_roles': 'Andere activiteiten', 'profil.devenir_partenaire': 'Mijn zaak vermelden in de Feest- & huwelijkshub'
   });
 
   // ---------------------------------------------------------------------------
   // Hub mariage
   // ---------------------------------------------------------------------------
   ajouter('fr', {
+    'hub.vide_prestation': 'Les premières prestations à réserver arrivent bientôt. En attendant, consultez l\'annuaire sur devis plus bas.',
+    'hub.vide_materiel': 'Le premier matériel à louer arrive bientôt.',
     'hub.tous': 'Tous les métiers', 'hub.aucun': 'Aucun partenaire pour ces critères, pour le moment.',
     'hub.devis': 'Demander un devis', 'hub.profil': 'Voir le profil',
     'hub.devis_intro': 'Votre message est transmis directement à {nom}, qui vous répond par email ou téléphone.',
@@ -1181,14 +1171,24 @@
     'hub.envoye': 'Demande envoyée à {nom}. Un email de confirmation vous a été adressé.'
   });
   ajouter('nl', {
-    'meta.hub.titre': 'Huwelijkshub: visagisten, fotografen, hennaya\'s en negafa\'s in heel België | {brand}',
-    'meta.hub.desc': 'Vind een betrouwbare visagiste, fotograaf, hennaya of negafa voor uw huwelijk in België. Gratis offerteaanvraag.',
-    'hub.surtitre': 'Huwelijkshub', 'hub.titre': 'De handen achter de grote dag',
-    'hub.chapeau': 'Geselecteerde visagisten, fotografen, hennaya\'s en negafa\'s in heel België. Eén bericht volstaat voor een offerte.',
+    'meta.hub.titre': 'Feest- & huwelijkshub: dienstverleners en materiaal in heel België | {brand}',
+    'meta.hub.desc': 'Visagisten, fotografen, negafa\'s, dj\'s, geluid en decoratie: boek dienstverleners en materiaal voor uw feest of huwelijk in België.',
+    'hub.surtitre': 'Feest- & huwelijkshub', 'hub.titre': 'Alles voor uw feest, op één plek',
+    'hub.chapeau': 'Dienstverleners en materiaal om online te boeken, en een gids van professionals op offerte.',
+    'hub.prest_titre': 'Dienstverleners om te boeken', 'hub.prest_texte': 'Visagisten, kappers, fotografen, hennaya\'s, negafa\'s, dj\'s: kies een datum en betaal veilig online.',
+    'hub.prest_tout': 'Alle diensten',
+    'hub.mat_titre': 'Materiaal te huur', 'hub.mat_texte': 'Geluid, verlichting, decoratie, amaria, servies: huur het materiaal voor uw feest bij particulieren en professionals.',
+    'hub.mat_tout': 'Al het materiaal',
+    'hub.annuaire_titre': 'Gids op offerte', 'hub.annuaire_texte': 'Geselecteerde professionals die op offerte werken. Eén bericht volstaat voor een voorstel.',
+    'hub.b.surtitre': 'Feest- & huwelijkshub', 'hub.b.titre': 'Op zoek naar een bepaalde dienstverlener of bepaald materiaal?',
+    'hub.b.texte': 'Visagisten, fotografen, negafa\'s, dj\'s, geluid, decoratie: bekijk de Feest- & huwelijkshub.',
+    'hub.b.prestataires': 'Dienstverleners', 'hub.b.materiel': 'Materiaal',
     'hub.beaute_surtitre': 'Schoonheid van de bruid', 'hub.beaute_titre': 'Zorg voor uzelf voor de grote dag',
     'hub.beaute_texte': 'Rituelen, oliën, gezichts- en haarverzorging: een selectie voor de weken voor het huwelijk, bij onze partnerwinkel.',
     'hub.beaute_cta': 'De winkel ontdekken',
     'hub.pro_surtitre': 'Bent u dienstverlener?', 'hub.pro_titre': 'Sluit u aan bij de gids en ontvang gerichte aanvragen.', 'hub.pro_cta': 'Mijn zaak vermelden',
+    'hub.vide_prestation': 'De eerste diensten om te boeken komen binnenkort. Bekijk intussen de gids op offerte hieronder.',
+    'hub.vide_materiel': 'Het eerste huurmateriaal komt binnenkort.',
     'hub.tous': 'Alle beroepen', 'hub.aucun': 'Momenteel geen partners voor deze criteria.',
     'hub.devis': 'Offerte aanvragen', 'hub.profil': 'Profiel bekijken',
     'hub.devis_intro': 'Uw bericht gaat rechtstreeks naar {nom}, die u per e-mail of telefoon antwoordt.',

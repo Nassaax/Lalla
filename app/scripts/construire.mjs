@@ -24,13 +24,18 @@ function remplacer(texte, avant, apres, fichier, min = 1) {
   return texte.split(avant).join(apres);
 }
 
+function remplacerMotif(texte, motif, fn, fichier) {
+  if (!motif.test(texte)) throw new Error(`${fichier} : motif introuvable ${motif} (le site a changé, adapter scripts/construire.mjs)`);
+  return texte.replace(motif, fn);
+}
+
 for (const page of PAGES) {
   let html = readFileSync(path.join(site, page), 'utf8');
   // Configuration publique (Supabase) servie par le site
   html = remplacer(html, '<script src="/api/config"></script>', `<script src="${SITE}/api/config"></script>`, page);
   // Couche app : chargée avant tout le reste, styles après ceux du site
-  html = remplacer(html, '<script src="assets/config.js"></script>', '<script src="app/natif.js"></script>\n  <script src="assets/config.js"></script>', page);
-  html = remplacer(html, '<link rel="stylesheet" href="assets/style.css">', '<link rel="stylesheet" href="assets/style.css">\n  <link rel="stylesheet" href="app/natif.css">', page);
+  html = remplacerMotif(html, /<script src="assets\/config\.js(\?v=[\w-]+)?"><\/script>/, (m) => '<script src="app/natif.js"></script>\n  ' + m, page);
+  html = remplacerMotif(html, /<link rel="stylesheet" href="assets\/style\.css(\?v=[\w-]+)?">/, (m) => m + '\n  <link rel="stylesheet" href="app/natif.css">', page);
   writeFileSync(path.join(www, page), html);
 }
 

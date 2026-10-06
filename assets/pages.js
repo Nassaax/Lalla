@@ -1480,13 +1480,32 @@
           grille.appendChild(carte);
         });
         L.motion.reveler(grille);
-        var ancre = location.hash && $(location.hash);
+        var ancre = /^#p-/.test(location.hash) && $(location.hash);
         if (ancre) ancre.scrollIntoView({ block: 'center' });
       });
     }
+    // Prestations et matériel réservables en ligne, avant l'annuaire sur devis
+    function reservables() {
+      var zones = $$('[data-hub-univers]');
+      return Promise.all(zones.map(function (zone) {
+        var u = zone.getAttribute('data-hub-univers');
+        L.ui.squelette(zone, 3);
+        return rechercher({ p_tri: 'recent', p_limite: 6, p_univers: u }).catch(function () { return []; }).then(function (liste) {
+          L.vider(zone);
+          if (!liste.length) { L.ui.etatVide(zone, t('hub.vide_' + u)); return; }
+          liste.forEach(function (tn) { var c = L.carteTenue(tn); c.setAttribute('data-reveal', ''); zone.appendChild(c); });
+          L.motion.reveler(zone);
+        });
+      }));
+    }
+    reservables().then(function () {
+      // Les grilles ont changé de hauteur : on recale l'ancre demandée (#prestataires, #materiel, #annuaire)
+      var bloc = location.hash && /^#[a-z]+$/.test(location.hash) && $(location.hash);
+      if (bloc) bloc.scrollIntoView({ block: 'start' });
+    });
     puces();
     charger();
-    document.addEventListener('lalla:langue', function () { puces(); charger(); });
+    document.addEventListener('lalla:langue', function () { reservables(); puces(); charger(); });
     var cta = $('[data-devenir-partenaire]');
     if (cta) cta.addEventListener('click', function (e) {
       e.preventDefault();

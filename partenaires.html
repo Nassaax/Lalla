@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title data-i18n="meta.hub.titre">Hub mariage : maquilleuses, photographes, hennayas et negafas partout en Belgique | LALLAT</title>
-  <meta name="description" data-i18n-attr="content:meta.hub.desc" content="Trouvez une maquilleuse, un photographe, une hennaya ou une negafa de confiance pour votre mariage en Belgique. Demande de devis gratuite.">
+  <title data-i18n="meta.hub.titre">Hub fêtes &amp; mariages : prestataires et matériel partout en Belgique | LALLAT</title>
+  <meta name="description" data-i18n-attr="content:meta.hub.desc" content="Maquilleuses, photographes, negafas, DJ, sono et décoration : réservez prestataires et matériel pour votre fête ou votre mariage en Belgique.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://lallat.be/partenaires.html">
   <link rel="alternate" hreflang="fr-BE" href="https://lallat.be/partenaires.html">
@@ -12,8 +12,8 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="LALLAT">
   <meta property="og:locale" content="fr_BE">
-  <meta property="og:title" content="Hub mariage : maquilleuses, photographes, hennayas et negafas partout en Belgique | LALLAT">
-  <meta property="og:description" content="Trouvez une maquilleuse, un photographe, une hennaya ou une negafa de confiance pour votre mariage en Belgique. Demande de devis gratuite.">
+  <meta property="og:title" content="Hub fêtes &amp; mariages : prestataires et matériel partout en Belgique | LALLAT">
+  <meta property="og:description" content="Maquilleuses, photographes, negafas, DJ, sono et décoration : réservez prestataires et matériel pour votre fête ou votre mariage en Belgique.">
   <meta property="og:url" content="https://lallat.be/partenaires.html">
   <meta property="og:image" content="https://lallat.be/assets/og-default.jpg">
   <meta name="twitter:card" content="summary_large_image">
@@ -24,7 +24,7 @@
   <meta name="apple-mobile-web-app-title" content="LALLAT">
   <link rel="preload" href="assets/polices/jost.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/polices/bodoni-moda.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/style.css?v=20261006b">
 </head>
 <body data-page="partenaires">
   <a class="lien-evitement" href="#contenu" data-i18n="nav.aller_contenu">Aller au contenu</a>
@@ -34,9 +34,14 @@
     <section class="page-entete">
       <div class="conteneur duo">
         <div>
-          <p class="surtitre" data-i18n="hub.surtitre">Hub mariage</p>
-          <h1 data-i18n="hub.titre">Les mains qui font le jour J</h1>
-          <p class="chapeau" data-i18n="hub.chapeau">Maquilleuses, photographes, hennayas et negafas prestataires sélectionnées partout en Belgique. Un message suffit pour recevoir un devis.</p>
+          <p class="surtitre" data-i18n="hub.surtitre">Hub fêtes &amp; mariages</p>
+          <h1 data-i18n="hub.titre">Tout pour votre fête, au même endroit</h1>
+          <p class="chapeau" data-i18n="hub.chapeau">Des prestataires et du matériel à réserver en ligne, et un annuaire de professionnels sur devis.</p>
+          <div class="hub-ancres">
+            <a class="bouton bouton--petit" href="#prestataires" data-i18n="hub.b.prestataires">Prestataires</a>
+            <a class="bouton bouton--ligne bouton--petit" href="#materiel" data-i18n="hub.b.materiel">Matériel</a>
+            <a class="bouton bouton--ligne bouton--petit" href="#annuaire" data-i18n="hub.annuaire_titre">Annuaire sur devis</a>
+          </div>
         </div>
         <div class="arche-cadre" style="max-width:320px;justify-self:center;width:100%">
           <div class="arche"><img src="assets/photos/hub-mariage.webp" alt="" width="800" height="1067" fetchpriority="high"></div>
@@ -45,8 +50,36 @@
     </section>
     <section class="section" style="padding-top:40px">
       <div class="conteneur">
-        <div class="puces" data-filtres-partenaires aria-label="Filtres" style="margin-bottom:32px;align-items:center"></div>
-        <div class="partenaires-grille" data-partenaires></div>
+        <div class="hub-bloc" id="prestataires" aria-labelledby="hub-prest-titre">
+          <div class="c2-entete">
+            <div>
+              <h2 id="hub-prest-titre" data-i18n="hub.prest_titre">Prestataires à réserver</h2>
+              <p data-i18n="hub.prest_texte">Maquilleuses, coiffeuses, photographes, hennayas, negafas, DJ : choisissez une date et payez en ligne en toute sécurité.</p>
+            </div>
+            <a class="lien-fleche" href="catalogue.html?univers=prestation" data-i18n="hub.prest_tout">Toutes les prestations</a>
+          </div>
+          <div class="grille-cartes" data-hub-univers="prestation"></div>
+        </div>
+        <div class="hub-bloc" id="materiel" aria-labelledby="hub-mat-titre">
+          <div class="c2-entete">
+            <div>
+              <h2 id="hub-mat-titre" data-i18n="hub.mat_titre">Matériel à louer</h2>
+              <p data-i18n="hub.mat_texte">Sono, éclairage, décoration, amaria, vaisselle : louez le matériel de votre fête auprès de particuliers et de professionnels.</p>
+            </div>
+            <a class="lien-fleche" href="catalogue.html?univers=materiel" data-i18n="hub.mat_tout">Tout le matériel</a>
+          </div>
+          <div class="grille-cartes" data-hub-univers="materiel"></div>
+        </div>
+        <div class="hub-bloc" id="annuaire" aria-labelledby="hub-annuaire-titre">
+          <div class="c2-entete">
+            <div>
+              <h2 id="hub-annuaire-titre" data-i18n="hub.annuaire_titre">Annuaire sur devis</h2>
+              <p data-i18n="hub.annuaire_texte">Des professionnels sélectionnés qui travaillent sur devis. Un message suffit pour recevoir une proposition.</p>
+            </div>
+          </div>
+          <div class="puces" data-filtres-partenaires aria-label="Filtres" style="margin-bottom:32px;align-items:center"></div>
+          <div class="partenaires-grille" data-partenaires></div>
+        </div>
       </div>
     </section>
     <section class="section section--emeraude beaute" aria-labelledby="beaute-titre">
@@ -73,9 +106,9 @@
 
   <footer id="pied" class="pied"></footer>
 
-  <script src="assets/config.js"></script>
+  <script src="assets/config.js?v=20261006b"></script>
   <script src="/api/config"></script>
-  <script src="assets/i18n.js"></script>
+  <script src="assets/i18n.js?v=20261006b"></script>
   <script defer src="assets/vendor/supabase.js"></script>
   <script defer src="assets/vendor/gsap.min.js"></script>
   <script defer src="assets/vendor/ScrollTrigger.min.js"></script>
@@ -83,7 +116,7 @@
   <script defer src="assets/vendor/Flip.min.js"></script>
   <script defer src="assets/vendor/lenis.min.js"></script>
   <script defer src="assets/visuels.js"></script>
-  <script defer src="assets/app.js"></script>
-  <script defer src="assets/pages.js"></script>
+  <script defer src="assets/app.js?v=20261006b"></script>
+  <script defer src="assets/pages.js?v=20261006b"></script>
 </body>
 </html>
