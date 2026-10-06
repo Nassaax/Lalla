@@ -22,3 +22,13 @@
 - [ ] Conditions générales relues par un avocat (caution en espèces, DAC7, annulations) + assurance RC pro
 - [ ] 10 à 20 loueuses inscrites avec annonces validées
 - [ ] Une location réelle à petit prix, puis « Ouvrir les réservations » dans l'admin
+
+## Application iPhone / iPad / Android
+- [x] Projet Capacitor (`app/`), icône, écran de démarrage, mode application dans le site
+- [x] Fabrication automatique sur GitHub : « App iOS » et « App Android » (Actions → Run workflow)
+- [ ] Compte Apple Developer (particulier, 99 $/an) puis secrets GitHub : APPLE_TEAM_ID,
+      APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_P8
+- [ ] App Store Connect : créer l'app « LALLAT » (identifiant be.lallat.app), fiche, captures, confidentialité
+- [ ] Compte Google Play Console (25 $ une fois) puis secrets GitHub : ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD
+- [ ] Notifications push (Firebase + clé APNs) : à brancher quand les comptes existent
+- [ ] Domaine lallat.be : ajouter lallat.be dans `app/capacitor.config.json` (server.url) et republier les apps
