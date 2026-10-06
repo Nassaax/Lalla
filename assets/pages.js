@@ -1442,7 +1442,7 @@
   // Hub mariage : annuaire des partenaires et demandes de devis
   // ===========================================================================
   // Photo d'illustration d'un métier tant que le partenaire n'a pas ajouté sa propre galerie
-  var PHOTOS_METIER = { photographe: 'assets/photos/presta-photo.webp', hennaya: 'assets/photos/presta-henne.webp' };
+  var PHOTOS_METIER = { maquilleuse: 'assets/photos/presta-maquillage.webp', photographe: 'assets/photos/presta-photo.webp', hennaya: 'assets/photos/presta-henne.webp' };
 
   L.pages.partenaires = function () {
     remplirPlaceholders(document);

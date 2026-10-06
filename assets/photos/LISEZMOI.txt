@@ -1,3 +1,4 @@
 Déposez ici vos photos (JPG ou WebP, 1600 px de large conseillé), puis renseignez leur chemin dans assets/config.js → photos.
 
 presta-musique.webp, presta-photo.webp, presta-henne.webp : photos libres de droit fournies pour illustrer les prestations (page Hub fêtes & mariages).
+presta-maquillage.webp, materiel-sono.webp : photos libres de droit fournies (maquillage et coiffure ; sono et éclairage).

@@ -1161,7 +1161,7 @@
   // Hub mariage
   // ---------------------------------------------------------------------------
   ajouter('fr', {
-    'hub.theme_musique': 'Musique et DJ', 'hub.theme_photo': 'Photographes', 'hub.theme_henne': 'Henné',
+    'hub.theme_musique': 'Musique et DJ', 'hub.theme_maquillage': 'Maquillage et coiffure', 'hub.theme_sono': 'Sono et éclairage', 'hub.theme_photo': 'Photographes', 'hub.theme_henne': 'Henné',
     'hub.vide_prestation': 'Les premières prestations à réserver arrivent bientôt. En attendant, consultez l\'annuaire sur devis plus bas.',
     'hub.vide_materiel': 'Le premier matériel à louer arrive bientôt.',
     'hub.tous': 'Tous les métiers', 'hub.aucun': 'Aucun partenaire pour ces critères, pour le moment.',
@@ -1188,7 +1188,7 @@
     'hub.beaute_texte': 'Rituelen, oliën, gezichts- en haarverzorging: een selectie voor de weken voor het huwelijk, bij onze partnerwinkel.',
     'hub.beaute_cta': 'De winkel ontdekken',
     'hub.pro_surtitre': 'Bent u dienstverlener?', 'hub.pro_titre': 'Sluit u aan bij de gids en ontvang gerichte aanvragen.', 'hub.pro_cta': 'Mijn zaak vermelden',
-    'hub.theme_musique': 'Muziek en dj', 'hub.theme_photo': 'Fotografen', 'hub.theme_henne': 'Henna',
+    'hub.theme_musique': 'Muziek en dj', 'hub.theme_maquillage': 'Make-up en kapsels', 'hub.theme_sono': 'Geluid en verlichting', 'hub.theme_photo': 'Fotografen', 'hub.theme_henne': 'Henna',
     'hub.vide_prestation': 'De eerste diensten om te boeken komen binnenkort. Bekijk intussen de gids op offerte hieronder.',
     'hub.vide_materiel': 'Het eerste huurmateriaal komt binnenkort.',
     'hub.tous': 'Alle beroepen', 'hub.aucun': 'Momenteel geen partners voor deze criteria.',
