@@ -3,8 +3,9 @@
   "private": true,
   "description": "LALLAT : application iOS et Android (Capacitor) autour du site",
   "scripts": {
-    "sync": "cap sync",
-    "icones": "capacitor-assets generate --iconBackgroundColor '#5E1D27' --iconBackgroundColorDark '#5E1D27' --splashBackgroundColor '#5E1D27' --splashBackgroundColorDark '#5E1D27' --ios --android"
+    "sync": "node scripts/construire.mjs && cap sync",
+    "icones": "capacitor-assets generate --iconBackgroundColor '#5E1D27' --iconBackgroundColorDark '#5E1D27' --splashBackgroundColor '#5E1D27' --splashBackgroundColorDark '#5E1D27' --ios --android",
+    "construire": "node scripts/construire.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",

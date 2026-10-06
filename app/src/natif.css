@@ -1,0 +1,8 @@
+/* LALLAT : réglages d'affichage propres à l'application (ajoutés à la copie de l'interface). */
+.est-app .entete { padding-top: env(safe-area-inset-top); }
+.est-app { scroll-padding-top: calc(var(--entete-h) + env(safe-area-inset-top) + 16px); }
+@media (max-width: 1023px) {
+  .est-app .nav { inset: calc(var(--entete-h) + env(safe-area-inset-top)) 0 auto 0; height: calc(100dvh - var(--entete-h) - env(safe-area-inset-top)); }
+}
+.est-app body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+.est-app .bouton--whatsapp svg { display: none; }

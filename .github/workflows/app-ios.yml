@@ -34,7 +34,7 @@ jobs:
           cache: npm
           cache-dependency-path: app/package-lock.json
       - run: npm ci
-      - run: npx cap sync ios
+      - run: node scripts/construire.mjs && npx cap sync ios
       - name: Clé API App Store Connect
         id: cle
         env:

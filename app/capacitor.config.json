@@ -2,20 +2,6 @@
   "appId": "be.lallat.app",
   "appName": "LALLAT",
   "webDir": "www",
-  "server": {
-    "url": "https://lalla-pearl.vercel.app/index.html?source=app",
-    "errorPath": "index.html",
-    "allowNavigation": [
-      "lalla-pearl.vercel.app",
-      "lallat.be",
-      "www.lallat.be",
-      "checkout.stripe.com",
-      "connect.stripe.com",
-      "verify.stripe.com",
-      "hooks.stripe.com",
-      "pueejmddxhofwbxtmxdg.supabase.co"
-    ]
-  },
   "ios": {
     "contentInset": "never",
     "backgroundColor": "#FAF6F0",
@@ -38,7 +24,14 @@
       "overlaysWebView": false
     },
     "PushNotifications": {
-      "presentationOptions": ["badge", "sound", "alert"]
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
     }
+  },
+  "server": {
+    "androidScheme": "https"
   }
 }

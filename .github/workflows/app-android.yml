@@ -37,7 +37,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: npm ci
-      - run: npx cap sync android
+      - run: node scripts/construire.mjs && npx cap sync android
       - name: Clé d'envoi Google Play
         env:
           KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}

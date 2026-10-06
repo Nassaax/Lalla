@@ -21,6 +21,17 @@
 	<string>LALLAT peut enregistrer des photos dans votre galerie.</string>
 	<key>CFBundleDisplayName</key>
         <string>LALLAT</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>be.lallat.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>lallat</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
