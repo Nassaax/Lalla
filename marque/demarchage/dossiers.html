@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>LALLAT, dossiers de démarchage</title>
+<link rel="stylesheet" href="../commun.css">
+<style>
+  /* Pages 1080 x 1350 (portrait Instagram), exportées en PNG et en PDF par rendre.mjs */
+  body { background: #222; display: grid; gap: 40px; justify-content: center; padding: 40px 0; }
+  .page { position: relative; width: 1080px; height: 1350px; overflow: hidden; padding: 96px; background: var(--i); color: var(--e); }
+  .page.sombre { background: radial-gradient(circle at 50% 30%, #7A2633 0%, #5E1D27 50%, #3A0F18 100%); color: #FFF8EC; }
+  .page.vert { background: radial-gradient(circle at 50% 30%, #11604E 0%, #0A3A30 55%, #04201A 100%); color: #FFF8EC; }
+  .motif { position: absolute; inset: 0; opacity: .07; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cg fill='none' stroke='%23C9A66B' stroke-width='1.6'%3E%3Cpolygon points='75,21 85.3,50.1 113.2,36.8 99.9,64.7 129,75 99.9,85.3 113.2,113.2 85.3,99.9 75,129 64.7,99.9 36.8,113.2 50.1,85.3 21,75 50.1,64.7 36.8,36.8 64.7,50.1'/%3E%3C/g%3E%3C/svg%3E"); pointer-events: none; }
+  .clair .motif { opacity: .35; filter: saturate(1.2); }
+  .contenu { position: relative; height: 100%; display: flex; flex-direction: column; }
+  .sur { font-family: Jost; font-weight: 500; font-size: 26px; letter-spacing: .3em; text-transform: uppercase; color: #A87C36; }
+  .sombre .sur, .vert .sur { color: #E9C77A; }
+  h1, h2 { font-family: Bodoni, serif; font-weight: 500; margin: 0; line-height: 1.04; }
+  h1 { font-size: 104px; } h2 { font-size: 78px; margin-top: 22px; }
+  h1 em, h2 em { font-style: italic; color: #5E1D27; }
+  .sombre h1 em, .sombre h2 em, .vert h2 em, .vert h1 em { color: #F2D58E; }
+  .chapeau { font-family: Jost; font-size: 34px; line-height: 1.45; color: #54483F; margin-top: 26px; }
+  .sombre .chapeau, .vert .chapeau { color: #EADBC8; }
+  .pied { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-family: Jost; font-size: 24px; letter-spacing: .1em; color: #8A7E74; }
+  .sombre .pied, .vert .pied { color: #CDBFA9; }
+  .pied .mot { font-family: Bodoni; font-size: 34px; letter-spacing: .3em; color: #5E1D27; }
+  .sombre .pied .mot, .vert .pied .mot { color: #FFF8EC; }
+
+  /* Couverture */
+  .couv { padding: 0; }
+  .couv .photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .couv .voile { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(36,10,16,.15) 0%, rgba(36,10,16,.05) 35%, rgba(36,10,16,.82) 66%, rgba(36,10,16,.96) 100%); }
+  .couv .contenu { padding: 96px; color: #FFF8EC; }
+  .couv .marque { font-family: Bodoni; font-size: 46px; letter-spacing: .4em; }
+  .couv .bas { margin-top: auto; }
+  .couv h1 { color: #FFF8EC; }
+  .couv h1 em { color: #F2D58E; }
+  .couv .chapeau { color: #F1E5D6; }
+  .ruban { display: inline-block; margin-bottom: 28px; padding: 12px 26px; border-radius: 999px; background: linear-gradient(135deg, #FFF3CF, #E2BC6E 55%, #B8893B); color: #4A1520; font-family: Jost; font-weight: 500; font-size: 26px; letter-spacing: .08em; }
+
+  /* Listes d'avantages */
+  .liste { display: grid; gap: 26px; margin-top: 44px; }
+  .item { display: grid; grid-template-columns: 84px 1fr; gap: 26px; align-items: start; }
+  .item i { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #FFF3CF, #E2BC6E 55%, #B8893B); box-shadow: 0 10px 24px rgba(184,137,59,.3); }
+  .item b { display: block; font-family: Jost; font-weight: 500; font-size: 36px; line-height: 1.2; }
+  .item span { display: block; font-family: Jost; font-size: 28px; line-height: 1.4; color: #54483F; margin-top: 6px; }
+  .sombre .item span, .vert .item span { color: #E3D3BF; }
+  .compacte .liste { gap: 20px; margin-top: 36px; }
+  .compacte .item b { font-size: 33px; }
+  .compacte .item span { font-size: 26px; }
+
+  /* Calcul */
+  .calcul { margin-top: 40px; padding: 40px 50px; border-radius: 34px; background: rgba(255,248,236,.08); border: 1px solid rgba(255,248,236,.18); font-family: Jost; }
+  .calcul .l { display: flex; justify-content: space-between; font-size: 36px; padding: 14px 0; color: #FFF8EC; }
+  .calcul .sep { border-top: 1px solid rgba(255,248,236,.22); margin: 18px 0 8px; }
+  .calcul .t { display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px; }
+  .calcul .t small { font-size: 28px; letter-spacing: .25em; text-transform: uppercase; color: #E9C77A; }
+  .calcul .t strong { white-space: nowrap; font-family: Bodoni; font-weight: 500; font-size: 124px; line-height: 1; color: #F2D58E; }
+  .note { font-family: Jost; font-size: 25px; line-height: 1.45; color: #CDBFA9; margin-top: 24px; }
+  .gratuit { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 34px; }
+  .gratuit span { padding: 14px 26px; border-radius: 999px; border: 1.5px solid rgba(233,199,122,.7); font-family: Jost; font-weight: 500; font-size: 27px; color: #FFF8EC; }
+
+  /* Deux colonnes */
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 46px; }
+  .carte { padding: 40px 36px; border-radius: 30px; background: #fff; box-shadow: 0 24px 60px rgba(94,29,39,.12); font-family: Jost; }
+  .carte .tag { display: inline-block; padding: 8px 18px; border-radius: 999px; background: #5E1D27; color: #fff; font-weight: 500; font-size: 22px; letter-spacing: .06em; }
+  .carte .tag.or { background: linear-gradient(135deg, #FFF3CF, #E2BC6E 55%, #B8893B); color: #4A1520; }
+  .carte h3 { font-family: Bodoni; font-weight: 500; font-size: 46px; margin: 22px 0 16px; line-height: 1.08; }
+  .carte ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+  .carte li { position: relative; padding-left: 36px; font-size: 26px; line-height: 1.35; color: #3E342D; }
+  .carte li::before { content: ''; position: absolute; left: 0; top: .32em; width: 20px; height: 20px; border-radius: 50%; background: #C9A66B; }
+
+  /* Étapes */
+  .etapes { display: grid; gap: 16px; margin-top: 36px; }
+  .etape { display: grid; grid-template-columns: 96px 1fr; gap: 26px; align-items: center; padding: 20px 28px; border-radius: 26px; background: rgba(255,248,236,.08); border: 1px solid rgba(255,248,236,.16); }
+  .etape .n { font-family: Bodoni; font-size: 62px; line-height: 1; color: #F2D58E; text-align: center; }
+  .etape b { display: block; font-family: Jost; font-weight: 500; font-size: 34px; color: #FFF8EC; }
+  .etape span { display: block; font-family: Jost; font-size: 26px; color: #E3D3BF; margin-top: 4px; }
+  .cta { margin-top: 30px; padding: 30px 36px; border-radius: 30px; background: #FAF6F0; color: #241B17; text-align: center; font-family: Jost; }
+  .cta .a { font-family: Bodoni; font-weight: 500; font-size: 40px; line-height: 1.2; color: #5E1D27; }
+  .cta .b { font-size: 28px; margin-top: 12px; color: #54483F; }
+  .cta .b b { color: #241B17; font-weight: 500; }
+
+  /* Mosaïque photos */
+  .mosaique { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 30px; }
+  .mosaique div { position: relative; aspect-ratio: 3/2; border-radius: 22px; overflow: hidden; }
+  .mosaique img { width: 100%; height: 100%; object-fit: cover; }
+  .mosaique span { position: absolute; left: 14px; bottom: 14px; padding: 8px 16px; border-radius: 999px; background: rgba(250,246,240,.94); font-family: Jost; font-weight: 500; font-size: 22px; color: #241B17; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ DOSSIER A : FOURNISSEUSES DE TENUES -->
+
+<section class="page couv" data-doc="tenues">
+  <img class="photo" src="../video/images/v-soiree.jpg" alt="" style="object-position:50% 18%">
+  <div class="voile"></div>
+  <div class="contenu">
+    <div class="marque">LALLAT</div>
+    <div class="bas">
+      <span class="ruban">Fournisseuses fondatrices</span>
+      <h1>Vos tenues méritent <em>d'être vues.</em></h1>
+      <p class="chapeau">Caftans, takchitas, tenues de mariée, accessoires : louez-les aux invitées des mariages, hennés, fiançailles et Aïd, partout en Belgique.</p>
+    </div>
+  </div>
+</section>
+
+<section class="page sombre" data-doc="tenues">
+  <div class="motif"></div>
+  <div class="contenu">
+    <p class="sur">Ce que vous gagnez</p>
+    <h2>Une tenue qui dort, <em>c'est un revenu qui attend.</em></h2>
+    <div class="calcul">
+      <div class="l"><span>Prix de location fixé par vous</span><span>90 €</span></div>
+      <div class="l"><span>Locations par mois</span><span>× 3</span></div>
+      <div class="l"><span>Commission LALLAT</span><span>15 %</span></div>
+      <div class="sep"></div>
+      <div class="t"><small>Pour vous, par mois</small><strong>229,50 €</strong></div>
+    </div>
+    <p class="note">Exemple indicatif. Le pressing payé par la cliente vous est reversé en plus. Une même pièce peut être louée de nombreuses fois.</p>
+    <div class="gratuit"><span>Publication gratuite</span><span>Aucun abonnement</span><span>Commission seulement si vous louez</span></div>
+    <div class="pied"><span class="mot">LALLAT</span><span>2 / 5</span></div>
+  </div>
+</section>
+
+<section class="page clair compacte" data-doc="tenues">
+  <div class="motif"></div>
+  <div class="contenu">
+    <p class="sur">Visibilité offerte</p>
+    <h2>Nous faisons la publicité, <em>vous encaissez.</em></h2>
+    <div class="liste">
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"/></svg></i><div><b>Votre boutique en ligne à votre nom</b><span>Toutes vos pièces sur une page à partager dans votre bio Instagram et sur WhatsApp.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></i><div><b>Trouvée sur Google</b><span>Chaque annonce a sa propre page, pensée pour apparaître dans les recherches.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="#5E1D27"/></svg></i><div><b>Mise en avant sur notre Instagram</b><span>Reels, stories et carrousels : les fournisseuses fondatrices passent en priorité au lancement.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></i><div><b>Des clientes près de chez vous</b><span>Recherche par code postal et par date de fête : on vous trouve au bon moment.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><path d="M4 21V9l8-6 8 6v12M9 21v-7h6v7"/></svg></i><div><b>Journées showroom</b><span>Présentez vos pièces lors de journées d'essayage organisées par LALLAT.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></i><div><b>Bientôt sur iPhone et Android</b><span>Vos annonces suivront automatiquement dans nos applications.</span></div></div>
+    </div>
+    <div class="pied"><span class="mot">LALLAT</span><span>3 / 5</span></div>
+  </div>
+</section>
+
+<section class="page vert compacte" data-doc="tenues">
+  <div class="motif"></div>
+  <div class="contenu">
+    <p class="sur">Vous êtes protégée</p>
+    <h2>Vous gardez le contrôle, <em>à chaque location.</em></h2>
+    <div class="liste">
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></i><div><b>La cliente paie avant la remise</b><span>Paiement en ligne sécurisé. Vous ne courez jamais après votre argent.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></i><div><b>La caution, c'est vous qui décidez</b><span>Bloquée sur sa carte, en espèces, en pourcentage, ou pas de caution du tout.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></i><div><b>État des lieux en photos</b><span>À la remise et au retour, validé par les deux parties depuis le téléphone.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><path d="M12 4v16M6 20h12M5 8h14M5 8l-2.5 6a3 3 0 0 0 5 0zM19 8l-2.5 6a3 3 0 0 0 5 0z"/></svg></i><div><b>Un souci ? Notre équipe tranche</b><span>Retard, tache, accroc : vous ouvrez un litige avec photos, nous décidons.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2a3.4 3.4 0 1 0 0 5.6M7.8 11h5M7.8 13.2h5"/></svg></i><div><b>Versement automatique au retour</b><span>Dès que le retour est validé, votre argent part sur votre compte, via Stripe.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></i><div><b>Vos dates, vos règles</b><span>Calendrier, durée minimale, remise en main propre ou envoi : tout se règle dans votre espace.</span></div></div>
+    </div>
+    <div class="pied"><span class="mot">LALLAT</span><span>4 / 5</span></div>
+  </div>
+</section>
+
+<section class="page sombre" data-doc="tenues">
+  <div class="motif"></div>
+  <div class="contenu">
+    <p class="sur">En 10 minutes</p>
+    <h2>Rejoignez les <em>fournisseuses fondatrices.</em></h2>
+    <div class="etapes">
+      <div class="etape"><span class="n">1</span><div><b>Créez votre compte</b><span>Gratuit, depuis votre téléphone.</span></div></div>
+      <div class="etape"><span class="n">2</span><div><b>Publiez vos pièces</b><span>Quelques photos, vos mesures, votre prix. Notre équipe relit et met en ligne.</span></div></div>
+      <div class="etape"><span class="n">3</span><div><b>Acceptez les demandes</b><span>Vous choisissez qui loue et quand.</span></div></div>
+      <div class="etape"><span class="n">4</span><div><b>Remise, retour, versement</b><span>Le reste est automatique.</span></div></div>
+    </div>
+    <div class="cta"><div class="a">On vous accompagne pour la première annonce.</div><div class="b">Inscription : <b data-site></b> · Instagram <b data-insta></b></div></div>
+    <div class="pied"><span class="mot">LALLAT</span><span>5 / 5</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ DOSSIER B : PRESTATAIRES ET MATÉRIEL -->
+
+<section class="page couv" data-doc="prestataires">
+  <img class="photo" src="../video/images/p-maquillage.jpg" alt="" style="object-position:50% 28%">
+  <div class="voile"></div>
+  <div class="contenu">
+    <div class="marque">LALLAT</div>
+    <div class="bas">
+      <span class="ruban">Hub fêtes &amp; mariages</span>
+      <h1>Faites-vous connaître <em>de toutes les invitées.</em></h1>
+      <p class="chapeau">Maquilleuses, coiffeuses, hennayas, negafas, photographes, musiciens, DJ, traiteurs et loueurs de matériel : rejoignez la plateforme des fêtes en Belgique.</p>
+    </div>
+  </div>
+</section>
+
+<section class="page clair compacte" data-doc="prestataires">
+  <div class="motif"></div>
+  <div class="contenu">
+    <p class="sur">Visibilité offerte</p>
+    <h2>Vos clientes vous trouvent <em>au bon moment.</em></h2>
+    <div class="liste">
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h10"/></svg></i><div><b>Affichée sur chaque tenue louée</b><span>Sous chaque caftan, la rubrique « Se préparer pour la fête » propose les prestataires de la même ville.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"/></svg></i><div><b>Votre vitrine à votre nom</b><span>Vos prestations, vos photos, vos avis, sur une page à partager partout.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1" fill="#5E1D27"/></svg></i><div><b>Portraits sur notre Instagram</b><span>Série « Les mains de la fête » : nous filmons et présentons les prestataires fondatrices.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></i><div><b>Trouvée sur Google</b><span>Chaque prestation a sa page, par métier et par ville.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></i><div><b>Des avis qui travaillent pour vous</b><span>Chaque prestation réalisée peut recevoir un avis vérifié, affiché sur votre page.</span></div></div>
+    </div>
+    <div class="mosaique">
+      <div><img src="../video/images/p-henne.jpg" alt="" style="object-position:60% 50%"><span>Henné</span></div>
+      <div><img src="../video/images/p-photo.jpg" alt="" style="object-position:50% 55%"><span>Photo</span></div>
+      <div><img src="../video/images/p-musique.jpg" alt="" style="object-position:62% 50%"><span>Musique</span></div>
+    </div>
+    <div class="pied"><span class="mot">LALLAT</span><span>2 / 5</span></div>
+  </div>
+</section>
+
+<section class="page clair" data-doc="prestataires">
+  <div class="motif"></div>
+  <div class="contenu">
+    <p class="sur">À votre rythme</p>
+    <h2>Deux façons <em>de travailler avec nous.</em></h2>
+    <div class="duo">
+      <div class="carte">
+        <span class="tag">Réservation en ligne</span>
+        <h3>Vos prestations à prix affiché</h3>
+        <ul>
+          <li>La cliente choisit la date, l'heure et le lieu</li>
+          <li>Elle paie en ligne à la réservation</li>
+          <li>Vous êtes payée après la prestation</li>
+          <li>Commission de 15 % seulement quand vous travaillez</li>
+          <li>Aussi pour le matériel : sono, décoration, amaria, vaisselle</li>
+        </ul>
+      </div>
+      <div class="carte">
+        <span class="tag or">Annuaire sur devis</span>
+        <h3>Vous recevez des demandes qualifiées</h3>
+        <ul>
+          <li>Votre fiche dans le Hub fêtes &amp; mariages</li>
+          <li>Les clientes vous écrivent avec date, lieu et projet</li>
+          <li>La demande arrive directement chez vous</li>
+          <li>Vous faites votre devis comme d'habitude</li>
+        </ul>
+      </div>
+    </div>
+    <p class="chapeau" style="font-size:30px">Vous pouvez aussi combiner les deux : prix fixes pour vos formules simples, devis pour le sur-mesure.</p>
+    <div class="pied"><span class="mot">LALLAT</span><span>3 / 5</span></div>
+  </div>
+</section>
+
+<section class="page vert compacte" data-doc="prestataires">
+  <div class="motif"></div>
+  <div class="contenu">
+    <p class="sur">Travaillez sereinement</p>
+    <h2>Fini les acomptes perdus <em>et les clientes fantômes.</em></h2>
+    <div class="liste">
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></i><div><b>Le paiement est encaissé à la réservation</b><span>La date est réservée pour de bon : plus de rendez-vous fantôme.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2a3.4 3.4 0 1 0 0 5.6M7.8 11h5M7.8 13.2h5"/></svg></i><div><b>Versement automatique après la prestation</b><span>Directement sur votre compte, via Stripe, sans relance.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></i><div><b>Votre agenda, vos zones</b><span>Vous ouvrez les dates que vous voulez et indiquez si vous vous déplacez.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><path d="M12 4v16M6 20h12M5 8h14M5 8l-2.5 6a3 3 0 0 0 5 0zM19 8l-2.5 6a3 3 0 0 0 5 0z"/></svg></i><div><b>Un cadre clair en cas de désaccord</b><span>Conditions acceptées par la cliente à la réservation, médiation par notre équipe.</span></div></div>
+      <div class="item"><i><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></i><div><b>Matériel loué : caution et état des lieux</b><span>Pour la sono ou la décoration, vous fixez la caution et faites un état des lieux en photos.</span></div></div>
+    </div>
+    <div class="pied"><span class="mot">LALLAT</span><span>4 / 5</span></div>
+  </div>
+</section>
+
+<section class="page sombre" data-doc="prestataires">
+  <div class="motif"></div>
+  <div class="contenu">
+    <p class="sur">En 10 minutes</p>
+    <h2>Devenez <em>prestataire fondatrice.</em></h2>
+    <div class="etapes">
+      <div class="etape"><span class="n">1</span><div><b>Créez votre compte prestataire</b><span>Gratuit, sans abonnement.</span></div></div>
+      <div class="etape"><span class="n">2</span><div><b>Ajoutez vos prestations</b><span>Photos, formules, prix, zone de déplacement.</span></div></div>
+      <div class="etape"><span class="n">3</span><div><b>Recevez les réservations</b><span>Notifiées par email, avec date, heure et lieu.</span></div></div>
+      <div class="etape"><span class="n">4</span><div><b>Réalisez, soyez payée, recevez un avis</b><span>Votre réputation grandit à chaque fête.</span></div></div>
+    </div>
+    <div class="cta"><div class="a">Les premières inscrites sont mises en avant au lancement.</div><div class="b">Inscription : <b data-site></b> · Instagram <b data-insta></b></div></div>
+    <div class="pied"><span class="mot">LALLAT</span><span>5 / 5</span></div>
+  </div>
+</section>
+
+<script>
+  // À mettre à jour quand le nom de domaine sera acheté, puis relancer : node marque/demarchage/rendre.mjs
+  const SITE = 'lalla-pearl.vercel.app';
+  const INSTA = '@lallat.be';
+  document.querySelectorAll('[data-site]').forEach((e) => { e.textContent = SITE; });
+  document.querySelectorAll('[data-insta]').forEach((e) => { e.textContent = INSTA; });
+  window.pret = document.fonts.ready.then(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
+</script>
+</body>
+</html>
