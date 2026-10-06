@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LALLAT</string>
+    <string name="title_activity_main">LALLAT</string>
+    <string name="package_name">be.lallat.app</string>
+    <string name="custom_url_scheme">be.lallat.app</string>
+</resources>

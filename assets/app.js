@@ -943,11 +943,69 @@
   };
 
   // ===========================================================================
+  // Application iOS / Android (Capacitor) : le site tourne dans l'app, les plugins natifs
+  // sont exposés par Capacitor sur window.Capacitor.Plugins.
+  // ===========================================================================
+  var Cap = window.Capacitor;
+  L.natif = {
+    actif: Boolean(Cap && Cap.isNativePlatform && Cap.isNativePlatform()),
+    plateforme: Cap && Cap.getPlatform ? Cap.getPlatform() : 'web',
+    plugin: function (nom) { return L.natif.actif && Cap.Plugins ? Cap.Plugins[nom] || null : null; },
+    /** Retour léger au toucher (ajout au panier, favori…). */
+    vibrer: function () { var hp = L.natif.plugin('Haptics'); if (hp) hp.impact({ style: 'LIGHT' }).catch(function () {}); },
+    /** Feuille de partage native ; renvoie false hors application. */
+    partager: function (titre, texte, url) {
+      var sh = L.natif.plugin('Share');
+      if (!sh) return false;
+      sh.share({ title: titre, text: texte, url: url, dialogTitle: titre }).catch(function () {});
+      return true;
+    },
+    init: function () {
+      if (!L.natif.actif) return;
+      document.documentElement.classList.add('est-app', 'est-app--' + L.natif.plateforme);
+      var sb = L.natif.plugin('StatusBar');
+      if (sb) { sb.setStyle({ style: 'LIGHT' }).catch(function () {}); if (L.natif.plateforme === 'android') sb.setBackgroundColor({ color: '#FAF6F0' }).catch(function () {}); }
+      var app = L.natif.plugin('App');
+      if (app) {
+        // Android : le bouton retour revient à la page précédente, puis ferme l'app.
+        app.addListener('backButton', function (e) {
+          var modale = document.querySelector('.modale.est-ouverte [data-fermer], .modale.est-ouverte .modale__fermer');
+          if (modale) { modale.click(); return; }
+          if (e.canGoBack) history.back(); else app.exitApp();
+        });
+        // Liens universels (https://…/tenue.html?id=…) ouverts dans l'app.
+        app.addListener('appUrlOpen', function (e) {
+          try {
+            var u = new URL(e.url);
+            if (u.origin !== location.origin && !/lallat\.be$|lalla-pearl\.vercel\.app$/.test(u.hostname)) return;
+            location.href = u.pathname + u.search + u.hash;
+          } catch (x) { /* adresse invalide */ }
+        });
+      }
+      // Liens externes (WhatsApp, Instagram, emails…) : navigateur du système.
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a[href]');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        if (/^(mailto|tel|sms):/.test(href)) return;
+        var u;
+        try { u = new URL(href, location.href); } catch (x) { return; }
+        if (u.origin === location.origin || /(^|\.)stripe\.com$/.test(u.hostname)) return;
+        var br = L.natif.plugin('Browser');
+        if (!br) return;
+        e.preventDefault();
+        br.open({ url: u.href }).catch(function () { location.href = u.href; });
+      }, true);
+    }
+  };
+
+  // ===========================================================================
   // Démarrage
   // ===========================================================================
   L.pages = L.pages || {};
 
   function demarrer() {
+    L.natif.init();
     initSupabase();
     L.motion.init();
     L.ui.entete();
@@ -964,7 +1022,7 @@
     L.motion.reveler(document);
     if (L.param('connexion') === '1') L.auth.pret.then(function () { if (!L.session) L.ui.authentification('connexion', page === 'admin' ? { ensuite: function () { location.reload(); } } : undefined); });
     // Application installable : service worker (HTTPS uniquement, hors tests locaux).
-    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    if ('serviceWorker' in navigator && location.protocol === 'https:' && !L.natif.actif) {
       window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () { /* facultatif */ }); });
     }
   }

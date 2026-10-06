@@ -1,0 +1,26 @@
+{
+  "name": "lallat-app",
+  "private": true,
+  "description": "LALLAT : application iOS et Android (Capacitor) autour du site",
+  "scripts": {
+    "sync": "cap sync",
+    "icones": "capacitor-assets generate --iconBackgroundColor '#5E1D27' --iconBackgroundColorDark '#5E1D27' --splashBackgroundColor '#5E1D27' --splashBackgroundColorDark '#5E1D27' --ios --android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
+    "@capacitor/camera": "^8.2.5",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.5.2",
+    "@capacitor/push-notifications": "^8.1.3",
+    "@capacitor/share": "^8.0.3",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.2"
+  }
+}

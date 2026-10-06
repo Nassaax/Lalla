@@ -969,3 +969,11 @@ a.puce { text-decoration: none; display: inline-flex; align-items: center; color
 .reservation-boite--lancement { display: grid; gap: 14px; }
 .reservation-boite--lancement .texte { margin: 0; }
 .bandeau-lancement strong { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 16px; color: #F4DFC2; }
+
+/* Application iOS / Android : la page passe sous la barre d'état, l'en-tête la contourne. */
+.est-app .entete { padding-top: env(safe-area-inset-top); }
+.est-app { scroll-padding-top: calc(var(--entete-h) + env(safe-area-inset-top) + 16px); }
+@media (max-width: 1023px) {
+  .est-app .nav { inset: calc(var(--entete-h) + env(safe-area-inset-top)) 0 auto 0; height: calc(100dvh - var(--entete-h) - env(safe-area-inset-top)); }
+}
+.est-app body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
