@@ -603,9 +603,8 @@
 
     var partage = h('button', { type: 'button', class: 'bouton bouton--whatsapp', onclick: function () {
       var url = location.origin + '/t/' + tn.id;
-      if (L.natif.partager(tn.titre, t('tenue.partage_texte', { titre: tn.titre }), url)) return;
       window.open('https://wa.me/?text=' + encodeURIComponent(t('tenue.partage_texte', { titre: tn.titre }) + ' ' + url), '_blank', 'noopener');
-    } }, L.natif.actif ? null : iconeWhatsapp(), t(L.natif.actif ? 'tenue.partager' : 'tenue.whatsapp'));
+    } }, iconeWhatsapp(), t('tenue.whatsapp'));
 
     var infos = h('div', { class: 'fiche__infos' },
       h('nav', { class: 'fil', 'aria-label': t('tenue.fil') }, h('a', { href: 'catalogue.html' }, t('nav.catalogue')), h('span', null, h('a', { href: 'catalogue.html?categorie=' + tn.categorie }, libelleCategorie(tn)))),
@@ -832,7 +831,6 @@
       bouton.textContent = t('tenue.finaliser');
       etatBouton('');
       L.ui.toast(t('tenue.ajoute'), 'succes');
-      L.natif.vibrer();
       if (window.gsap && L.motion.actif) gsap.fromTo('.panier-lien', { scale: 1 }, { scale: 1.25, duration: 0.2, yoyo: true, repeat: 1, ease: 'power2.out' });
     });
     setTimeout(verifier, 0);
