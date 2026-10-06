@@ -1,0 +1,39 @@
+/* LALLAT, reels « Hub fêtes & mariages » : styles communs (1080 x 1920). */
+#scene { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #070504; }
+#camera { position: absolute; inset: 0; }
+.plan { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
+.motif { position: absolute; left: -220px; top: -220px; width: 1520px; height: 2360px; }
+.ligne { display: block; overflow: hidden; padding: 0 .12em .12em; }
+.ligne > span { display: inline-block; }
+.or { background: linear-gradient(100deg, #9E7432 0%, #E9CB86 20%, #FFF3CF 30%, #D6AE62 42%, #B8893B 56%, #F4DDA0 72%, #FFF6D8 78%, #A87C36 100%); background-size: 260% 100%; background-position: 100% 50%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.ital { font-family: Bodoni, serif; font-style: italic; font-weight: 500; }
+.serif { font-family: Bodoni, serif; font-weight: 500; }
+.jost { font-family: Jost, sans-serif; font-weight: 500; }
+.centre { position: absolute; left: 0; right: 0; text-align: center; }
+.ombre { filter: drop-shadow(0 6px 24px rgba(0,0,0,.55)); }
+.surt { font-family: Jost; font-weight: 500; font-size: 30px; letter-spacing: .32em; text-transform: uppercase; color: #E9C77A; }
+.rayons { position: absolute; left: 50%; top: 50%; width: 2600px; height: 2600px; margin: -1300px 0 0 -1300px; background: repeating-conic-gradient(from 0deg, rgba(233,199,122,.09) 0deg 5deg, rgba(233,199,122,0) 5deg 15deg); -webkit-mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 30%, transparent 62%); mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 30%, transparent 62%); }
+.anneau { position: absolute; left: 540px; top: 900px; width: 4700px; height: 4700px; margin: -2350px 0 0 -2350px; border-radius: 50%; border: 14px solid #E9C77A; opacity: 0; }
+.photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fenetre-arche { -webkit-mask: var(--arche) center / 100% 100% no-repeat; mask: var(--arche) center / 100% 100% no-repeat; }
+#vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.42) 100%); }
+#flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 46%, rgba(255,246,220,.95) 0%, rgba(255,226,160,.55) 35%, rgba(255,226,160,0) 75%); mix-blend-mode: screen; }
+#grain { position: absolute; inset: 0; pointer-events: none; opacity: .07; mix-blend-mode: overlay; }
+#paillettes { position: absolute; inset: 0; pointer-events: none; }
+
+/* Téléphone */
+.tel { position: absolute; width: 700px; height: 1400px; border-radius: 104px; background: #0E0B0A; padding: 20px; box-shadow: 0 60px 140px rgba(0,0,0,.55), inset 0 0 0 3px #3A302A; }
+.tel .ecran { position: relative; width: 100%; height: 100%; border-radius: 86px; overflow: hidden; background: #FAF6F0; }
+.tel .ile { position: absolute; left: 230px; top: 26px; width: 200px; height: 58px; border-radius: 30px; background: #000; z-index: 5; }
+
+/* Final commun */
+#fin { background: radial-gradient(circle at 50% 34%, #8A2C3C 0%, #5E1D27 45%, #34101A 100%); clip-path: circle(0% at 50% 47%); }
+#fin .rosace { position: absolute; inset: 0; opacity: 0; }
+#fin .arche { position: absolute; left: 390px; top: 400px; width: 300px; height: 396px; overflow: visible; }
+#fin .L { top: 510px; font-size: 250px; line-height: 1; color: #FFF8EC; opacity: 0; }
+#fin .nom { top: 870px; display: flex; justify-content: center; font-size: 132px; letter-spacing: .26em; margin-right: -.26em; }
+#fin .nom span { display: inline-block; opacity: 0; }
+#fin .slogan { top: 1050px; font-size: 66px; line-height: 1.2; color: #F7E3A3; opacity: 0; }
+#fin .cta { top: 1265px; opacity: 0; }
+#fin .cta span { display: inline-block; background: #FAF6F0; color: #5E1D27; font-family: Jost; font-weight: 500; font-size: 42px; padding: 28px 56px; border-radius: 999px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+#fin .bas { top: 1410px; font-family: Jost; font-weight: 500; font-size: 27px; letter-spacing: .3em; text-transform: uppercase; color: #E9C77A; opacity: 0; }

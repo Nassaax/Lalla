@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>LALLAT, reel Hub : votre équipe</title>
+<link rel="stylesheet" href="../commun.css">
+<link rel="stylesheet" href="hub-fx.css">
+<style>
+  /* A. Ouverture */
+  #sa { background: radial-gradient(circle at 50% 50%, #3A2418 0%, #170E09 55%, #050302 100%); visibility: visible; }
+  #sa .t1 { top: 700px; font-size: 132px; color: #FFF8EC; line-height: 1; }
+  #sa .t2 { top: 860px; font-size: 104px; line-height: 1.05; }
+  #sa .filet { position: absolute; left: 290px; top: 1035px; width: 500px; height: 20px; overflow: visible; }
+
+  /* B. Coupes plein écran */
+  .coupe .media { position: absolute; inset: 0; }
+  .coupe .degrade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,5,4,.45) 0%, rgba(7,5,4,0) 22%, rgba(7,5,4,0) 48%, rgba(7,5,4,.82) 78%, rgba(7,5,4,.92) 100%); }
+  .coupe .geant { position: absolute; left: 0; top: 380px; white-space: nowrap; font-family: Jost; font-weight: 500; font-size: 330px; letter-spacing: -.02em; color: transparent; -webkit-text-stroke: 2.5px rgba(247,227,163,.55); line-height: 1; }
+  .coupe .etiquette { position: absolute; left: 90px; right: 60px; top: 1170px; }
+  .coupe .num { font-size: 30px; opacity: 0; }
+  .coupe .nom { font-size: 150px; color: #FFF8EC; line-height: 1.02; margin-top: 10px; }
+  .coupe .sous { font-family: Jost; font-size: 40px; color: #E8DCCB; margin-top: 18px; opacity: 0; }
+  .lame { position: absolute; top: 0; height: 1920px; overflow: hidden; }
+  .lame img { position: absolute; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+  #progression { position: absolute; left: 90px; right: 90px; top: 140px; display: flex; gap: 12px; opacity: 0; }
+  #progression span { flex: 1; height: 6px; border-radius: 3px; background: rgba(255,248,236,.28); overflow: hidden; }
+  #progression i { display: block; height: 100%; background: linear-gradient(90deg, #E9C77A, #FFF3CF); transform-origin: 0 50%; transform: scaleX(0); }
+
+  /* C. Collage des arches */
+  #sb { background: radial-gradient(circle at 50% 52%, #8A2C3C 0%, #5E1D27 48%, #2A0A11 100%); clip-path: circle(0% at 50% 52%); }
+  #sb .t1 { top: 230px; font-size: 112px; color: #FFF8EC; line-height: 1.05; }
+  #sb .t2 { top: 360px; font-size: 124px; line-height: 1.05; }
+  .vignette { position: absolute; width: 270px; height: 356px; }
+  .vignette .f { position: absolute; inset: 0; -webkit-mask: var(--arche) center / 100% 100% no-repeat; mask: var(--arche) center / 100% 100% no-repeat; box-shadow: 0 30px 60px rgba(0,0,0,.4); }
+  .vignette img { width: 100%; height: 100%; object-fit: cover; }
+  .vignette svg.bord { position: absolute; left: -12px; top: -14px; width: 294px; height: 384px; overflow: visible; }
+  .vignette .leg { position: absolute; left: 0; right: 0; top: 376px; text-align: center; font-family: Jost; font-weight: 500; font-size: 32px; color: #FFF8EC; letter-spacing: .04em; }
+  .vignette .coche { position: absolute; right: -14px; top: 46px; width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, #FFF3CF, #E2BC6E 55%, #B8893B); display: grid; place-items: center; box-shadow: 0 10px 26px rgba(0,0,0,.4); transform: scale(0); }
+
+  /* D. Téléphone */
+  #sc { background: radial-gradient(circle at 50% 50%, #11604E 0%, #0A3A30 52%, #04201A 100%); }
+  #etapes { position: absolute; left: 0; right: 0; top: 150px; height: 140px; overflow: hidden; }
+  .etape { position: absolute; left: 0; right: 0; top: 0; text-align: center; font-size: 98px; line-height: 1.3; color: #FFF8EC; }
+  .etape b { font-style: italic; font-weight: 500; color: #F7E3A3; margin-right: .22em; }
+  #tel { left: 190px; top: 330px; transform-origin: 350px 0; }
+  .ui-haut { position: absolute; left: 0; right: 0; top: 100px; height: 60px; display: flex; align-items: center; justify-content: center; font-family: Bodoni; font-size: 34px; letter-spacing: .3em; color: #5E1D27; }
+  .panier { position: absolute; right: 44px; top: 98px; width: 64px; height: 64px; }
+  .panier .badge { position: absolute; right: -6px; top: -6px; min-width: 36px; height: 36px; border-radius: 18px; background: #5E1D27; color: #fff; font-family: Jost; font-weight: 500; font-size: 22px; display: grid; place-items: center; transform: scale(0); }
+  .ui-titre { position: absolute; left: 40px; top: 186px; font-family: Bodoni; font-weight: 500; font-size: 50px; color: #241B17; }
+  .ui-sous { position: absolute; left: 40px; top: 252px; font-family: Jost; font-size: 25px; color: #7A6E66; }
+  .puces { position: absolute; left: 40px; top: 306px; display: flex; gap: 12px; white-space: nowrap; }
+  .puces span { font-family: Jost; font-weight: 500; font-size: 23px; padding: 12px 22px; border-radius: 999px; border: 1.5px solid #D3C4AE; color: #241B17; background: #fff; }
+  .puces span.actif { background: #241B17; color: #fff; border-color: #241B17; }
+  .liste-cadre { position: absolute; left: 0; right: 0; top: 380px; bottom: 0; overflow: hidden; }
+  .liste { position: absolute; left: 40px; top: 0; width: 580px; display: grid; grid-template-columns: 280px 280px; gap: 26px 20px; }
+  .carte { position: relative; }
+  .carte .img { position: relative; height: 340px; border-radius: 24px; overflow: hidden; background: #E5D9C8; }
+  .carte .img img { width: 100%; height: 100%; object-fit: cover; }
+  .carte .cadre { position: absolute; inset: 0; border-radius: 24px; box-shadow: inset 0 0 0 0 #C9A66B; }
+  .carte .pastille { position: absolute; left: 14px; top: 14px; background: #fff; border-radius: 999px; padding: 6px 14px; font-family: Jost; font-weight: 500; font-size: 18px; color: #241B17; }
+  .carte .ok { position: absolute; right: 14px; top: 14px; width: 54px; height: 54px; border-radius: 50%; background: #5E1D27; display: grid; place-items: center; transform: scale(0); box-shadow: 0 6px 16px rgba(0,0,0,.3); }
+  .carte .nomc { font-family: Jost; font-weight: 500; font-size: 24px; color: #241B17; margin-top: 12px; line-height: 1.2; }
+  .carte .prix { font-family: Jost; font-size: 22px; color: #54483F; margin-top: 4px; }
+  .carte .prix b { font-weight: 500; color: #241B17; font-size: 26px; }
+  .vol { position: absolute; padding: 8px 18px; border-radius: 999px; background: #5E1D27; color: #fff; font-family: Jost; font-weight: 500; font-size: 22px; opacity: 0; white-space: nowrap; z-index: 6; }
+  #feuille { position: absolute; left: 0; right: 0; bottom: 0; height: 270px; background: #fff; border-radius: 40px 40px 0 0; box-shadow: 0 -20px 50px rgba(36,27,23,.18); padding: 34px 40px 0; z-index: 4; }
+  #feuille .l1 { font-family: Jost; font-size: 25px; color: #7A6E66; }
+  #feuille .l2 { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; }
+  #feuille .l2 .n { font-family: Bodoni; font-weight: 500; font-size: 44px; color: #241B17; }
+  #feuille .l2 .m { font-family: Jost; font-weight: 500; font-size: 40px; color: #5E1D27; }
+  #feuille .btn { margin-top: 24px; height: 92px; border-radius: 999px; background: #5E1D27; color: #fff; font-family: Jost; font-weight: 500; font-size: 32px; display: grid; place-items: center; position: relative; overflow: hidden; }
+  #feuille .btn .reflet { position: absolute; top: 0; bottom: 0; width: 160px; left: -200px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0)); transform: skewX(-20deg); }
+  #doigt { position: absolute; left: 0; top: 0; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; background: rgba(255,255,255,.38); border: 3px solid rgba(255,255,255,.95); box-shadow: 0 10px 30px rgba(0,0,0,.35); opacity: 0; z-index: 8; }
+  .onde { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; border: 4px solid #C9A66B; opacity: 0; z-index: 7; }
+</style>
+</head>
+<body>
+<div id="scene"><div id="camera">
+
+  <!-- A. Le jour J, c'est une équipe -->
+  <section class="plan" id="sa">
+    <div class="rayons" id="rayons-a"></div>
+    <div id="intro">
+      <div class="centre t1 serif ombre"><span class="ligne"><span id="a1">Le jour J,</span></span></div>
+      <div class="centre t2 ital ombre"><span class="ligne"><span id="a2" class="or">c'est toute une équipe.</span></span></div>
+      <svg class="filet" viewBox="0 0 500 20"><path id="filet-a" d="M0 10 H210 M290 10 H500" stroke="#E9C77A" stroke-width="2" fill="none"/><polygon id="losange-a" points="250,0 260,10 250,20 240,10" fill="#E9C77A"/></svg>
+    </div>
+  </section>
+
+  <!-- B. Cinq métiers, cinq coupes -->
+  <section class="plan coupe" id="c0" data-img="p-maquillage" data-pos="50% 28%" data-geant="MAQUILLAGE" data-num="01 · Beauté" data-nom="Maquilleuse" data-sous="Le teint parfait, jusqu'au bout de la nuit."></section>
+  <section class="plan coupe" id="c1" data-img="p-photo" data-pos="50% 55%" data-geant="PHOTOGRAPHIE" data-num="02 · Souvenirs" data-nom="Photographe" data-sous="Chaque regard, capturé pour toujours."></section>
+  <section class="plan coupe" id="c2" data-img="p-henne" data-pos="62% 50%" data-geant="HENNÉ" data-num="03 · Tradition" data-nom="Hennaya" data-sous="Des motifs dessinés avec soin." data-lames="5"></section>
+  <section class="plan coupe" id="c3" data-img="p-musique" data-pos="64% 50%" data-geant="MUSIQUE" data-num="04 · Ambiance" data-nom="Musiciens" data-sous="Daqqa, chaabi ou DJ : à vous de choisir."></section>
+  <section class="plan coupe" id="c4" data-img="p-sono" data-pos="50% 45%" data-geant="SONO" data-num="05 · Matériel" data-nom="Sono &amp; lumière" data-sous="Le matériel qui fait vibrer la salle."></section>
+  <div id="progression"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div>
+
+  <!-- C. Choisissez-les vous-même -->
+  <section class="plan" id="sb">
+    <svg class="motif" id="motif-b"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".12"/></svg>
+    <div class="anneau" id="anneau-b"></div>
+    <div class="centre t1 serif ombre"><span class="ligne"><span id="b1">Choisissez-les</span></span></div>
+    <div class="centre t2 ital ombre"><span class="ligne"><span id="b2" class="or">vous-même.</span></span></div>
+    <div id="vignettes"></div>
+  </section>
+
+  <!-- D. Comparez, choisissez, réservez -->
+  <section class="plan" id="sc">
+    <svg class="motif" id="motif-c"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".14"/></svg>
+    <div id="etapes">
+      <div class="etape serif"><b>1.</b>Comparez</div>
+      <div class="etape serif"><b>2.</b>Choisissez</div>
+      <div class="etape serif"><b>3.</b>Réservez</div>
+    </div>
+    <div class="tel" id="tel">
+      <div class="ecran">
+        <div class="ile"></div>
+        <div class="ui-haut">LALLAT</div>
+        <svg class="panier" viewBox="0 0 64 64"><path d="M18 22h28l-3 30H21z" fill="none" stroke="#241B17" stroke-width="3" stroke-linejoin="round"/><path d="M25 22v-4a7 7 0 0 1 14 0v4" fill="none" stroke="#241B17" stroke-width="3"/></svg>
+        <div class="panier" style="pointer-events:none"><div class="badge" id="badge">0</div></div>
+        <div class="ui-titre">Hub fêtes &amp; mariages</div>
+        <div class="ui-sous">Prestataires à réserver en ligne</div>
+        <div class="puces" id="puces"><span class="actif">Tous</span><span>Maquillage</span><span>Photo</span><span>Henné</span><span>Musique</span><span>Sono</span></div>
+        <div class="liste-cadre"><div class="liste" id="liste"></div></div>
+        <div id="feuille">
+          <div class="l1">Votre sélection</div>
+          <div class="l2"><span class="n" id="feuille-n">4 prestataires</span><span class="m">1&nbsp;430&nbsp;€</span></div>
+          <div class="btn" id="btn-reserver">Réserver mes dates<span class="reflet" id="reflet"></span></div>
+        </div>
+        <div id="ondes"></div>
+        <div id="doigt"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- E. Final -->
+  <section class="plan" id="fin"></section>
+
+  <div id="flash"></div>
+  <div id="vignette"></div>
+  <div id="grain"></div>
+</div>
+<canvas id="paillettes" width="1080" height="1920"></canvas>
+</div>
+
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="hub-fx.js"></script>
+<script>
+  const { $, $$, OR, rafale, poussiere, outils, finale, demarrer } = FX;
+  FX.installer();
+  const COCHE = '<svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+  const COCHE_B = COCHE.replace('#fff', '#5E1D27');
+
+  // ------------------------------------------------------------------ construction des coupes
+  $$('.coupe').forEach((c) => {
+    const d = c.dataset, n = Number(d.lames || 0);
+    const media = n
+      ? Array.from({ length: n }, (_, i) => `<div class="lame" style="left:${i * 1080 / n}px;width:${1080 / n + 1}px"><img src="images/${d.img}.jpg" alt="" style="left:${-i * 1080 / n}px;object-position:${d.pos}"></div>`).join('')
+      : `<img class="photo" src="images/${d.img}.jpg" alt="" style="object-position:${d.pos}">`;
+    c.innerHTML = `<div class="media">${media}</div><div class="degrade"></div><div class="geant">${d.geant}</div>
+      <div class="etiquette"><div class="num surt">${d.num}</div><div class="nom serif"><span class="ligne"><span>${d.nom}</span></span></div><div class="sous">${d.sous}</div></div>`;
+  });
+
+  // Vignettes du collage
+  const VIG = [['p-maquillage', 'Maquillage', 75, 560, '50% 25%'], ['p-photo', 'Photo', 405, 560, '50% 55%'], ['p-henne', 'Henné', 735, 560, '60% 50%'], ['p-musique', 'Musique', 240, 1010, '62% 50%'], ['p-sono', 'Sono', 570, 1010, '50% 42%']];
+  $('#vignettes').innerHTML = VIG.map(([img, leg, x, y, pos]) => `<div class="vignette" style="left:${x}px;top:${y}px"><div class="f"><img src="images/${img}.jpg" alt="" style="object-position:${pos}"></div>
+    <svg class="bord" viewBox="0 0 294 384"><path d="M4 382 V170 C4 86 58 30 147 4 C236 30 290 86 290 170 V382" fill="none" stroke="#E9C77A" stroke-width="3"/></svg>
+    <div class="coche">${COCHE_B}</div><div class="leg">${leg}</div></div>`).join('');
+
+  // Cartes de l'application
+  const CARTES = [['p-maquillage', 'Maquillage mariée avec essai', '180 €', 'la prestation', '50% 25%'], ['p-photo', 'Reportage photo de mariage', '650 €', 'la prestation', '50% 55%'],
+    ['p-henne', 'Soirée henné, mariée et invitées', '150 €', 'la prestation', '60% 50%'], ['p-musique', 'Musiciens et DJ, chaabi et oriental', '450 €', 'la prestation', '62% 50%'],
+    ['p-sono', 'Sono 2 000 W avec micros', '90 €', 'la location', '50% 42%'], ['v-mariage', 'Negafa et tenues de mariée', '390 €', 'la prestation', '50% 20%']];
+  $('#liste').innerHTML = CARTES.map(([img, nom, prix, unite, pos], i) => `<div class="carte" id="carte${i}"><div class="img"><img src="images/${img}.jpg" alt="" style="object-position:${pos}">
+    <span class="pastille">${i < 4 ? 'Prestataire' : i === 4 ? 'Matériel' : 'Prestataire'}</span><div class="ok">${COCHE}</div><div class="cadre"></div></div>
+    <div class="nomc">${nom}</div><div class="prix"><b>${prix}</b> ${unite}</div></div>`).join('');
+
+  // ------------------------------------------------------------------ timeline (120 BPM, 15 s)
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  const u = outils(tl);
+
+  // A. Ouverture (0 à 1,5 s)
+  tl.fromTo('#rayons-a', { rotation: 0, opacity: 0 }, { rotation: 18, opacity: 1, duration: 1.6, ease: 'none' }, 0);
+  u.entrer('#a1', .05, .55); u.entrer('#a2', .3, .6);
+  u.brillance('#a2', .6, .9);
+  u.tracer('#filet-a', .35, .6);
+  tl.fromTo('#losange-a', { scale: 0, svgOrigin: '250 10' }, { scale: 1, duration: .4, ease: 'back.out(3)', svgOrigin: '250 10', immediateRender: false }, .55);
+  tl.to('#intro', { scale: 2.4, opacity: 0, filter: 'blur(14px)', duration: .45, ease: 'power3.in', transformOrigin: '50% 48%' }, 1.2);
+
+  // B. Coupes (1,5 à 6,0 s), une par mesure et demie
+  const T = [1.5, 2.4, 3.3, 4.2, 5.1], DUREE = .9;
+  const coupes = $$('.coupe');
+  tl.to('#progression', { opacity: 1, duration: .3 }, 1.5);
+  coupes.forEach((c, i) => {
+    const t = T[i], id = '#' + c.id;
+    u.montrer(id, t - .02);
+    if (i === 0) tl.fromTo(id, { clipPath: 'circle(0% at 50% 50%)' }, { clipPath: 'circle(80% at 50% 50%)', duration: .42, ease: 'power3.inOut', immediateRender: false }, t);
+    if (i === 1) tl.fromTo(id, { clipPath: 'polygon(130% 0%, 130% 0%, 100% 100%, 100% 100%)' }, { clipPath: 'polygon(-30% 0%, 130% 0%, 100% 100%, -60% 100%)', duration: .4, ease: 'power3.inOut', immediateRender: false }, t);
+    if (i === 2) c.querySelectorAll('.lame').forEach((l, k) => tl.fromTo(l, { yPercent: k % 2 ? -100 : 100 }, { yPercent: 0, duration: .42, ease: 'power3.inOut', immediateRender: false }, t + k * .03));
+    if (i === 3) { tl.fromTo(c.querySelector('.media'), { scale: 2.4, opacity: 0, filter: 'blur(18px)' }, { scale: 1.12, opacity: 1, filter: 'blur(0px)', duration: .4, ease: 'power3.out', immediateRender: false }, t); u.eclair(t, .7, .4); }
+    if (i === 4) tl.fromTo(id, { clipPath: 'inset(50% 0% 50% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: .4, ease: 'power3.inOut', immediateRender: false }, t);
+    if (i !== 3) tl.fromTo(c.querySelector('.media'), { scale: 1.16 }, { scale: 1, duration: 1.3, ease: 'power2.out', immediateRender: false }, t);
+    else tl.to(c.querySelector('.media'), { scale: 1, duration: .9, ease: 'power1.out' }, t + .4);
+    tl.fromTo(c.querySelector('.geant'), { x: 420 }, { x: -620, duration: 1.4, ease: 'none', immediateRender: false }, t);
+    tl.fromTo(c.querySelector('.num'), { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: .35, immediateRender: false }, t + .12);
+    u.entrer(c.querySelector('.nom .ligne > span'), t + .15, .45);
+    tl.fromTo(c.querySelector('.sous'), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .35, immediateRender: false }, t + .3);
+    tl.to($$('#progression i')[i], { scaleX: 1, duration: DUREE, ease: 'none' }, t);
+    if (i > 0) u.cacher('#' + coupes[i - 1].id, t + .5);
+  });
+  u.cacher('#sa', 1.95);
+  tl.to('#progression', { opacity: 0, duration: .2 }, 5.95);
+
+  // C. Collage (6,0 à 7,55 s)
+  u.montrer('#sb', 5.98);
+  tl.to('#sb', { clipPath: 'circle(150% at 50% 52%)', duration: .5, ease: 'power3.inOut' }, 6.0);
+  tl.fromTo('#anneau-b', { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: .5, ease: 'power3.inOut', immediateRender: false }, 6.0);
+  u.cacher('#c4', 6.5);
+  tl.fromTo('#motif-b', { rotation: 0 }, { rotation: 6, duration: 1.6, ease: 'none', immediateRender: false }, 6.0);
+  u.entrer('#b1', 6.15, .5); u.entrer('#b2', 6.35, .55);
+  u.brillance('#b2', 6.6, .9);
+  $$('.vignette').forEach((v, i) => {
+    tl.fromTo(v, { x: 540 - (VIG[i][2] + 135), y: 960 - (VIG[i][3] + 178), scale: 2.6, opacity: 0, rotation: (i - 2) * 6 },
+      { x: 0, y: 0, scale: 1, opacity: 1, rotation: 0, duration: .55, ease: 'power3.out', immediateRender: false }, 6.2 + i * .07);
+    tl.to(v.querySelector('.coche'), { scale: 1, duration: .35, ease: 'back.out(3)' }, 6.95 + i * .1);
+    rafale({ graine: 30 + i, t0: 6.97 + i * .1, x: VIG[i][2] + 270, y: VIG[i][3] + 84, n: 16, v: [80, 320], vie: [.5, .9], taille: [2, 5], couleurs: OR, types: ['etoile', 'point'], g: -60 });
+  });
+
+  // D. Téléphone (7,55 à 11,6 s)
+  u.montrer('#sc', 7.5);
+  gsap.set('#sc', { yPercent: 100 });
+  tl.to('#sc', { yPercent: 0, duration: .45, ease: 'power3.inOut' }, 7.55);
+  tl.to('#sb', { yPercent: -30, duration: .45, ease: 'power3.inOut' }, 7.55);
+  u.cacher('#sb', 8.05);
+  tl.fromTo('#motif-c', { rotation: 0 }, { rotation: 7, duration: 4.2, ease: 'none', immediateRender: false }, 7.55);
+  gsap.set('#tel', { scale: .92 });
+  tl.fromTo('#tel', { y: 300, opacity: 0 }, { y: 0, opacity: 1, duration: .6, immediateRender: false }, 7.7);
+  gsap.set('.etape', { yPercent: 115 });
+  const etapes = $$('.etape');
+  [7.8, 8.95, 10.6].forEach((t, i) => { tl.to(etapes[i], { yPercent: 0, duration: .45, ease: 'power4.out' }, t); if (i < 2) tl.to(etapes[i], { yPercent: -115, duration: .28, ease: 'power3.in' }, [8.95, 10.6][i] - .28); });
+  // Les puces défilent : on compare
+  tl.fromTo('#puces', { x: 0 }, { x: -170, duration: .7, ease: 'power2.inOut', immediateRender: false }, 8.05);
+  tl.to('#puces', { x: 0, duration: .5, ease: 'power2.inOut' }, 8.75);
+  // Doigt et sélections : positions en coordonnées d'écran
+  const POS = [[180, 550], [480, 550], [180, 1000], [480, 1000]];
+  const SELECTIONS = [[0, 9.05], [1, 9.5], [2, 10.2], [3, 10.6]];
+  tl.set('#doigt', { x: 330, y: 1150 }, 7.6);
+  tl.to('#doigt', { opacity: 1, duration: .25 }, 8.7);
+  const ondes = $('#ondes');
+  SELECTIONS.forEach(([k, t], j) => {
+    const scroll = k >= 2 ? -450 : 0;
+    const [x, y] = POS[k];
+    tl.to('#doigt', { x, y: y + scroll, duration: .3, ease: 'power2.inOut' }, t - .32);
+    tl.to('#doigt', { scale: .78, duration: .07, ease: 'power2.in' }, t - .02);
+    tl.to('#doigt', { scale: 1, duration: .18, ease: 'power2.out' }, t + .05);
+    const o = document.createElement('div'); o.className = 'onde'; o.style.left = x + 'px'; o.style.top = (y + scroll) + 'px'; ondes.appendChild(o);
+    tl.fromTo(o, { scale: .4, opacity: 1 }, { scale: 2.6, opacity: 0, duration: .5, ease: 'power2.out', immediateRender: false }, t);
+    const carte = $('#carte' + k);
+    tl.to(carte.querySelector('.ok'), { scale: 1, duration: .32, ease: 'back.out(3)' }, t + .02);
+    tl.to(carte.querySelector('.cadre'), { boxShadow: 'inset 0 0 0 6px #C9A66B', duration: .2 }, t);
+    tl.fromTo(carte, { scale: 1 }, { scale: .96, duration: .08, yoyo: true, repeat: 1, immediateRender: false }, t);
+    // Pastille qui s'envole vers le panier
+    const vol = document.createElement('div'); vol.className = 'vol'; vol.textContent = '+ ajouté'; $('#tel .ecran').appendChild(vol);
+    tl.fromTo(vol, { x: x - 50, y: y + scroll - 30, opacity: 0, scale: .6 }, { opacity: 1, scale: 1, duration: .12, immediateRender: false }, t + .05);
+    tl.to(vol, { x: 560, y: 110, scale: .4, duration: .38, ease: 'power3.in' }, t + .17);
+    tl.to(vol, { opacity: 0, duration: .05 }, t + .55);
+    tl.set('#badge', { textContent: String(j + 1) }, t + .55);
+    tl.fromTo('#badge', { scale: j ? 1.5 : 0 }, { scale: 1, duration: .3, ease: 'back.out(3)', immediateRender: false }, t + .55);
+  });
+  tl.to('#liste', { y: -450, duration: .5, ease: 'power3.inOut' }, 9.62);
+  // Feuille de réservation
+  gsap.set('#feuille', { yPercent: 110 });
+  tl.to('#feuille', { yPercent: 0, duration: .45, ease: 'power3.out' }, 10.85);
+  tl.to('#doigt', { x: 330, y: 1285, duration: .3, ease: 'power2.inOut' }, 10.95);
+  tl.to('#doigt', { scale: .78, duration: .07 }, 11.25); tl.to('#doigt', { scale: 1, duration: .15 }, 11.32);
+  tl.fromTo('#reflet', { x: 0 }, { x: 900, duration: .45, ease: 'power2.inOut', immediateRender: false }, 11.15);
+  tl.fromTo('#btn-reserver', { scale: 1 }, { scale: .95, duration: .08, yoyo: true, repeat: 1, immediateRender: false }, 11.27);
+  rafale({ graine: 40, t0: 11.3, x: 540, y: 1560, dx: 400, n: 60, v: [200, 900], vie: [.6, 1.1], taille: [2, 6], couleurs: OR, types: ['etoile', 'point'], g: -100 });
+  tl.to('#tel', { scale: 2.6, opacity: 0, duration: .4, ease: 'power3.in' }, 11.4);
+  tl.to('#etapes', { opacity: 0, duration: .25 }, 11.4);
+  u.eclair(11.62, .9, .4);
+  poussiere({ graine: 41, t0: 7.6, t1: 11.7, n: 40, alpha: .45 });
+
+  // E. Final (11,65 à 15 s)
+  finale(tl, 11.65, { duree: 15, slogan: 'Votre fête,<br>vos prestataires.', cta: 'Hub fêtes &amp; mariages · lien en bio', bas: 'Maquillage · Photo · Henné · Musique · Sono' });
+  u.cacher('#sc', 12.3);
+
+  // Paillettes d'ouverture
+  rafale({ graine: 1, t0: .55, x: 540, y: 1045, dx: 500, n: 60, v: [100, 500], vie: [.8, 1.3], taille: [2, 5], couleurs: OR, types: ['point', 'etoile'], g: -60, etale: .2 });
+  T.forEach((t, i) => rafale({ graine: 10 + i, t0: t + .02, x: 540, y: 960, dx: 1080, dy: 1920, n: 24, v: [40, 200], vie: [.5, .9], taille: [2, 4], couleurs: OR, types: ['point'], g: -40 }));
+
+  demarrer(tl, 15);
+</script>
+</body>
+</html>

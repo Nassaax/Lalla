@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>LALLAT, reel Hub : en toute confiance</title>
+<link rel="stylesheet" href="../commun.css">
+<link rel="stylesheet" href="hub-fx.css">
+<style>
+  /* A. Ouverture */
+  #sa { background: radial-gradient(circle at 50% 46%, #3A2418 0%, #170E09 55%, #050302 100%); visibility: visible; }
+  #sa .t1 { top: 190px; font-size: 100px; color: #FFF8EC; line-height: 1.05; }
+  #sa .t2 { top: 1270px; font-size: 118px; line-height: 1.05; }
+  #arche-a { position: absolute; left: 270px; top: 380px; width: 540px; height: 712px; transform-origin: 270px 400px; }
+  #arche-a .f { position: absolute; inset: 0; }
+  #arche-a img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+  #arche-a svg { position: absolute; left: -30px; top: -34px; width: 600px; height: 780px; overflow: visible; }
+
+  /* B. Les quatre garanties */
+  .pilier .num { top: 300px; opacity: 0; }
+  .pilier .titre { top: 1120px; font-size: 104px; line-height: 1.05; }
+  .pilier .sous { top: 1380px; font-family: Jost; font-size: 38px; line-height: 1.35; padding: 0 110px; opacity: 0; }
+  .pilier .icone { position: absolute; left: 290px; top: 410px; width: 500px; height: 500px; overflow: visible; }
+  .clair { background: radial-gradient(circle at 50% 38%, #FFFDF8 0%, #FAF6F0 55%, #EFE4D2 100%); }
+  .clair .titre { color: #241B17; } .clair .titre em { color: #5E1D27; } .clair .num { color: #8A6528; } .clair .sous { color: #54483F; }
+  .sombre { color: #FFF8EC; } .sombre .titre { color: #FFF8EC; } .sombre .sous { color: #E8DCCB; }
+  #p1 { clip-path: circle(0% at 50% 47%); }
+  #p2 { background: radial-gradient(circle at 50% 38%, #8A2C3C 0%, #5E1D27 48%, #2E0C13 100%); clip-path: polygon(130% 0%, 130% 0%, 100% 100%, 100% 100%); }
+  #p3 { background: radial-gradient(circle at 50% 40%, #11604E 0%, #0A3A30 52%, #04201A 100%); clip-path: circle(0% at 50% 34%); }
+  #p4 { }
+  /* Frise de paiement */
+  #frise { position: absolute; left: 90px; right: 90px; top: 520px; height: 420px; }
+  #frise .rail { position: absolute; left: 70px; right: 70px; top: 128px; height: 6px; border-radius: 3px; background: rgba(255,248,236,.18); }
+  #frise .trait { position: absolute; left: 70px; right: 70px; top: 128px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #B8893B, #F7E3A3); transform-origin: 0 50%; transform: scaleX(0); }
+  #frise .noeud { position: absolute; top: 60px; width: 140px; text-align: center; }
+  #frise .noeud .rond { width: 140px; height: 140px; border-radius: 50%; background: #0A3A30; border: 4px solid rgba(255,248,236,.3); display: grid; place-items: center; transform: scale(.85); }
+  #frise .noeud.on .rond { border-color: #E9C77A; background: linear-gradient(135deg, #FFF3CF, #E2BC6E 55%, #B8893B); }
+  #frise .noeud .leg { margin-top: 26px; margin-left: -60px; margin-right: -60px; font-family: Jost; font-weight: 500; font-size: 32px; line-height: 1.2; color: #FFF8EC; opacity: 0; }
+  #frise .bille { position: absolute; left: 70px; top: 116px; width: 30px; height: 30px; margin-left: -15px; border-radius: 50%; background: #FFF6D8; box-shadow: 0 0 30px 10px rgba(255,226,160,.7); opacity: 0; }
+  /* Étoiles */
+  #etoiles { position: absolute; left: 0; right: 0; top: 500px; display: flex; justify-content: center; gap: 22px; }
+  #etoiles svg { width: 150px; height: 150px; overflow: visible; }
+  #bulle { position: absolute; left: 170px; right: 170px; top: 760px; padding: 32px 40px; border-radius: 34px; background: #fff; box-shadow: 0 24px 60px rgba(94,29,39,.15); display: flex; gap: 26px; align-items: center; opacity: 0; }
+  #bulle i { flex-shrink: 0; width: 84px; height: 84px; border-radius: 50%; background: #5E1D27; display: grid; place-items: center; }
+  #bulle div { font-family: Jost; font-weight: 500; font-size: 34px; color: #241B17; line-height: 1.25; }
+  #bulle small { display: block; font-weight: 400; font-size: 27px; color: #7A6E66; }
+
+  /* C. Récapitulatif */
+  #sr { background: radial-gradient(circle at 50% 46%, #2E2014 0%, #140D08 50%, #050302 100%); clip-path: inset(50% 0% 50% 0%); }
+  #sr .t1 { top: 470px; font-size: 112px; color: #FFF8EC; line-height: 1.05; }
+  #sr .t2 { top: 600px; font-size: 124px; line-height: 1.05; }
+  #recap { position: absolute; left: 0; right: 0; top: 860px; display: grid; gap: 26px; justify-content: center; }
+  .rc { display: flex; align-items: center; gap: 28px; font-family: Jost; font-weight: 500; font-size: 42px; color: #FFF8EC; opacity: 0; }
+  .rc i { flex-shrink: 0; width: 78px; height: 78px; border-radius: 50%; background: linear-gradient(135deg, #FFF3CF, #E2BC6E 55%, #B8893B); display: grid; place-items: center; box-shadow: 0 10px 26px rgba(184,137,59,.35); }
+</style>
+</head>
+<body>
+<div id="scene"><div id="camera">
+
+  <!-- A. Le bon prestataire, en toute confiance -->
+  <section class="plan" id="sa">
+    <div class="rayons" id="rayons-a"></div>
+    <div class="centre t1 serif ombre"><span class="ligne"><span id="a1">Le bon prestataire,</span></span></div>
+    <div id="arche-a">
+      <div class="f fenetre-arche"><img src="images/p-maquillage.jpg" alt="" id="img-a"></div>
+      <svg viewBox="0 0 600 780"><path id="arche-trait" d="M30 776 V350 C30 190 130 80 300 30 C470 80 570 190 570 350 V776" fill="none" stroke="#E9C77A" stroke-width="5"/></svg>
+    </div>
+    <div class="centre t2 ital ombre"><span class="ligne"><span id="a2" class="or">en toute confiance.</span></span></div>
+  </section>
+
+  <!-- B1. Annonces validées -->
+  <section class="plan pilier clair" id="p1">
+    <svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".45" style="filter:brightness(.55) saturate(1.3)"/></svg>
+    <div class="centre num surt">01 · Sélection</div>
+    <svg class="icone" viewBox="0 0 500 500">
+      <circle id="p1-anneau" cx="250" cy="250" r="230" fill="none" stroke="#C9A66B" stroke-width="3" stroke-dasharray="6 14"/>
+      <path id="p1-bouclier" d="M250 70 L400 130 V250 C400 340 335 400 250 432 C165 400 100 340 100 250 V130 Z" fill="rgba(94,29,39,.06)" stroke="#5E1D27" stroke-width="12" stroke-linejoin="round"/>
+      <path id="p1-coche" d="M180 255 L232 305 L330 200" fill="none" stroke="#B8893B" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="centre titre serif"><span class="ligne"><span id="t1a">Annonces validées</span></span><span class="ligne"><span id="t1b"><em class="ital">par notre équipe.</em></span></span></div>
+    <div class="centre sous">Chaque annonce est relue avant sa mise en ligne.</div>
+  </section>
+
+  <!-- B2. Paiement sécurisé -->
+  <section class="plan pilier sombre" id="p2">
+    <svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".12"/></svg>
+    <div class="centre num surt">02 · Paiement</div>
+    <svg class="icone" viewBox="0 0 500 500">
+      <circle cx="250" cy="250" r="230" fill="none" stroke="#E9C77A" stroke-width="2" opacity=".5"/>
+      <g id="p2-carte"><rect x="70" y="170" width="300" height="196" rx="24" fill="#FAF6F0"/><rect x="70" y="214" width="300" height="38" fill="#241B17"/><rect x="100" y="290" width="120" height="18" rx="9" fill="#D3C4AE"/><rect x="100" y="322" width="70" height="14" rx="7" fill="#D3C4AE"/><rect x="290" y="286" width="54" height="40" rx="8" fill="url(#dore)"/></g>
+      <g id="p2-cadenas"><path id="p2-anse" d="M330 250 V200 a50 50 0 0 1 100 0 V250" fill="none" stroke="#E9C77A" stroke-width="22" stroke-linecap="round"/><rect x="300" y="240" width="160" height="140" rx="28" fill="url(#dore)"/><circle cx="380" cy="300" r="16" fill="#5E1D27"/><rect x="373" y="304" width="14" height="36" rx="7" fill="#5E1D27"/></g>
+    </svg>
+    <div class="centre titre serif"><span class="ligne"><span id="t2a">Paiement</span></span><span class="ligne"><span id="t2b"><em class="ital or">sécurisé.</em></span></span></div>
+    <div class="centre sous">Réglez en ligne, par carte ou Bancontact.</div>
+  </section>
+
+  <!-- B3. Payé après la fête -->
+  <section class="plan pilier sombre" id="p3">
+    <svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".14"/></svg>
+    <div class="centre num surt">03 · Garantie</div>
+    <div id="frise">
+      <div class="rail"></div><div class="trait" id="trait"></div>
+      <div class="noeud" style="left:0"><div class="rond"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div><div class="leg">Vous<br>réservez</div></div>
+      <div class="noeud" style="left:310px"><div class="rond"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></div><div class="leg">Le jour J</div></div>
+      <div class="noeud" style="left:620px"><div class="rond"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2a3.4 3.4 0 1 0 0 5.6M7.8 11h5M7.8 13.2h5"/></svg></div><div class="leg">Prestataire<br>payé</div></div>
+      <div class="bille" id="bille"></div>
+    </div>
+    <div class="centre titre serif"><span class="ligne"><span id="t3a">Payé après</span></span><span class="ligne"><span id="t3b"><em class="ital or">votre fête.</em></span></span></div>
+    <div class="centre sous">Le prestataire reçoit son paiement une fois la prestation réalisée.</div>
+  </section>
+
+  <!-- B4. Avis et litiges -->
+  <section class="plan pilier clair" id="p4">
+    <svg class="motif"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".45" style="filter:brightness(.55) saturate(1.3)"/></svg>
+    <div class="centre num surt">04 · Sérénité</div>
+    <div id="etoiles"></div>
+    <div id="bulle"><i><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M12 4v16M6 20h12M5 8h14M5 8l-2.5 6a3 3 0 0 0 5 0zM19 8l-2.5 6a3 3 0 0 0 5 0z"/></svg></i><div>Un souci&nbsp;?<small>Notre équipe tranche les litiges.</small></div></div>
+    <div class="centre titre serif"><span class="ligne"><span id="t4a">Des avis après</span></span><span class="ligne"><span id="t4b"><em class="ital">chaque prestation.</em></span></span></div>
+    <div class="centre sous">Les clientes notent, vous choisissez en connaissance de cause.</div>
+  </section>
+
+  <!-- C. Récapitulatif -->
+  <section class="plan" id="sr">
+    <div class="rayons" id="rayons-r"></div>
+    <div class="centre t1 serif ombre"><span class="ligne"><span id="r1">Réservez</span></span></div>
+    <div class="centre t2 ital ombre"><span class="ligne"><span id="r2" class="or">l'esprit léger.</span></span></div>
+    <div id="recap"></div>
+  </section>
+
+  <section class="plan" id="fin"></section>
+
+  <div id="flash"></div>
+  <div id="vignette"></div>
+  <div id="grain"></div>
+</div>
+<canvas id="paillettes" width="1080" height="1920"></canvas>
+</div>
+
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="hub-fx.js"></script>
+<script>
+  const { $, $$, OR, rafale, pluie, poussiere, outils, finale, demarrer } = FX;
+  FX.installer();
+  const COCHE = '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+  $('#etoiles').innerHTML = Array.from({ length: 5 }, (_, i) => `<svg viewBox="0 0 100 100"><path d="M50 6l13 28 30 3.5-22.5 20.5 6.5 30L50 73 23 88l6.5-30L7 37.5l30-3.5z" fill="#EFE4D2" stroke="#D3C4AE" stroke-width="3" stroke-linejoin="round"/>
+    <path class="plein" d="M50 6l13 28 30 3.5-22.5 20.5 6.5 30L50 73 23 88l6.5-30L7 37.5l30-3.5z" fill="url(#dore)" stroke="#B8893B" stroke-width="3" stroke-linejoin="round"/></svg>`).join('');
+  $('#recap').innerHTML = ['Annonces validées', 'Paiement sécurisé', 'Payé après la fête', 'Avis et médiation'].map((t) => `<div class="rc"><i>${COCHE}</i>${t}</div>`).join('');
+
+  // ------------------------------------------------------------------ timeline (120 BPM, 15 s)
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  const u = outils(tl);
+
+  // A. Ouverture (0 à 2,0 s)
+  tl.fromTo('#rayons-a', { rotation: 0, opacity: 0 }, { rotation: 15, opacity: 1, duration: 2.2, ease: 'none' }, 0);
+  tl.fromTo('#arche-a', { opacity: 0, scale: .86, y: 60 }, { opacity: 1, scale: 1, y: 0, duration: .8 }, 0);
+  tl.fromTo('#img-a', { scale: 1.25 }, { scale: 1.05, duration: 2, ease: 'power2.out' }, 0);
+  u.tracer('#arche-trait', .1, 1);
+  u.entrer('#a1', .2, .55); u.entrer('#a2', .55, .6);
+  u.brillance('#a2', .9, 1);
+  tl.to('#arche-a', { scale: 4.2, duration: .5, ease: 'power3.in' }, 1.55);
+  tl.to('#sa .t1, #sa .t2', { opacity: 0, duration: .25 }, 1.6);
+
+  // B. Quatre garanties (2,0 à 10,5 s), une toutes les 2,1 s
+  const P = [2.0, 4.1, 6.2, 8.3];
+  const entreeTitre = (id, t) => { u.entrer(`#${id}a`, t + .15, .5); u.entrer(`#${id}b`, t + .32, .55); tl.fromTo(`#${['p1', 'p2', 'p3', 'p4'][Number(id[1]) - 1]} .num`, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .4, immediateRender: false }, t + .1); tl.fromTo(`#${['p1', 'p2', 'p3', 'p4'][Number(id[1]) - 1]} .sous`, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .45, immediateRender: false }, t + .55); };
+
+  // B1
+  u.montrer('#p1', 1.95);
+  tl.to('#p1', { clipPath: 'circle(150% at 50% 47%)', duration: .5, ease: 'power3.inOut' }, 1.95);
+  u.eclair(2.0, .6, .45);
+  u.cacher('#sa', 2.5);
+  entreeTitre('t1', P[0]);
+  tl.fromTo('#p1-anneau', { rotation: 0, svgOrigin: '250 250', opacity: 0 }, { rotation: 90, svgOrigin: '250 250', opacity: 1, duration: 2.1, ease: 'none', immediateRender: false }, 2.0);
+  u.tracer('#p1-bouclier', 2.15, .6);
+  u.tracer('#p1-coche', 2.7, .35);
+  tl.fromTo('#p1 .icone', { scale: .8 }, { scale: 1, duration: .6, ease: 'back.out(1.8)', transformOrigin: '50% 50%', immediateRender: false }, 2.1);
+  tl.fromTo('#p1 .icone', { scale: 1 }, { scale: 1.08, duration: .12, yoyo: true, repeat: 1, transformOrigin: '50% 50%', immediateRender: false }, 3.02);
+  rafale({ graine: 80, t0: 3.05, x: 540, y: 660, n: 50, v: [150, 650], vie: [.6, 1.1], taille: [2, 6], couleurs: ['#E9C77A', '#B8893B', '#D9B25F'], types: ['etoile', 'point'], g: 0, lumiere: false });
+
+  // B2
+  u.montrer('#p2', 4.05);
+  tl.to('#p2', { clipPath: 'polygon(-30% 0%, 130% 0%, 100% 100%, -60% 100%)', duration: .45, ease: 'power3.inOut' }, 4.05);
+  u.cacher('#p1', 4.55);
+  entreeTitre('t2', P[1]);
+  tl.fromTo('#p2-carte', { x: -260, rotation: -14, svgOrigin: '220 268', opacity: 0 }, { x: 0, rotation: -4, svgOrigin: '220 268', opacity: 1, duration: .55, ease: 'power3.out', immediateRender: false }, 4.2);
+  tl.fromTo('#p2-cadenas', { y: -200, opacity: 0 }, { y: 0, opacity: 1, duration: .45, ease: 'back.out(1.6)', immediateRender: false }, 4.45);
+  tl.fromTo('#p2-anse', { y: -40 }, { y: 0, duration: .15, ease: 'power4.in', immediateRender: false }, 5.0);
+  u.secousse(5.15, 9, .25);
+  rafale({ graine: 81, t0: 5.15, x: 720, y: 720, n: 60, v: [150, 700], vie: [.6, 1.1], taille: [2, 6], couleurs: OR, types: ['etoile', 'point'], g: -50 });
+
+  // B3
+  u.montrer('#p3', 6.15);
+  tl.to('#p3', { clipPath: 'circle(150% at 50% 34%)', duration: .5, ease: 'power3.inOut' }, 6.15);
+  u.cacher('#p2', 6.7);
+  entreeTitre('t3', P[2]);
+  const noeuds = $$('#frise .noeud');
+  noeuds.forEach((n, i) => {
+    const t = 6.4 + i * .42;
+    tl.fromTo(n.querySelector('.rond'), { scale: 0 }, { scale: .85, duration: .35, ease: 'back.out(2)', immediateRender: false }, 6.3 + i * .08);
+    tl.to(n.querySelector('.rond'), { scale: 1, borderColor: '#E9C77A', background: 'linear-gradient(135deg, #FFF3CF, #E2BC6E 55%, #B8893B)', duration: .25, ease: 'back.out(3)' }, t);
+    tl.fromTo(n.querySelector('.leg'), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .35, immediateRender: false }, t);
+    rafale({ graine: 90 + i, t0: t, x: 90 + 70 + i * 310, y: 520 + 130, n: 22, v: [100, 420], vie: [.5, .9], taille: [2, 5], couleurs: OR, types: ['etoile', 'point'], g: -60 });
+  });
+  tl.fromTo('#trait', { scaleX: 0 }, { scaleX: 1, duration: .84, ease: 'none', immediateRender: false }, 6.4);
+  tl.fromTo('#bille', { x: 0, opacity: 0 }, { x: 620, opacity: 1, duration: .84, ease: 'none', immediateRender: false }, 6.4);
+  tl.to('#bille', { opacity: 0, scale: 3, duration: .25 }, 7.24);
+  rafale({ graine: 95, t0: 7.26, x: 850, y: 650, n: 22, angle: [-Math.PI * .9, -Math.PI * .1], v: [500, 1100], vie: [1, 1.5], taille: [10, 16], couleurs: OR, types: ['piece'], g: 1500, frein: .6 });
+
+  // B4
+  u.montrer('#p4', 8.2);
+  gsap.set('#p4', { yPercent: 100 });
+  tl.to('#p4', { yPercent: 0, duration: .45, ease: 'power3.inOut' }, 8.25);
+  tl.to('#p3', { yPercent: -35, duration: .45, ease: 'power3.inOut' }, 8.25);
+  u.cacher('#p3', 8.75);
+  entreeTitre('t4', P[3]);
+  $$('#etoiles svg').forEach((s, i) => {
+    tl.fromTo(s, { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: .4, ease: 'back.out(2.2)', transformOrigin: '50% 50%', immediateRender: false }, 8.45 + i * .06);
+    tl.fromTo(s.querySelector('.plein'), { opacity: 0, scale: .4, svgOrigin: '50 50' }, { opacity: 1, scale: 1, svgOrigin: '50 50', duration: .3, ease: 'back.out(3)', immediateRender: false }, 8.85 + i * .12);
+    rafale({ graine: 100 + i, t0: 8.88 + i * .12, x: 540 + (i - 2) * 172, y: 575, n: 14, v: [80, 300], vie: [.4, .8], taille: [2, 5], couleurs: ['#E9C77A', '#B8893B'], types: ['etoile'], g: 0, lumiere: false });
+  });
+  tl.fromTo('#bulle', { opacity: 0, y: 60, scale: .9 }, { opacity: 1, y: 0, scale: 1, duration: .5, ease: 'back.out(1.8)', immediateRender: false }, 9.55);
+
+  // C. Récapitulatif (10,4 à 11,6 s)
+  u.montrer('#sr', 10.35);
+  tl.to('#sr', { clipPath: 'inset(0% 0% 0% 0%)', duration: .4, ease: 'power3.inOut' }, 10.4);
+  u.cacher('#p4', 10.85);
+  tl.fromTo('#rayons-r', { rotation: 0, opacity: 0 }, { rotation: 12, opacity: 1, duration: 1.4, ease: 'none', immediateRender: false }, 10.4);
+  u.entrer('#r1', 10.5, .45); u.entrer('#r2', 10.65, .5);
+  u.brillance('#r2', 10.9, .8);
+  $$('.rc').forEach((r, i) => {
+    tl.fromTo(r, { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: .32, immediateRender: false }, 10.7 + i * .12);
+    tl.fromTo(r.querySelector('i'), { scale: 0 }, { scale: 1, duration: .32, ease: 'back.out(3)', immediateRender: false }, 10.7 + i * .12);
+  });
+  u.eclair(11.62, .9, .4);
+
+  // D. Final (11,65 à 15 s)
+  finale(tl, 11.65, { duree: 15, slogan: 'Choisissez sereinement,<br>on veille au reste.', cta: 'Hub fêtes &amp; mariages · lien en bio', bas: 'Annonces validées · Paiement sécurisé' });
+  u.cacher('#sr', 12.3);
+  rafale({ graine: 1, t0: .5, x: 540, y: 760, dx: 600, dy: 700, n: 60, v: [60, 300], vie: [.8, 1.4], taille: [2, 5], couleurs: OR, types: ['point', 'etoile'], g: -50, etale: .4 });
+  poussiere({ graine: 2, t0: 0, t1: 2.1, n: 30, alpha: .4 });
+  poussiere({ graine: 3, t0: 4.1, t1: 8.4, n: 35, alpha: .45 });
+
+  demarrer(tl, 15);
+</script>
+</body>
+</html>

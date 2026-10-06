@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>LALLAT, reel Hub : budget maîtrisé</title>
+<link rel="stylesheet" href="../commun.css">
+<link rel="stylesheet" href="hub-fx.css">
+<style>
+  /* A. Le chaos des devis */
+  #sa { background: radial-gradient(circle at 50% 46%, #2A211C 0%, #120D0A 55%, #050302 100%); visibility: visible; perspective: 1600px; }
+  .devis { position: absolute; left: 0; top: 0; width: 300px; height: 390px; margin: -195px 0 0 -150px; background: #F4ECDF; border-radius: 10px; padding: 30px 28px; box-shadow: 0 30px 60px rgba(0,0,0,.5); font-family: Jost; color: #54483F; }
+  .devis .h { font-weight: 500; font-size: 30px; letter-spacing: .2em; color: #241B17; }
+  .devis .r { height: 10px; border-radius: 5px; background: #DCCFBB; margin-top: 16px; }
+  .devis .q { margin-top: 26px; font-size: 28px; line-height: 1.25; color: #8A2C3C; font-weight: 500; }
+  .devis .p { position: absolute; left: 28px; right: 28px; bottom: 28px; display: flex; justify-content: space-between; font-size: 26px; border-top: 2px dashed #CDBFA9; padding-top: 14px; }
+  .devis .p b { color: #A3261F; font-weight: 500; }
+  #sa .voile { position: absolute; left: 0; right: 0; top: 600px; height: 520px; background: radial-gradient(ellipse at 50% 50%, rgba(5,3,2,.85) 0%, rgba(5,3,2,.6) 45%, rgba(5,3,2,0) 72%); }
+  #sa .t1 { top: 700px; font-size: 108px; color: #FFF8EC; line-height: 1.05; }
+  #sa .t2 { top: 835px; font-size: 112px; line-height: 1.05; }
+  #balai { position: absolute; left: -900px; top: -400px; width: 700px; height: 2800px; background: linear-gradient(90deg, rgba(233,199,122,0), rgba(255,243,207,.95) 50%, rgba(233,199,122,0)); transform: rotate(14deg); opacity: 0; mix-blend-mode: screen; }
+
+  /* B. Les prix sont affichés */
+  #sb { background: radial-gradient(circle at 50% 45%, #FFFDF8 0%, #FAF6F0 55%, #EFE4D2 100%); clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%); }
+  #sb .t1 { top: 690px; font-size: 128px; color: #241B17; line-height: 1.05; }
+  #sb .t2 { top: 835px; font-size: 136px; color: #5E1D27; line-height: 1.05; }
+  .etiq { position: absolute; display: flex; align-items: center; gap: 16px; padding: 12px 30px 12px 12px; border-radius: 999px; background: #fff; box-shadow: 0 18px 40px rgba(94,29,39,.18); font-family: Jost; font-weight: 500; font-size: 44px; color: #5E1D27; opacity: 0; white-space: nowrap; }
+  .etiq img { width: 76px; height: 76px; border-radius: 50%; object-fit: cover; }
+
+  /* C. Le ticket */
+  #sc { background: radial-gradient(circle at 50% 40%, #3A2418 0%, #170E09 55%, #050302 100%); }
+  #sc .titre { top: 160px; font-size: 68px; color: #FFF8EC; line-height: 1.1; }
+  #ticket { position: absolute; left: 110px; top: 300px; width: 860px; padding: 44px 50px 70px; background: #FAF6F0; border-radius: 36px 36px 0 0; box-shadow: 0 50px 120px rgba(0,0,0,.55);
+    -webkit-mask: linear-gradient(#000, #000) top / 100% calc(100% - 30px) no-repeat, radial-gradient(circle at 50% 0, transparent 16px, #000 17px) bottom / 44px 30px repeat-x;
+    mask: linear-gradient(#000, #000) top / 100% calc(100% - 30px) no-repeat, radial-gradient(circle at 50% 0, transparent 16px, #000 17px) bottom / 44px 30px repeat-x; }
+  #ticket .tete { display: flex; justify-content: space-between; align-items: baseline; }
+  #ticket .tete .s { font-family: Jost; font-weight: 500; font-size: 28px; letter-spacing: .3em; color: #5E1D27; }
+  #ticket .tete .e { font-family: Jost; font-size: 24px; color: #8A7E74; }
+  #ticket .date { font-family: Bodoni; font-weight: 500; font-size: 52px; color: #241B17; margin-top: 8px; }
+  #ticket .sep { border-top: 3px dashed #D3C4AE; margin: 26px 0 8px; }
+  .ligne-t { display: grid; grid-template-columns: 88px 1fr auto; gap: 24px; align-items: center; height: 112px; border-bottom: 1px solid #E5D9C8; opacity: 0; }
+  .ligne-t img { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; }
+  .ligne-t .lb { font-family: Jost; font-weight: 500; font-size: 34px; color: #241B17; line-height: 1.15; }
+  .ligne-t .lb small { display: block; font-weight: 400; font-size: 24px; color: #8A7E74; }
+  .ligne-t .px { font-family: Bodoni; font-weight: 500; font-size: 50px; color: #241B17; }
+  #ticket .total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 28px; }
+  #ticket .total .l { font-family: Jost; font-weight: 500; font-size: 32px; letter-spacing: .12em; text-transform: uppercase; color: #54483F; }
+  #ticket .total .v { font-family: Bodoni; font-weight: 500; font-size: 92px; color: #5E1D27; }
+  #jauge { position: absolute; left: 110px; width: 860px; top: 1360px; }
+  #jauge .h { display: flex; justify-content: space-between; font-family: Jost; font-size: 32px; color: #E8DCCB; }
+  #jauge .h b { font-weight: 500; color: #FFF8EC; }
+  #jauge .piste { position: relative; margin-top: 18px; height: 30px; border-radius: 15px; background: rgba(255,248,236,.14); overflow: hidden; }
+  #jauge .rempli { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; border-radius: 15px; background: linear-gradient(90deg, #B8893B, #E9C77A 60%, #FFF3CF); transform-origin: 0 50%; transform: scaleX(0); }
+  #jauge .reste { position: absolute; right: 0; top: 84px; display: flex; align-items: center; gap: 14px; font-family: Jost; font-weight: 500; font-size: 36px; color: #F7E3A3; opacity: 0; }
+  #jauge .reste i { width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, #FFF3CF, #E2BC6E 55%, #B8893B); display: grid; place-items: center; }
+  #tampon { position: absolute; left: 700px; top: 215px; width: 300px; height: 300px; opacity: 0; }
+  #sc .note { top: 1530px; font-family: Jost; font-size: 26px; color: #A89A86; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="scene"><div id="camera">
+
+  <!-- A. Des devis partout -->
+  <section class="plan" id="sa">
+    <div id="papiers"></div>
+    <div class="voile"></div>
+    <div class="centre t1 serif ombre"><span class="ligne"><span id="a1">Des devis partout,</span></span></div>
+    <div class="centre t2 ital ombre"><span class="ligne"><span id="a2" class="or">un budget qui file&nbsp;?</span></span></div>
+    <div id="balai"></div>
+  </section>
+
+  <!-- B. Ici, les prix sont affichés -->
+  <section class="plan" id="sb">
+    <svg class="motif" id="motif-b"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".5" style="filter:brightness(.55) saturate(1.3)"/></svg>
+    <div class="centre t1 serif"><span class="ligne"><span id="b1">Ici, les prix</span></span></div>
+    <div class="centre t2 ital"><span class="ligne"><span id="b2">sont affichés.</span></span></div>
+    <div id="etiquettes"></div>
+  </section>
+
+  <!-- C. Le budget, ligne par ligne -->
+  <section class="plan" id="sc">
+    <div class="rayons" id="rayons-c"></div>
+    <div class="centre titre serif"><span class="ligne"><span id="c1">Votre budget, <em class="or">ligne par ligne.</em></span></span></div>
+    <div class="centre titre serif"><span class="ligne"><span id="c2">Le total, <em class="or">avant de payer.</em></span></span></div>
+    <div id="ticket">
+      <div class="tete"><span class="s">MON MARIAGE</span><span class="e">Exemple</span></div>
+      <div class="date">Samedi 12 juillet</div>
+      <div class="sep"></div>
+      <div id="lignes"></div>
+      <div class="total"><span class="l">Total</span><span class="v" id="total">0 €</span></div>
+    </div>
+    <svg id="tampon" viewBox="0 0 360 360">
+      <defs><path id="cercle-texte" d="M180 180 m-128 0 a128 128 0 1 1 256 0 a128 128 0 1 1 -256 0"/></defs>
+      <g fill="none" stroke="#A3261F" opacity=".92"><circle cx="180" cy="180" r="170" stroke-width="8"/><circle cx="180" cy="180" r="150" stroke-width="3"/><circle cx="180" cy="180" r="100" stroke-width="3"/></g>
+      <text font-family="Jost" font-weight="500" font-size="30" letter-spacing="7" fill="#A3261F"><textPath href="#cercle-texte">PRIX AFFICHÉS · TOTAL CLAIR · </textPath></text>
+      <path d="M140 182 l28 28 l56 -60" fill="none" stroke="#A3261F" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div id="jauge">
+      <div class="h"><span>Budget prévu</span><b>2&nbsp;000&nbsp;€</b></div>
+      <div class="piste"><div class="rempli" id="rempli"></div></div>
+      <div class="reste" id="reste"><i><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5E1D27" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg></i>Il vous reste 480&nbsp;€</div>
+    </div>
+    <div class="centre note">Exemple indicatif. Les frais de service s'affichent avant le paiement.</div>
+  </section>
+
+  <section class="plan" id="fin"></section>
+
+  <div id="flash"></div>
+  <div id="vignette"></div>
+  <div id="grain"></div>
+</div>
+<canvas id="paillettes" width="1080" height="1920"></canvas>
+</div>
+
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="hub-fx.js"></script>
+<script>
+  const { $, $$, OR, graine, rafale, poussiere, outils, finale, demarrer } = FX;
+  FX.installer();
+  const euros = (v) => Math.round(v).toLocaleString('fr-BE').replace(/\s/g, ' ') + ' €';
+
+  // ------------------------------------------------------------------ papiers de devis
+  const TEXTES = [['DEVIS', 'Prix sur demande', '? €'], ['DEVIS', 'Déplacement en sus ?', '+ ?'], ['DEVIS', 'Rappelez-nous…', '— €'], ['DEVIS', 'À partir de…', '??? €'],
+    ['DEVIS', 'Options non comprises', '+ ?'], ['DEVIS', 'Réponse sous 10 jours', '… €'], ['DEVIS', 'Acompte à définir', '? €'], ['DEVIS', 'Tarif selon la date', '?? €']];
+  const r = graine(3), papiers = [];
+  for (let i = 0; i < 16; i++) {
+    const t = TEXTES[i % TEXTES.length], d = document.createElement('div');
+    d.className = 'devis';
+    d.innerHTML = `<div class="h">${t[0]}</div><div class="r" style="width:80%"></div><div class="r" style="width:60%"></div><div class="q">${t[1]}</div><div class="r" style="width:70%"></div><div class="r" style="width:45%"></div><div class="p"><span>Total</span><b>${t[2]}</b></div>`;
+    $('#papiers').appendChild(d);
+    papiers.push({ d, x: 80 + r() * 920, y: 120 + r() * 1700, z: -500 + r() * 700, rx: (r() - .5) * 60, ry: (r() - .5) * 70, rz: (r() - .5) * 50, vx: (r() - .5) * 160, vy: (r() - .5) * 220, vr: (r() - .5) * 40, flou: r() < .4 ? 3 + r() * 5 : 0 });
+  }
+
+  // Étiquettes de prix
+  const ETIQ = [['p-maquillage', '180 €', 90, 300, '50% 25%'], ['p-photo', '650 €', 610, 360, '50% 55%'], ['p-henne', '150 €', 120, 1120, '60% 50%'], ['p-musique', '450 €', 600, 1180, '62% 50%'], ['p-sono', '90 €', 360, 1400, '50% 42%']];
+  $('#etiquettes').innerHTML = ETIQ.map(([img, prix, x, y, pos]) => `<div class="etiq" style="left:${x}px;top:${y}px"><img src="images/${img}.jpg" alt="" style="object-position:${pos}">${prix}</div>`).join('');
+
+  // Lignes du ticket
+  const LIGNES = [['p-maquillage', 'Maquillage et coiffure', 'Maquilleuse · Bruxelles', 180, '50% 25%'], ['p-photo', 'Reportage photo', 'Photographe · Liège', 650, '50% 55%'],
+    ['p-henne', 'Soirée henné', 'Hennaya · Anvers', 150, '60% 50%'], ['p-musique', 'Musique et DJ', '5 heures de soirée', 450, '62% 50%'], ['p-sono', 'Sono 2 000 W', 'Location · 1 jour', 90, '50% 42%']];
+  $('#lignes').innerHTML = LIGNES.map(([img, lb, sous, px, pos]) => `<div class="ligne-t"><img src="images/${img}.jpg" alt="" style="object-position:${pos}"><div class="lb">${lb}<small>${sous}</small></div><div class="px">${euros(px)}</div></div>`).join('');
+
+  // ------------------------------------------------------------------ timeline (120 BPM, 15 s)
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  const u = outils(tl);
+
+  // A. Chaos (0 à 2,4 s) : les papiers dérivent, puis s'envolent balayés
+  const papierParImage = (t) => {
+    const fuite = FX.clamp((t - 1.95) / .45), f = fuite * fuite;
+    papiers.forEach((p, i) => {
+      const tt = Math.min(t, 2.4);
+      const x = p.x + p.vx * tt - f * (1800 + i * 40), y = p.y + p.vy * tt + Math.sin(tt * 1.6 + i) * 20 - f * 200;
+      p.d.style.transform = `translate3d(${x}px, ${y}px, ${p.z}px) rotateX(${p.rx + tt * 10}deg) rotateY(${p.ry + tt * 14}deg) rotateZ(${p.rz + p.vr * tt + f * 60}deg)`;
+      p.d.style.filter = `blur(${(p.flou + f * 18).toFixed(1)}px)`;
+    });
+  };
+  tl.fromTo('#papiers', { opacity: 0, scale: 1.15 }, { opacity: 1, scale: 1, duration: .5, ease: 'power2.out', immediateRender: false }, 0);
+  u.entrer('#a1', .15, .55); u.entrer('#a2', .45, .6);
+  u.brillance('#a2', .8, 1);
+  u.secousse(1.0, 8, .3); u.secousse(1.5, 10, .3);
+  tl.fromTo('#balai', { x: 0, opacity: 0 }, { x: 2600, opacity: 1, duration: .55, ease: 'power2.in', immediateRender: false }, 1.95);
+  tl.to('#sa .t1, #sa .t2, #sa .voile', { opacity: 0, x: -200, filter: 'blur(10px)', duration: .35, ease: 'power2.in' }, 2.1);
+
+  // B. Les prix sont affichés (2,4 à 3,75 s)
+  u.montrer('#sb', 2.3);
+  tl.to('#sb', { clipPath: 'polygon(0% 0%, 120% 0%, 100% 100%, -20% 100%)', duration: .45, ease: 'power3.inOut' }, 2.3);
+  u.eclair(2.38, .5, .45);
+  u.cacher('#sa', 2.8);
+  tl.fromTo('#motif-b', { rotation: 0, scale: 1.1 }, { rotation: -4, scale: 1, duration: 1.6, ease: 'none', immediateRender: false }, 2.3);
+  u.entrer('#b1', 2.5, .5); u.entrer('#b2', 2.7, .55, 'back.out(1.4)');
+  $$('.etiq').forEach((e, i) => {
+    tl.fromTo(e, { opacity: 0, scale: .3, rotation: (i % 2 ? 12 : -12) }, { opacity: 1, scale: 1, rotation: (i % 2 ? 4 : -4), duration: .4, ease: 'back.out(2.4)', immediateRender: false }, 2.85 + i * .12);
+    tl.to(e, { y: '-=24', duration: 1, ease: 'sine.inOut' }, 3.2);
+  });
+
+  // C. Ticket (3,75 à 11,1 s)
+  u.montrer('#sc', 3.7);
+  gsap.set('#sc', { clipPath: 'circle(0% at 50% 50%)' });
+  tl.to('#sc', { clipPath: 'circle(150% at 50% 50%)', duration: .5, ease: 'power3.inOut' }, 3.75);
+  tl.to('.etiq', { x: (i) => 540 - ETIQ[i][2] - 120, y: (i) => 960 - ETIQ[i][3], scale: .2, opacity: 0, duration: .45, ease: 'power3.in' }, 3.7);
+  u.cacher('#sb', 4.3);
+  tl.fromTo('#rayons-c', { rotation: 0, opacity: 0 }, { rotation: 25, opacity: .7, duration: 7.3, ease: 'none', immediateRender: false }, 3.75);
+  u.entrer('#c1', 3.95, .55);
+  tl.fromTo('#ticket', { y: 900, rotationX: 40, opacity: 0, transformPerspective: 1600 }, { y: 0, rotationX: 0, opacity: 1, duration: .7, ease: 'power3.out', immediateRender: false }, 3.9);
+  tl.fromTo('#jauge', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: .5, immediateRender: false }, 4.3);
+  const totalTxt = $('#total'), compteur = { v: 0 };
+  let cumul = 0;
+  $$('.ligne-t').forEach((l, i) => {
+    const t = 4.6 + i * .62, avant = cumul; cumul += LIGNES[i][3];
+    tl.fromTo(l, { opacity: 0, x: 120 }, { opacity: 1, x: 0, duration: .4, ease: 'power3.out', immediateRender: false }, t);
+    tl.fromTo(l.querySelector('img'), { scale: 0 }, { scale: 1, duration: .4, ease: 'back.out(2.5)', immediateRender: false }, t + .05);
+    tl.fromTo(compteur, { v: avant }, { v: cumul, duration: .45, ease: 'power2.out', immediateRender: false, onUpdate: () => { totalTxt.textContent = euros(compteur.v); } }, t + .1);
+    tl.to('#rempli', { scaleX: cumul / 2000, duration: .45, ease: 'power3.out' }, t + .1);
+    rafale({ graine: 60 + i, t0: t + .15, x: 860, y: 300 + 44 + 34 + 60 + 50 + i * 112 + 56, dx: 60, n: 18, v: [80, 360], vie: [.5, .9], taille: [2, 5], couleurs: OR, types: ['etoile', 'point'], g: -60 });
+  });
+  tl.fromTo('#ticket .total .v', { scale: 1 }, { scale: 1.12, duration: .15, yoyo: true, repeat: 1, transformOrigin: '100% 60%', immediateRender: false }, 7.65);
+  tl.fromTo('#reste', { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: .45, immediateRender: false }, 7.75);
+  tl.fromTo('#reste i', { scale: 0 }, { scale: 1, duration: .4, ease: 'back.out(3)', immediateRender: false }, 7.8);
+  // Tampon
+  tl.fromTo('#tampon', { opacity: 0, scale: 2.6, rotation: -30 }, { opacity: 1, scale: 1, rotation: -12, duration: .28, ease: 'power4.in', immediateRender: false }, 8.25);
+  u.secousse(8.53, 16, .35);
+  rafale({ graine: 70, t0: 8.53, x: 850, y: 365, dx: 240, dy: 240, n: 50, v: [120, 520], vie: [.5, 1], taille: [2, 5], couleurs: ['#E9C77A', '#FFF6D8', '#C9A66B'], types: ['point', 'etoile'], g: 0 });
+  u.sortir('#c1', 8.9);
+  u.entrer('#c2', 9.15, .55);
+  tl.fromTo('#sc .note', { opacity: 0 }, { opacity: 1, duration: .5, immediateRender: false }, 9.4);
+  tl.to('#ticket .total .v', { color: '#A87C36', duration: .4, yoyo: true, repeat: 1 }, 9.6);
+  // Sortie
+  tl.to('#ticket, #tampon', { y: -1500, rotationX: -25, duration: .55, ease: 'power3.in' }, 10.55);
+  tl.to('#jauge, #sc .note, #sc .titre', { opacity: 0, duration: .3 }, 10.6);
+  u.eclair(11.1, .9, .4);
+  poussiere({ graine: 71, t0: 3.8, t1: 11.2, n: 45, alpha: .4 });
+
+  // D. Final (11,15 à 15 s)
+  finale(tl, 11.15, { duree: 15, slogan: 'Votre budget,<br>sous contrôle.', cta: 'Hub fêtes &amp; mariages · lien en bio', bas: 'Prix affichés · Paiement sécurisé' });
+  u.cacher('#sc', 11.8);
+
+  demarrer(tl, 15, papierParImage);
+</script>
+</body>
+</html>
