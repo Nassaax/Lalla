@@ -1441,6 +1441,9 @@
   // ===========================================================================
   // Hub mariage : annuaire des partenaires et demandes de devis
   // ===========================================================================
+  // Photo d'illustration d'un métier tant que le partenaire n'a pas ajouté sa propre galerie
+  var PHOTOS_METIER = { photographe: 'assets/photos/presta-photo.webp', hennaya: 'assets/photos/presta-henne.webp' };
+
   L.pages.partenaires = function () {
     remplirPlaceholders(document);
     var lienBeaute = $('[data-beaute]');
@@ -1467,9 +1470,11 @@
         var liste = r.data || [];
         if (!liste.length) { L.ui.etatVide(grille, t('hub.aucun')); return; }
         liste.forEach(function (p, i) {
-          var visuel = (p.galerie && p.galerie[0]) || 'placeholder:' + ['couronne', 'bijoux', 'mdamma'][i % 3] + ':' + ['or', 'emeraude', 'bordeaux'][i % 3] + ':face:' + i;
+          var photo = p.galerie && p.galerie[0] && p.galerie[0].indexOf('placeholder:') !== 0 ? p.galerie[0] : null;
+          var visuel = photo ? L.img.url(photo, 'partenaires')
+            : PHOTOS_METIER[p.metier] || L.img.url('placeholder:' + ['couronne', 'bijoux', 'mdamma'][i % 3] + ':' + ['or', 'emeraude', 'bordeaux'][i % 3] + ':face:' + i);
           var carte = h('article', { class: 'partenaire', id: 'p-' + p.id, 'data-reveal': '' },
-            h('div', { class: 'partenaire__visuel' }, h('img', { src: L.img.url(visuel, 'partenaires'), alt: '', loading: 'lazy' })),
+            h('div', { class: 'partenaire__visuel' }, h('img', { src: visuel, alt: '', loading: 'lazy' })),
             h('div', { class: 'partenaire__corps' },
               h('p', { class: 'surtitre', style: { margin: 0 } }, t('metier.' + p.metier) + ' · ' + L.zone(p.ville)),
               h('h3', { class: 'partenaire__nom' }, p.nom),
@@ -1498,11 +1503,16 @@
         });
       }));
     }
-    reservables().then(function () {
-      // Les grilles ont changé de hauteur : on recale l'ancre demandée (#prestataires, #materiel, #annuaire)
-      var bloc = location.hash && /^#[a-z]+$/.test(location.hash) && $(location.hash);
-      if (bloc) bloc.scrollIntoView({ block: 'start' });
-    });
+    // Ancre demandée (#prestataires, #materiel, #annuaire) : recalée sous l'en-tête une fois les grilles remplies
+    function allerAncre() {
+      var bloc = /^#[a-z]+$/.test(location.hash) && $(location.hash);
+      if (!bloc) return;
+      var entete = $('#entete');
+      var haut = bloc.getBoundingClientRect().top + window.scrollY - ((entete && entete.offsetHeight) || 72) - 12;
+      if (L.motion.lenis) L.motion.lenis.scrollTo(haut, { immediate: true });
+      else window.scrollTo({ top: haut, behavior: 'instant' });
+    }
+    reservables().then(function () { allerAncre(); setTimeout(allerAncre, 400); });
     puces();
     charger();
     document.addEventListener('lalla:langue', function () { reservables(); puces(); charger(); });
