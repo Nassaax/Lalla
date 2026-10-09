@@ -785,8 +785,8 @@
       var retour = h('div');
       var typeBloc = h('div', { class: 'champ', hidden: true },
         h('span', { class: 'champ__libelle' }, t('auth.type')),
-        h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'creatrice', 'prestataire', 'loueur'].map(function (ty, i) {
-          return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'type', value: ty, checked: i === 0 }), h('span', null, t('type.' + ty)));
+        h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'creatrice', 'prestataire', 'loueur'].map(function (ty) {
+          return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'type', value: ty, checked: (options.type || 'particuliere') === ty }), h('span', null, t('type.' + ty)));
         })));
       var form = h('form', { class: 'formulaire', novalidate: true },
         h('div', { class: 'champ' },
@@ -1090,6 +1090,11 @@
     if (L.bandeauLancement) L.bandeauLancement(page);
     L.motion.reveler(document);
     if (L.param('connexion') === '1') L.auth.pret.then(function () { if (!L.session) L.ui.authentification('connexion', page === 'admin' ? { ensuite: function () { location.reload(); } } : undefined); });
+    // Lien direct vers l'inscription avec le bon profil (brochures de démarchage) : ?inscription=fournisseuse, prestataire, partenaire ou cliente
+    var inscription = L.param('inscription');
+    if (['cliente', 'fournisseuse', 'partenaire', 'prestataire'].indexOf(inscription) >= 0) L.auth.pret.then(function () {
+      if (!L.session) L.ui.authentification('inscription', inscription === 'prestataire' ? { role: 'fournisseuse', type: 'prestataire' } : { role: inscription });
+    });
     // Application installable : service worker (HTTPS uniquement, hors tests locaux).
     if ('serviceWorker' in navigator && location.protocol === 'https:') {
       window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () { /* facultatif */ }); });

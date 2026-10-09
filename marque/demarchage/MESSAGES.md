@@ -1,7 +1,7 @@
 # LALLAT : messages de démarchage
 
 À copier-coller. Remplacez [Prénom], [sa spécialité] et [détail personnalisé] avant d'envoyer.
-Joignez le dossier : `lallat-fournisseuses.pdf` ou `lallat-prestataires.pdf` (WhatsApp, email), ou les 5 images du dossier (DM Instagram).
+Envoyez le lien de la brochure en ligne : **lallat.be/devenir-fournisseuse** ou **lallat.be/devenir-prestataire**. Elle s'ouvre directement dans Instagram et WhatsApp, avec un bouton qui ouvre l'inscription sur le bon profil. Envoyez le lien après une première réponse : dans un tout premier message, Instagram peut filtrer les liens. Le PDF reste disponible pour l'email (`lallat-fournisseuses.pdf`, `lallat-prestataires.pdf`).
 
 Règle d'or : toujours une phrase personnalisée sur SON travail (une pièce, une photo, un post). C'est ce qui fait répondre.
 
@@ -28,7 +28,7 @@ Règle d'or : toujours une phrase personnalisée sur SON travail (une pièce, un
 ### WhatsApp ou après une réponse positive
 
 > Merci pour votre réponse [Prénom] !
-> Voici le dossier en pièce jointe. En résumé :
+> Voici notre présentation : lallat.be/devenir-fournisseuse. En résumé :
 > • Publier vos tenues est gratuit, sans abonnement. Vous fixez votre prix, vos dates et votre caution (ou pas de caution du tout).
 > • LALLAT prend 15 % seulement quand vous louez. Exemple : un caftan à 90 € loué 3 fois par mois, c'est 229,50 € pour vous, plus le pressing qui vous est reversé.
 > • La cliente paie en ligne avant la remise, un état des lieux en photos est fait à la remise et au retour, et votre argent part automatiquement dès que la tenue revient.
@@ -62,7 +62,7 @@ Règle d'or : toujours une phrase personnalisée sur SON travail (une pièce, un
 
 ### WhatsApp ou après une réponse positive
 
-> Merci [Prénom] ! Voici le dossier. L'essentiel :
+> Merci [Prénom] ! Voici notre présentation : lallat.be/devenir-prestataire. L'essentiel :
 > • Inscription gratuite, sans abonnement.
 > • Deux façons de travailler : vos formules à prix fixe, réservées et payées en ligne (commission de 15 % seulement quand vous travaillez), ou l'annuaire sur devis, où les clientes vous écrivent directement avec date, lieu et projet.
 > • Le paiement est encaissé à la réservation : plus de rendez-vous fantômes ni d'acomptes à courir. Vous êtes payée automatiquement après la prestation.

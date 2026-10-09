@@ -30,7 +30,8 @@ Le premier lien s'affiche sous la bio, les autres dans la liste.
 
 1. https://lallat.be : « Découvrir les tenues »
 2. https://lallat.be/partenaires.html : « Hub fêtes & mariages »
-3. https://lallat.be/compte.html?vue=annonces : « Proposer mes tenues »
+3. https://lallat.be/devenir-fournisseuse : « Proposer mes tenues »
+4. https://lallat.be/devenir-prestataire : « Devenir prestataire »
 
 ## Contact (compte professionnel, Options de contact)
 E-mail : info@lallat.be

@@ -37,6 +37,14 @@
       "destination": "/api/sitemap"
     },
     {
+      "source": "/devenir-fournisseuse",
+      "destination": "/dossier/fournisseuses.html"
+    },
+    {
+      "source": "/devenir-prestataire",
+      "destination": "/dossier/prestataires.html"
+    },
+    {
       "source": "/api/cron/:task",
       "destination": "/api/cron?task=:task"
     }
