@@ -16,7 +16,8 @@
 - [x] Serveurs DNS pris en compte (9 octobre), certificats HTTPS émis pour lallat.be et www.lallat.be
 - [x] OVHcloud Zimbra : organisation « Lallat » créée, lallat.be associé (diagnostic MX et SPF OK)
 - [x] Zone Vercel : SRV `_autodiscover._tcp` (0 0 443 zimbra1.mail.ovh.net) et DKIM `ovhmo-selector-1/2._domainkey` (CNAME vers *.jo.dkim.mail.ovh.net)
-- [ ] OVHcloud Zimbra : créer la boîte **info@lallat.be** (onglet Compte email), puis Rafraîchir le diagnostic (SRV et DKIM au vert)
+- [x] OVHcloud Zimbra : boîte **info@lallat.be** créée (webmail OVHcloud ; IMAP imap.mail.ovh.net:993 SSL, SMTP smtp.mail.ovh.net:465 SSL)
+- [ ] Diagnostic Zimbra : Rafraîchir (SRV et DKIM au vert, bouton Activer pour le DKIM si proposé) ; test d'envoi et de réception
 - [ ] Resend : section Domains, ajouter `lallat.be` (région Irlande), puis ajouter ses enregistrements dans la zone Vercel (DKIM `resend._domainkey`, MX et TXT sur `send`)
 - [ ] Vercel : **supprimer `EMAIL_FROM`** une fois Resend vérifié (les emails partiront alors de info@lallat.be)
 - [x] Vercel : `SITE_URL` = https://lallat.be
