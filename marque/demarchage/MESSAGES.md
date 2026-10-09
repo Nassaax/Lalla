@@ -12,9 +12,9 @@ Règle d'or : toujours une phrase personnalisée sur SON travail (une pièce, un
 ### DM Instagram, version douce (premier contact, sans argument commercial)
 
 > Bonjour [Prénom] 🤍
-> Quel coup de cœur pour [votre takchita émeraude] ! On sent tout le soin que vous mettez dans vos tenues.
-> Chez LALLAT, on rêve que chaque invitée puisse se sentir belle le jour d'un mariage, d'un henné ou de l'Aïd, en louant sa tenue près de chez elle. Et que les belles pièces ne dorment plus au fond de l'armoire entre deux fêtes.
-> On aimerait beaucoup que les vôtres fassent partie des premières que l'on présente.
+> Quel coup de cœur pour [votre takchita émeraude] !
+> On se lance très prochainement avec LALLAT, un site où les invitées d'un mariage, d'un henné ou de l'Aïd louent leur tenue marocaine près de chez elles, auprès de particulières, de negafas et de créatrices, partout en Belgique.
+> Ce serait un plaisir que vos pièces y soient présentées dès l'ouverture.
 > Ça vous dirait qu'on en parle ? 🌸
 
 ### DM Instagram (premier contact, court)
@@ -47,9 +47,9 @@ Règle d'or : toujours une phrase personnalisée sur SON travail (une pièce, un
 ### DM Instagram, version douce (premier contact, sans argument commercial)
 
 > Bonjour [Prénom] 🤍
-> Quel coup de cœur pour [votre henné de mariée] ! On sent tout le soin que vous mettez dans chaque détail.
-> Chez LALLAT, on rêve que chaque invitée puisse se préparer sereinement pour la fête : sa tenue, son henné, son maquillage, trouvés près de chez elle.
-> On prépare une série de portraits, « Les mains de la fête », et on aimerait beaucoup vous y présenter.
+> Quel coup de cœur pour [votre henné de mariée] !
+> On se lance très prochainement avec LALLAT, un site où les invitées d'un mariage, d'un henné ou de l'Aïd louent leur tenue marocaine près de chez elles et réservent aussi leur henné, leur maquillage ou leur photographe.
+> Ce serait un plaisir de vous y présenter dès l'ouverture.
 > Ça vous dirait qu'on en parle ? 🌸
 
 ### DM Instagram (premier contact, court)
