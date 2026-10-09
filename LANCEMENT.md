@@ -20,8 +20,9 @@
 - [ ] Resend : section Domains, ajouter `lallat.be` (région Irlande), puis ajouter ses enregistrements dans la zone Vercel (DKIM `resend._domainkey`, MX et TXT sur `send`)
 - [ ] Vercel : **supprimer `EMAIL_FROM`** une fois Resend vérifié (les emails partiront alors de info@lallat.be)
 - [x] Vercel : `SITE_URL` = https://lallat.be
-- [ ] Supabase : Authentication, URL Configuration, Site URL = https://lallat.be (+ redirections https://lallat.be/**)
-- [ ] Stripe : mettre à jour l'URL des 2 webhooks vers https://lallat.be/api/webhook
+- [x] Supabase : Authentication, URL Configuration, Site URL = https://lallat.be (+ redirections)
+- [ ] **Bloquant avant le recrutement** : Supabase, SMTP personnalisé via Resend (smtp.resend.com, port 465, utilisateur `resend`, mot de passe = clé API Resend dédiée, expéditeur info@lallat.be). Sans lui, Supabase n'envoie les emails de confirmation qu'aux membres de l'équipe (2 par heure) : les inscriptions publiques échouent.
+- [ ] Stripe : webhooks sur https://lallat.be/api/webhook au passage en mode réel (les webhooks de test sur vercel.app continuent de fonctionner)
 - [x] App : adresse par défaut dans `app/scripts/construire.mjs` ; dossiers de démarchage régénérés avec lallat.be
 - [ ] Plus tard (après mise à jour des webhooks Stripe) : rediriger lalla-pearl.vercel.app vers lallat.be
 - [ ] Redéployer, puis vérifier un email reçu par une adresse quelconque
