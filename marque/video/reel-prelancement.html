@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>LALLAT, reel prélancement</title>
+<!--
+  Reel de prélancement (publicité Instagram), 1080 x 1920, 25 s, 120 BPM.
+  Textes importants entre y = 280 et y = 1240 (zones sûres des publicités Reels : 14 % en haut, 35 % en bas).
+
+  A. 0,00 à 3,60   Accroche. « Votre prochaine tenue de fête / est déjà dans l'armoire d'une autre. »
+                   Une armoire en arche, fermée, un filet de lumière entre les portes ; les portes s'ouvrent en 3D sur un caftan.
+  B. 3,50 à 8,00   Concept. Travelling arrière : la tenue n'est qu'une fenêtre d'une façade d'arches (« Louez-la, près de chez vous. »),
+                   les fenêtres deviennent des points d'or qui volent dessiner la Belgique (« Partout en Belgique. »),
+                   la carte implose : logo LALLAT, « Location de tenues marocaines » (temps fort à 6,50 s).
+  C. 8,00 à 16,00  Pour qui ? Prisme 3D à trois faces : invitées, particulières · negafas · créatrices, prestataires · matériel.
+  D. 16,00 à 19,60 Sceau « Prélancement », puis « Les inscriptions sont ouvertes. » mot par mot (temps fort à 18,00 s).
+  E. 19,60 à 25,00 Écran d'inscription (trois profils, « Créer mon compte »), puis écran final : lallat.be.
+-->
+<link rel="stylesheet" href="../commun.css">
+<link rel="stylesheet" href="hub-fx.css">
+<style>
+  .txt { position: absolute; left: 0; right: 0; text-align: center; }
+  .blanc { color: #FFF8EC; }
+  .sec { position: absolute; inset: 0; }
+
+  /* A. L'armoire */
+  #sa { background: radial-gradient(circle at 50% 64%, #3E131B 0%, #1C080B 46%, #070304 100%); visibility: visible; }
+  #cam-a { transform-origin: 540px 1210px; }
+  #a-l1, #a-l1b { top: 290px; font-size: 112px; line-height: 1.08; }
+  #a-l2, #a-l2b { top: 404px; font-size: 150px; line-height: 1.08; }
+  #a-l3b { top: 562px; font-size: 150px; line-height: 1.08; }
+  #armoire { position: absolute; left: 220px; top: 760px; width: 640px; height: 900px; }
+  #armoire .contour { position: absolute; left: -34px; top: -44px; width: 708px; height: 988px; overflow: visible; }
+  #interieur { position: absolute; inset: 0; -webkit-mask: var(--arche) center / 100% 100% no-repeat; mask: var(--arche) center / 100% 100% no-repeat; background: #120607; overflow: hidden; }
+  #interieur img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 26%; transform: scale(1.25); filter: brightness(.12); }
+  #interieur .lueur { position: absolute; inset: 0; background: radial-gradient(ellipse 40% 60% at 50% 55%, rgba(255,214,150,.55), rgba(255,214,150,0) 70%); }
+  #portes { position: absolute; inset: 0; perspective: 2200px; }
+  .porte { position: absolute; top: 0; width: 320px; height: 900px; }
+  #porte-g { left: 0; transform-origin: 0% 50%; }
+  #porte-d { left: 320px; transform-origin: 100% 50%; }
+  .porte .face-p { position: absolute; inset: 0; overflow: hidden; background: linear-gradient(165deg, #842838 0%, #5E1D27 46%, #380C15 100%); }
+  #porte-g .face-p { -webkit-mask: var(--demi-g) center / 100% 100% no-repeat; mask: var(--demi-g) center / 100% 100% no-repeat; }
+  #porte-d .face-p { -webkit-mask: var(--demi-d) center / 100% 100% no-repeat; mask: var(--demi-d) center / 100% 100% no-repeat; }
+  .porte svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .porte .ombre-p { position: absolute; inset: 0; }
+  #porte-g .ombre-p { background: linear-gradient(90deg, rgba(0,0,0,0) 60%, rgba(0,0,0,.35) 100%); }
+  #porte-d .ombre-p { background: linear-gradient(270deg, rgba(0,0,0,0) 60%, rgba(0,0,0,.35) 100%); }
+  .poignee { position: absolute; top: 470px; width: 14px; height: 96px; border-radius: 7px; background: linear-gradient(180deg, #FFF3CF, #D6AE62 45%, #8A6528); box-shadow: 0 6px 14px rgba(0,0,0,.45); }
+  #porte-g .poignee { right: 22px; } #porte-d .poignee { left: 22px; }
+  #fente { position: absolute; left: 317px; top: 36px; width: 6px; height: 864px; border-radius: 3px; background: linear-gradient(180deg, rgba(255,246,220,0) 0%, #FFF6DC 12%, #F2CF8A 100%); box-shadow: 0 0 24px 8px rgba(255,214,140,.75), 0 0 90px 34px rgba(233,170,90,.35); }
+  #flaque { position: absolute; left: 70px; top: 840px; width: 500px; height: 160px; background: radial-gradient(ellipse at 50% 30%, rgba(255,210,140,.45), rgba(255,210,140,0) 70%); }
+
+  /* B. La façade, puis la Belgique, puis le logo */
+  #sb { background: radial-gradient(circle at 50% 58%, #7A2232 0%, #5E1D27 45%, #26080F 100%); }
+  #facade { position: absolute; inset: 0; transform-origin: 540px 1223px; }
+  .fen { position: absolute; width: 168px; height: 222px; }
+  .fen .f { position: absolute; inset: 0; -webkit-mask: var(--arche) center / 100% 100% no-repeat; mask: var(--arche) center / 100% 100% no-repeat; background: #1A0A0C; overflow: hidden; }
+  .fen img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.28); }
+  .fen svg { position: absolute; left: -7px; top: -9px; width: 182px; height: 240px; overflow: visible; }
+  #b-l1, #b-l1b { top: 286px; font-size: 170px; line-height: 1.05; }
+  #b-l2, #b-l2b { top: 476px; font-size: 92px; line-height: 1.08; }
+  #carte { position: absolute; left: 0; top: 0; }
+  #logo-b { position: absolute; inset: 0; }
+  #logo-b .arche-l { position: absolute; left: 410px; top: 470px; width: 260px; height: 343px; overflow: visible; }
+  #logo-L { top: 562px; font-size: 200px; line-height: 1; opacity: 0; }
+  #logo-nom { top: 880px; display: flex; justify-content: center; font-size: 122px; letter-spacing: .26em; margin-right: -.26em; line-height: 1.1; }
+  #logo-nom span { display: inline-block; opacity: 0; }
+  #logo-sous { top: 1064px; font-family: Jost; font-weight: 500; font-size: 31px; letter-spacing: .3em; text-transform: uppercase; color: #F3D99A; opacity: 0; }
+  #anneau-b { top: 700px; }
+
+  /* C. Pour qui ? */
+  #sc { background: radial-gradient(circle at 50% 64%, #6E1F2E 0%, #4A1520 42%, #1C060B 100%); }
+  #c-titre { top: 700px; font-size: 124px; line-height: 1.1; }
+  .pers { position: absolute; left: 0; right: 0; top: 284px; text-align: center; }
+  .chip { display: inline-block; border: 2px solid rgba(233,199,122,.8); border-radius: 999px; padding: 12px 30px 10px; font-family: Jost; font-weight: 500; font-size: 26px; letter-spacing: .2em; text-transform: uppercase; color: #F3D99A; background: rgba(0,0,0,.2); opacity: 0; }
+  .pers .h { font-family: Bodoni; font-weight: 500; font-size: 102px; line-height: 1.02; color: #FFF8EC; margin-top: 22px; }
+  .pers .h em { font-style: italic; }
+  .pers .s { font-family: Jost; font-weight: 400; font-size: 38px; color: #E8DCCB; margin-top: 16px; opacity: 0; }
+  #c-3d { position: absolute; left: 0; right: 0; top: 760px; height: 1060px; perspective: 2600px; perspective-origin: 50% 35%; }
+  #prisme { position: absolute; left: 190px; top: 0; width: 700px; height: 960px; transform-style: preserve-3d; }
+  .face { position: absolute; inset: 0; border-radius: 30px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #1A0A0C; }
+  .face > img { width: 100%; height: 100%; object-fit: cover; }
+  .face .cadre { position: absolute; inset: 0; border-radius: 30px; box-shadow: inset 0 0 0 3px rgba(233,199,122,.75); }
+  .face .voile { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(20,5,8,.55) 100%); }
+  .face .reflet { position: absolute; top: -20%; bottom: -20%; width: 260px; left: -320px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,246,220,.28), rgba(255,255,255,0)); transform: skewX(-18deg); }
+  .mosaique { position: absolute; inset: 0; background: #2A0A11; }
+  .tuile { position: absolute; width: 340px; height: 470px; border-radius: 18px; overflow: hidden; }
+  .tuile img { width: 100%; height: 100%; object-fit: cover; }
+  .bulle { position: absolute; padding: 14px 30px 12px; border-radius: 999px; background: #FAF6F0; color: #5E1D27; font-family: Jost; font-weight: 500; font-size: 32px; box-shadow: 0 16px 40px rgba(0,0,0,.4); opacity: 0; white-space: nowrap; }
+
+  /* D. Prélancement */
+  #sd { background: radial-gradient(circle at 50% 50%, #4A1320 0%, #22070D 45%, #050102 100%); }
+  #d-pl { top: 318px; font-size: 160px; line-height: 1.08; }
+  #d-l1 { top: 296px; font-size: 106px; line-height: 1.08; }
+  #d-l2 { top: 418px; font-size: 140px; line-height: 1.08; }
+  #d-l1 span, #d-l2 span { display: inline-block; opacity: 0; }
+  #d-w2, #d-w4 { margin-left: .28em; }
+  #sceau { position: absolute; left: 260px; top: 590px; width: 560px; height: 560px; }
+  #sceau svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  #d-sous { top: 1172px; font-family: Jost; font-weight: 400; font-size: 40px; color: #E8DCCB; opacity: 0; }
+  #rayons-d { top: 870px; }
+
+  /* E. Inscription */
+  #se { background: radial-gradient(circle at 50% 30%, #FFFDF8 0%, #FAF6F0 45%, #EFE4D3 100%); }
+  #e-l1 { top: 292px; font-size: 98px; line-height: 1.1; color: #5E1D27; }
+  #e-l2 { top: 438px; font-family: Jost; font-weight: 500; font-size: 26px; letter-spacing: .22em; text-transform: uppercase; color: #7A6440; opacity: 0; }
+  #se .tel { left: 190px; top: 560px; }
+  .e-titre { position: absolute; left: 44px; top: 190px; font-family: Bodoni; font-weight: 500; font-size: 54px; color: #241B17; }
+  .e-label { position: absolute; left: 46px; top: 270px; font-family: Jost; font-weight: 500; font-size: 22px; letter-spacing: .16em; text-transform: uppercase; color: #7A6E66; }
+  .opt { position: absolute; left: 40px; width: 580px; height: 86px; border-radius: 22px; border: 2px solid #D3C4AE; background: #fff; font-family: Jost; font-weight: 500; font-size: 29px; color: #241B17; line-height: 82px; padding-left: 90px; }
+  .opt .radio { position: absolute; left: 30px; top: 23px; width: 36px; height: 36px; border-radius: 50%; border: 3px solid #B9AA95; }
+  .opt .radio i { position: absolute; left: 6px; top: 6px; width: 18px; height: 18px; border-radius: 50%; background: #5E1D27; transform: scale(0); }
+  .e-btn { position: absolute; left: 40px; width: 580px; top: 650px; height: 98px; border-radius: 999px; background: #5E1D27; color: #fff; font-family: Jost; font-weight: 500; font-size: 32px; overflow: hidden; }
+  .e-btn .t { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .e-btn .t2 { opacity: 0; }
+  .e-btn .reflet { position: absolute; top: 0; bottom: 0; width: 160px; left: -200px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0)); transform: skewX(-20deg); }
+  .e-champs { position: absolute; left: 40px; width: 580px; top: 790px; }
+  .e-champs div { height: 78px; border-radius: 18px; border: 2px solid #E5D9C8; margin-bottom: 18px; font-family: Jost; font-size: 26px; color: #A39686; line-height: 74px; padding-left: 28px; }
+  #doigt { position: absolute; left: 0; top: 0; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; background: rgba(94,29,39,.18); border: 3px solid rgba(94,29,39,.85); box-shadow: 0 10px 30px rgba(0,0,0,.25); opacity: 0; z-index: 8; }
+  .onde { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; border: 4px solid #C9A66B; opacity: 0; z-index: 7; }
+
+  /* Pastille de prélancement (de 7,5 à 16 s) */
+  #pastille { position: absolute; left: 850px; top: 690px; width: 200px; height: 200px; visibility: hidden; z-index: 20; }
+  #pastille svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+  /* Traînées de vitesse et éclats de lumière */
+  #vitesse { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: repeating-linear-gradient(0deg, rgba(255,240,205,0) 0px, rgba(255,240,205,0) 26px, rgba(255,240,205,.5) 27px, rgba(255,240,205,0) 30px); filter: blur(2px); }
+  #fuite { position: absolute; left: -600px; top: 300px; width: 900px; height: 1400px; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at center, rgba(255,190,110,.55), rgba(255,140,80,.18) 40%, rgba(255,140,80,0) 70%); mix-blend-mode: screen; filter: blur(30px); }
+
+  /* Écran final : remonté pour rester dans la zone sûre des publicités */
+  #fin .arche { top: 236px; }
+  #fin .L { top: 346px; }
+  #fin .nom { top: 700px; }
+  #fin .slogan { top: 860px; }
+  #fin .cta { top: 1030px; }
+  #fin .bas { top: 1168px; }
+  #anneau-fin { top: 640px; }
+</style>
+</head>
+<body>
+<div id="scene"><div id="camera">
+
+  <!-- A. L'armoire -->
+  <section class="plan" id="sa">
+    <div class="sec" id="cam-a">
+      <svg class="motif" id="motif-a"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".06"/></svg>
+      <div class="rayons" id="rayons-a" style="top:1210px;opacity:0"></div>
+      <div id="armoire">
+        <div id="interieur"><img src="images/v-ouverture.jpg" alt=""><div class="lueur"></div></div>
+        <div id="flaque"></div>
+        <div id="portes">
+          <div class="porte" id="porte-g"><div class="face-p">
+            <svg viewBox="0 0 320 900" preserveAspectRatio="none"><rect width="320" height="900" fill="url(#zellige)" opacity=".22"/>
+              <path d="M30 880 V420 C30 250 120 120 300 52 V880 Z" fill="none" stroke="#E9C77A" stroke-width="3" opacity=".85"/>
+              <path d="M52 860 V430 C52 275 135 158 286 98 V860 Z" fill="none" stroke="#E9C77A" stroke-width="1.4" opacity=".5"/></svg>
+            <div class="ombre-p"></div><div class="poignee"></div></div></div>
+          <div class="porte" id="porte-d"><div class="face-p">
+            <svg viewBox="0 0 320 900" preserveAspectRatio="none"><rect width="320" height="900" fill="url(#zellige)" opacity=".22"/>
+              <path d="M290 880 V420 C290 250 200 120 20 52 V880 Z" fill="none" stroke="#E9C77A" stroke-width="3" opacity=".85"/>
+              <path d="M268 860 V430 C268 275 185 158 34 98 V860 Z" fill="none" stroke="#E9C77A" stroke-width="1.4" opacity=".5"/></svg>
+            <div class="ombre-p"></div><div class="poignee"></div></div></div>
+          <div id="fente"></div>
+        </div>
+        <svg class="contour" viewBox="0 0 708 988"><path d="M10 984 V452 C10 236 130 92 354 8 C578 92 698 236 698 452 V984" fill="none" stroke="#E9C77A" stroke-width="5"/><path d="M26 984 V458 C26 250 140 114 354 34 C568 114 682 250 682 458 V984" fill="none" stroke="#E9C77A" stroke-width="1.6" opacity=".6"/></svg>
+      </div>
+      <div id="a-p1">
+        <div class="txt serif blanc ombre" id="a-l1"><span class="ligne"><span>Votre prochaine</span></span></div>
+        <div class="txt ital ombre" id="a-l2"><span class="ligne"><span class="or">tenue de fête</span></span></div>
+      </div>
+      <div id="a-p2">
+        <div class="txt serif blanc ombre" id="a-l1b"><span class="ligne"><span>est déjà dans</span></span></div>
+        <div class="txt ital ombre" id="a-l2b"><span class="ligne"><span class="or">l'armoire</span></span></div>
+        <div class="txt ital ombre" id="a-l3b"><span class="ligne"><span class="or">d'une autre.</span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B. La façade, la Belgique, le logo -->
+  <section class="plan" id="sb">
+    <svg class="motif" id="motif-b"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".1"/></svg>
+    <div class="rayons" id="rayons-b" style="top:700px;opacity:0"></div>
+    <div class="anneau" id="anneau-b"></div>
+    <div id="facade"></div>
+    <canvas id="carte" width="1080" height="1920"></canvas>
+    <div id="b-p1">
+      <div class="txt ital ombre" id="b-l1"><span class="ligne"><span class="or">Louez-la,</span></span></div>
+      <div class="txt serif blanc ombre" id="b-l2"><span class="ligne"><span>près de chez vous.</span></span></div>
+    </div>
+    <div id="b-p2">
+      <div class="txt ital ombre" id="b-l1b"><span class="ligne"><span class="or">Partout</span></span></div>
+      <div class="txt serif blanc ombre" id="b-l2b"><span class="ligne"><span>en Belgique.</span></span></div>
+    </div>
+    <div id="logo-b">
+      <svg class="arche-l" viewBox="0 0 400 528"><path d="M32 524 V240 C32 128 96 53 200 10 C304 53 368 128 368 240 V524" fill="none" stroke="#E9C77A" stroke-width="7"/><path d="M58 524 V246 C58 142 112 76 200 38 C288 76 342 142 342 246 V524" fill="none" stroke="#E9C77A" stroke-width="2.2" opacity=".7"/></svg>
+      <div class="txt serif blanc" id="logo-L">L</div>
+      <div class="txt serif" id="logo-nom"><span class="or">L</span><span class="or">A</span><span class="or">L</span><span class="or">L</span><span class="or">A</span><span class="or">T</span></div>
+      <div class="txt" id="logo-sous">Location de tenues marocaines</div>
+    </div>
+  </section>
+
+  <!-- C. Pour qui ? -->
+  <section class="plan" id="sc">
+    <svg class="motif" id="motif-c"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".1"/></svg>
+    <div class="rayons" id="rayons-c" style="top:1240px;opacity:.55"></div>
+    <div class="txt ital ombre" id="c-titre"><span class="or">C'est pour qui&nbsp;?</span></div>
+    <div class="pers" id="pers1"><span class="chip">Invitées</span>
+      <div class="h"><span class="ligne"><span>Louez la tenue</span></span><span class="ligne"><span><em>de vos rêves.</em></span></span></div>
+      <div class="s">Mariage, henné, fiançailles, Aïd.</div></div>
+    <div class="pers" id="pers2"><span class="chip">Particulières · Negafas · Créatrices</span>
+      <div class="h"><span class="ligne"><span>Mettez vos tenues</span></span><span class="ligne"><span><em>en location.</em></span></span></div>
+      <div class="s">Un revenu en plus, en toute sécurité.</div></div>
+    <div class="pers" id="pers3"><span class="chip">Prestataires · Matériel</span>
+      <div class="h"><span class="ligne"><span>Faites-vous</span></span><span class="ligne"><span><em>réserver.</em></span></span></div>
+      <div class="s">Henné, maquillage, photo, musique, sono.</div></div>
+    <div id="c-3d">
+      <div id="prisme">
+        <div class="face" id="face1"><img src="images/v-soiree.jpg" alt="" style="object-position:50% 30%"><div class="voile"></div><div class="reflet"></div><div class="cadre"></div></div>
+        <div class="face" id="face2"><img src="images/v-devenir.jpg" alt="" style="object-position:50% 35%"><div class="voile"></div><div class="reflet"></div><div class="cadre"></div></div>
+        <div class="face" id="face3"><div class="mosaique">
+          <div class="tuile" style="left:0;top:0"><img src="images/p-henne.jpg" alt="" style="object-position:58% 50%"></div>
+          <div class="tuile" style="left:360px;top:0"><img src="images/p-maquillage.jpg" alt="" style="object-position:50% 25%"></div>
+          <div class="tuile" style="left:0;top:490px"><img src="images/p-photo.jpg" alt="" style="object-position:50% 55%"></div>
+          <div class="tuile" style="left:360px;top:490px"><img src="images/p-musique.jpg" alt="" style="object-position:62% 50%"></div>
+        </div><div class="reflet"></div><div class="cadre"></div></div>
+      </div>
+    </div>
+    <div class="bulle" style="left:40px;top:880px">Henné</div>
+    <div class="bulle" style="left:790px;top:980px">Maquillage</div>
+    <div class="bulle" style="left:52px;top:1200px">Photo</div>
+    <div class="bulle" style="left:812px;top:1300px">Musique</div>
+    <div class="bulle" style="left:450px;top:1690px">Sono</div>
+  </section>
+
+  <!-- D. Prélancement -->
+  <section class="plan" id="sd">
+    <svg class="motif" id="motif-d"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".07"/></svg>
+    <div class="rayons" id="rayons-d" style="opacity:0"></div>
+    <div class="txt ital ombre" id="d-pl"><span class="ligne"><span class="or">Prélancement</span></span></div>
+    <div class="txt serif blanc ombre" id="d-l1"><span id="d-w1">Les</span><span id="d-w2">inscriptions</span></div>
+    <div class="txt ital ombre" id="d-l2"><span id="d-w3" class="or">sont</span><span id="d-w4" class="or">ouvertes.</span></div>
+    <div id="sceau">
+      <svg viewBox="0 0 560 560"><defs><radialGradient id="cire" cx="50%" cy="42%" r="60%"><stop offset="0" stop-color="#8A2C3C"/><stop offset=".6" stop-color="#5E1D27"/><stop offset="1" stop-color="#34101A"/></radialGradient>
+        <path id="cercle-s" d="M280,280 m-210,0 a210,210 0 1,1 420,0 a210,210 0 1,1 -420,0"/></defs>
+        <circle cx="280" cy="280" r="256" fill="url(#cire)" stroke="#E9C77A" stroke-width="4"/>
+        <circle cx="280" cy="280" r="176" fill="none" stroke="#E9C77A" stroke-width="1.6" opacity=".75"/>
+        <path d="M222 400 V262 C222 214 246 182 280 166 C314 182 338 214 338 262 V400" fill="none" stroke="#E9C77A" stroke-width="4"/>
+        <text x="280" y="372" text-anchor="middle" font-family="Bodoni" font-weight="500" font-size="150" fill="#FFF8EC">L</text></svg>
+      <svg viewBox="0 0 560 560" id="sceau-texte"><text font-family="Jost" font-weight="500" font-size="34" letter-spacing="3" fill="#F3D99A"><textPath href="#cercle-s" textLength="1319" lengthAdjust="spacing">PRÉLANCEMENT • PRÉLANCEMENT • PRÉLANCEMENT • </textPath></text></svg>
+      <svg viewBox="0 0 560 560" id="sceau-pointilles"><circle cx="280" cy="280" r="272" fill="none" stroke="#E9C77A" stroke-width="2.4" stroke-dasharray="3 12" opacity=".8"/></svg>
+    </div>
+    <div class="txt" id="d-sous">Créez votre compte dès aujourd'hui.</div>
+  </section>
+
+  <!-- E. Inscription -->
+  <section class="plan" id="se">
+    <svg class="motif" id="motif-e"><rect width="100%" height="100%" fill="url(#zellige)" opacity=".16"/></svg>
+    <div class="txt ital" id="e-l1"><span class="ligne"><span>Inscription gratuite</span></span></div>
+    <div class="txt" id="e-l2">Invitée · Fournisseuse · Prestataire</div>
+    <div class="tel" id="tel">
+      <div class="ecran">
+        <div class="ile"></div>
+        <div class="ui-haut" style="position:absolute;left:0;right:0;top:100px;height:60px;display:flex;align-items:center;justify-content:center;font-family:Bodoni;font-size:34px;letter-spacing:.3em;color:#5E1D27">LALLAT</div>
+        <div class="e-titre">Créer un compte</div>
+        <div class="e-label">Je souhaite</div>
+        <div class="opt" id="opt1" style="top:312px"><span class="radio"><i></i></span>Louer des tenues</div>
+        <div class="opt" id="opt2" style="top:414px"><span class="radio"><i></i></span>Proposer mes tenues</div>
+        <div class="opt" id="opt3" style="top:516px"><span class="radio"><i></i></span>Référencer mon activité</div>
+        <div class="e-btn" id="e-btn"><div class="t t1">Créer mon compte</div>
+          <div class="t t2"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg>Bienvenue&nbsp;!</div>
+          <span class="reflet" id="e-reflet"></span></div>
+        <div id="ondes"></div>
+        <div id="doigt"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final -->
+  <section class="plan" id="fin"></section>
+
+  <div id="pastille">
+    <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="98" fill="#5E1D27" stroke="#E9C77A" stroke-width="2.4"/><circle cx="100" cy="100" r="58" fill="none" stroke="#E9C77A" stroke-width="1.2" opacity=".7"/>
+      <text x="100" y="124" text-anchor="middle" font-family="Bodoni" font-weight="500" font-size="66" fill="#FFF8EC">L</text></svg>
+    <svg viewBox="0 0 200 200" id="pastille-texte"><defs><path id="cercle-p" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
+      <text font-family="Jost" font-weight="500" font-size="15" letter-spacing="1" fill="#F3D99A"><textPath href="#cercle-p" textLength="490" lengthAdjust="spacing">PRÉLANCEMENT • INSCRIPTIONS OUVERTES • </textPath></text></svg>
+  </div>
+
+  <div id="fuite"></div>
+  <div id="vitesse"></div>
+  <div id="flash"></div>
+  <div id="vignette"></div>
+  <div id="grain"></div>
+</div>
+<canvas id="paillettes" width="1080" height="1920"></canvas>
+</div>
+
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="hub-fx.js"></script>
+<script src="belgique.js"></script>
+<script>
+  const { $, $$, OR, clamp, graine, rafale, pluie, poussiere, outils, finale, demarrer } = FX;
+  FX.installer();
+  const svgUrl = (vb, d) => `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='${vb}' preserveAspectRatio='none'%3E%3Cpath d='${d}'/%3E%3C/svg%3E")`;
+  document.documentElement.style.setProperty('--demi-g', svgUrl('0 0 200 528', 'M0 528V236C0 118 74 40 200 0V528Z'));
+  document.documentElement.style.setProperty('--demi-d', svgUrl('0 0 200 528', 'M0 0C126 40 200 118 200 236V528H0Z'));
+
+  // ------------------------------------------------------------------ façade : 5 colonnes x 6 rangées de fenêtres en arche
+  const PHOTOS = [['v-soiree', '50% 25%'], ['v-aid', '50% 30%'], ['v-fiancailles', '50% 28%'], ['v-mariage', '50% 30%'], ['v-devenir', '50% 30%'], ['v-henne', '50% 35%'],
+    ['v-ouverture', '50% 30%'], ['v-soiree', '50% 70%'], ['v-aid', '50% 75%'], ['v-fiancailles', '50% 70%'], ['v-mariage', '40% 75%'], ['v-ouverture', '50% 62%']];
+  const r0 = graine(3), FEN = [];
+  for (let r = 0; r < 6; r++) for (let c = 0; c < 5; c++) {
+    const x = 60 + c * 198, y = 600 + r * 256, centre = r === 2 && c === 2;
+    const [img, pos] = centre ? ['v-ouverture', '50% 26%'] : PHOTOS[Math.floor(r0() * PHOTOS.length)];
+    FEN.push({ x, y, cx: x + 84, cy: y + 111, anneau: Math.max(Math.abs(r - 2), Math.abs(c - 2)), centre, img, pos });
+  }
+  $('#facade').innerHTML = FEN.map((f) => `<div class="fen" style="left:${f.x}px;top:${f.y}px"><div class="f"><img src="images/${f.img}.jpg" alt="" style="object-position:${f.pos}${f.centre ? ';filter:brightness(1)' : ''}"></div>
+    <svg viewBox="0 0 182 240"><path d="M3 238 V108 C3 52 38 18 91 3 C144 18 179 52 179 108 V238" fill="none" stroke="#E9C77A" stroke-width="2.4"/></svg></div>`).join('');
+
+  // ------------------------------------------------------------------ timeline
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  const u = outils(tl);
+  const FLOU = (b, d) => `blur(${b}px) drop-shadow(${d}px 0px 0px rgba(255,40,90,${d ? .7 : 0})) drop-shadow(${-d}px 0px 0px rgba(40,200,255,${d ? .7 : 0}))`;
+  // Texte qui claque : grossi, flou, décalage rouge et bleu, puis net
+  const claquer = (sel, t, o = {}) => {
+    const de = o.de || { opacity: 0, scale: o.s || 1.45, filter: FLOU(18, 16) };
+    tl.fromTo(sel, de, { opacity: 1, scale: 1, filter: FLOU(0, 0), duration: o.d || .34, ease: 'expo.out', immediateRender: true }, t);
+    tl.set(sel, { filter: 'none' }, t + (o.d || .34) + .01);
+  };
+  const ligne = (sel) => sel + ' .ligne > span';
+  const tracerEl = (p, t, d) => { const l = p.getTotalLength(); gsap.set(p, { strokeDasharray: l, strokeDashoffset: l }); tl.to(p, { strokeDashoffset: 0, duration: d, ease: 'power2.inOut' }, t); };
+  const balayage = (t) => { // traînées de vitesse et éclat de lumière pendant une transition
+    tl.fromTo('#vitesse', { opacity: 0 }, { opacity: .9, duration: .1, ease: 'power2.in', immediateRender: false }, t);
+    tl.to('#vitesse', { opacity: 0, duration: .25, ease: 'power2.out' }, t + .12);
+    tl.fromTo('#fuite', { x: 0, opacity: 0 }, { x: 1500, opacity: 1, duration: .55, ease: 'power2.inOut', immediateRender: false }, t - .1);
+    tl.to('#fuite', { opacity: 0, duration: .2 }, t + .35);
+  };
+
+  // ================================================================== A. L'armoire (0 à 3,6 s)
+  tl.fromTo('#cam-a', { scale: 1 }, { scale: 1.07, duration: 2.5, ease: 'none', immediateRender: false }, 0);
+  tl.fromTo('#motif-a', { rotation: 0 }, { rotation: 5, duration: 3.6, ease: 'none', immediateRender: false }, 0);
+  claquer('#a-l1', 0, { de: { opacity: .35, scale: 1.3, filter: FLOU(10, 10) }, d: .3 });
+  claquer('#a-l2', .1, { d: .36 });
+  u.brillance('#a-l2 .or', .4, 1.0);
+  tl.fromTo('#fente', { opacity: .55 }, { opacity: 1, duration: .5, ease: 'sine.inOut', repeat: 3, yoyo: true, immediateRender: false }, .1);
+  tl.fromTo('#flaque', { opacity: .4 }, { opacity: .9, duration: .5, ease: 'sine.inOut', repeat: 3, yoyo: true, immediateRender: false }, .1);
+  u.sortir(ligne('#a-l1'), 1.2, .26); u.sortir(ligne('#a-l2'), 1.24, .26);
+  claquer('#a-l1b', 1.34); claquer('#a-l2b', 1.46); claquer('#a-l3b', 1.6);
+  u.brillance('#a-l2b .or, #a-l3b .or', 1.8, 1.0);
+  // L'armoire tremble, la lumière déborde, les portes s'ouvrent
+  tl.to('#portes', { keyframes: [{ x: -5 }, { x: 5 }, { x: -4 }, { x: 4 }, { x: -2 }, { x: 0 }], duration: .3, ease: 'none' }, 2.24);
+  tl.to('#fente', { opacity: 1, scaleX: 3.2, duration: .3, ease: 'power2.in' }, 2.24);
+  tl.to('#flaque', { opacity: 1, scale: 1.3, duration: .3, ease: 'power2.in' }, 2.24);
+  tl.to('#porte-g', { rotationY: -114, duration: .62, ease: 'expo.out' }, 2.55);
+  tl.to('#porte-d', { rotationY: 114, duration: .62, ease: 'expo.out' }, 2.55);
+  tl.to('#fente, #flaque', { opacity: 0, duration: .15 }, 2.55);
+  tl.to('#interieur img', { filter: 'brightness(1)', scale: 1.04, duration: .9, ease: 'power2.out' }, 2.55);
+  tl.fromTo('#interieur .lueur', { opacity: 1 }, { opacity: 0, duration: 1.0, immediateRender: false }, 2.55);
+  tl.fromTo('#rayons-a', { opacity: 0, rotation: 0, scale: .6 }, { opacity: 1, rotation: 26, scale: 1, duration: 1.2, ease: 'power2.out', immediateRender: false }, 2.55);
+  u.eclair(2.55, .95, .6); u.secousse(2.57, 18, .4);
+  rafale({ graine: 2, t0: 2.57, x: 540, y: 1180, dx: 300, dy: 520, n: 150, v: [300, 1500], vie: [.8, 1.6], taille: [2, 6], couleurs: OR, types: ['point', 'etoile', 'confetti'], g: 160 });
+  tl.to('#a-p2', { opacity: 0, y: -60, filter: 'blur(12px)', duration: .3, ease: 'power2.in' }, 2.95);
+  // Plongée dans l'arche
+  tl.to('#cam-a', { scale: 4.6, duration: .55, ease: 'power3.in' }, 3.02);
+  u.montrer('#sb', 3.42);
+  tl.fromTo('#sb', { opacity: 0 }, { opacity: 1, duration: .14, ease: 'none', immediateRender: false }, 3.44);
+  u.cacher('#sa', 3.62);
+
+  // ================================================================== B. Façade, Belgique, logo (3,5 à 8,0 s)
+  gsap.set('#facade', { scale: 12 });
+  tl.to('#facade', { scale: 1, duration: 1.0, ease: 'expo.out' }, 3.5);
+  tl.fromTo('#facade', { filter: 'blur(10px)' }, { filter: 'blur(0px)', duration: .35, immediateRender: false }, 3.5);
+  tl.set('#facade', { filter: 'none' }, 3.9);
+  tl.fromTo('#motif-b', { rotation: 0, scale: 1.1 }, { rotation: -6, scale: 1, duration: 4.5, ease: 'none', immediateRender: false }, 3.5);
+  $$('.fen').forEach((el, i) => {
+    const f = FEN[i];
+    if (!f.centre) tl.to(el.querySelector('img'), { filter: 'brightness(1)', duration: .35, ease: 'power1.out' }, 3.86 + f.anneau * .09 + (i % 3) * .015);
+    tracerEl(el.querySelector('path'), 3.9 + f.anneau * .08, .5);
+  });
+  claquer('#b-l1', 3.72, { s: 1.6 });
+  u.entrer(ligne('#b-l2'), 3.98, .5);
+  u.brillance('#b-l1 .or', 4.15, 1.0);
+  // Les fenêtres deviennent des points d'or
+  tl.to('.fen', { scale: .06, opacity: 0, duration: .34, ease: 'power3.in', stagger: { each: .011, from: 'center', grid: [6, 5] } }, 5.0);
+  u.cacher('#facade', 5.75);
+  u.sortir(ligne('#b-l1'), 4.96, .22); u.sortir(ligne('#b-l2'), 4.98, .2);
+  claquer('#b-l1b', 5.14, { s: 1.6 });
+  u.entrer(ligne('#b-l2b'), 5.32, .45);
+  u.brillance('#b-l1b .or', 5.45, 1.0);
+  tl.to('#b-p2', { opacity: 0, scale: .92, filter: 'blur(10px)', duration: .25, ease: 'power2.in' }, 6.2);
+  // Temps fort : logo
+  u.eclair(6.5, 1, .7); u.secousse(6.51, 22, .45);
+  tl.fromTo('#anneau-b', { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: .8, ease: 'power3.out', immediateRender: false }, 6.5);
+  tl.fromTo('#rayons-b', { opacity: 0, scale: .5, rotation: 0 }, { opacity: 1, scale: 1, rotation: 20, duration: 1.6, ease: 'power2.out', immediateRender: false }, 6.5);
+  $$('#logo-b .arche-l path').forEach((p) => tracerEl(p, 6.44, .55));
+  tl.fromTo('#logo-L', { opacity: 0, scale: .6, filter: 'blur(12px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: .45, ease: 'back.out(1.8)', immediateRender: false }, 6.52);
+  $$('#logo-nom span').forEach((s, i) => tl.fromTo(s, { opacity: 0, y: 90, rotationX: -90 }, { opacity: 1, y: 0, rotationX: 0, duration: .55, ease: 'back.out(1.7)', immediateRender: false }, 6.65 + i * .05));
+  u.brillance('#logo-nom span', 7.15, 1.2);
+  tl.fromTo('#logo-sous', { opacity: 0, letterSpacing: '.7em' }, { opacity: 1, letterSpacing: '.3em', duration: .7, ease: 'power3.out', immediateRender: false }, 7.05);
+  rafale({ graine: 4, t0: 6.52, x: 540, y: 700, n: 200, v: [300, 1700], vie: [1.0, 1.9], taille: [2, 7], couleurs: OR, types: ['point', 'etoile', 'confetti'], g: 200, etale: .1 });
+  // Pastille « Prélancement · Inscriptions ouvertes » (9 à 16 s)
+  u.montrer('#pastille', 8.93);
+  tl.fromTo('#pastille', { scale: 0, rotation: -120 }, { scale: 1, rotation: 0, duration: .55, ease: 'back.out(2.2)', immediateRender: false }, 8.95);
+  tl.fromTo('#pastille-texte', { rotation: 0 }, { rotation: 250, duration: 7.05, ease: 'none', immediateRender: false }, 8.95);
+  tl.to('#pastille', { scale: 0, duration: .25, ease: 'back.in(2)' }, 15.68);
+  u.cacher('#pastille', 15.95);
+  // Transition éclair vers C
+  tl.to('#sb', { x: -1080, filter: 'blur(22px)', duration: .28, ease: 'power3.in' }, 7.8);
+  u.montrer('#sc', 7.96);
+  tl.fromTo('#sc', { x: 1080, filter: 'blur(22px)' }, { x: 0, filter: 'blur(0px)', duration: .32, ease: 'power3.out', immediateRender: false }, 7.98);
+  tl.set('#sc', { filter: 'none' }, 8.31);
+  balayage(7.92);
+  u.cacher('#sb', 8.12);
+
+  // ================================================================== C. Pour qui ? (8,0 à 16,0 s)
+  tl.fromTo('#motif-c', { rotation: 0 }, { rotation: 8, duration: 8, ease: 'none', immediateRender: false }, 8);
+  tl.fromTo('#rayons-c', { rotation: 0 }, { rotation: 40, duration: 8, ease: 'none', immediateRender: false }, 8);
+  claquer('#c-titre', 8.06, { s: 1.7 });
+  u.brillance('#c-titre .or', 8.2, .8);
+  tl.to('#c-titre', { scale: 2.3, opacity: 0, filter: 'blur(16px)', duration: .3, ease: 'power2.in' }, 8.46);
+  gsap.set('#c-3d', { opacity: 0 });
+  tl.to('#c-3d', { opacity: 1, duration: .2, ease: 'none' }, 8.42);
+  tl.fromTo('#prisme', { rotationY: -280, rotationX: 22, scale: .5, y: 460 }, { rotationY: 0, rotationX: 5, scale: 1, y: 0, duration: .85, ease: 'expo.out', immediateRender: false }, 8.42);
+  $$('.face').forEach((f, i) => gsap.set(f, { rotationY: i * 120, z: 202 }));
+  // Les faces : 0°, puis -120°, puis -240°
+  tl.to('#prisme', { rotationY: -120, duration: .62, ease: 'power4.inOut' }, 10.9);
+  tl.to('#prisme', { rotationY: -240, duration: .62, ease: 'power4.inOut' }, 13.3);
+  tl.to('#prisme', { y: -16, duration: 1.1, ease: 'sine.inOut', repeat: 5, yoyo: true }, 9.3);
+  $$('.face .reflet').forEach((r, i) => tl.fromTo(r, { x: 0 }, { x: 1300, duration: .9, ease: 'power2.inOut', immediateRender: false }, [9.1, 11.5, 13.95][i]));
+  const PERS = [['#pers1', 8.95, 10.86], ['#pers2', 11.12, 13.26], ['#pers3', 13.52, 15.7]];
+  PERS.forEach(([p, t0, t1]) => {
+    tl.fromTo(p + ' .chip', { opacity: 0, scale: .7, y: 16 }, { opacity: 1, scale: 1, y: 0, duration: .4, ease: 'back.out(2)', immediateRender: false }, t0);
+    u.entrer(p + ' .h .ligne > span', t0 + .08, .5);
+    tl.fromTo(p + ' .s', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .4, immediateRender: false }, t0 + .3);
+    tl.to(p + ' .chip, ' + p + ' .s', { opacity: 0, duration: .2, ease: 'power2.in' }, t1);
+    u.sortir(p + ' .h .ligne > span', t1, .24);
+  });
+  gsap.set('.h .ligne > span', { yPercent: 115 });
+  $$('.tuile').forEach((tu, i) => tl.fromTo(tu, { rotationY: 90 }, { rotationY: 0, duration: .45, ease: 'back.out(1.6)', immediateRender: true }, 13.62 + i * .09));
+  $$('.bulle').forEach((b, i) => {
+    tl.fromTo(b, { opacity: 0, scale: .4, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: .4, ease: 'back.out(2.4)', immediateRender: false }, 14.0 + i * .1);
+    tl.to(b, { y: -18, duration: .8, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 14.45 + i * .1);
+    tl.to(b, { opacity: 0, scale: .6, duration: .2 }, 15.62);
+  });
+  tl.to('#c-3d', { scale: 2.4, opacity: 0, duration: .34, ease: 'power3.in' }, 15.66);
+
+  // ================================================================== D. Prélancement (16,0 à 19,6 s)
+  u.montrer('#sd', 16.0); u.cacher('#sc', 16.0);
+  tl.fromTo('#motif-d', { rotation: 0 }, { rotation: -7, duration: 3.6, ease: 'none', immediateRender: false }, 16);
+  claquer('#d-pl', 16.02, { s: 1.8 });
+  u.brillance('#d-pl .or', 16.3, 1.0);
+  tl.fromTo('#sceau', { scale: 3.2, rotation: -50, opacity: 0 }, { scale: 1, rotation: -8, opacity: 1, duration: .42, ease: 'expo.out', immediateRender: false }, 16.12);
+  u.secousse(16.14, 20, .35);
+  rafale({ graine: 6, t0: 16.15, x: 540, y: 870, dx: 420, dy: 420, n: 90, v: [200, 900], vie: [.6, 1.2], taille: [2, 5], couleurs: OR, types: ['point', 'etoile'], g: 120 });
+  tl.fromTo('#rayons-d', { opacity: 0, rotation: 0 }, { opacity: .9, rotation: 60, duration: 3.4, ease: 'power1.in', immediateRender: false }, 16.12);
+  tl.fromTo('#sceau-texte', { rotation: 0 }, { rotation: 260, duration: 3.4, ease: 'power2.in', immediateRender: false }, 16.12);
+  tl.fromTo('#sceau-pointilles', { rotation: 0 }, { rotation: -90, duration: 3.4, ease: 'none', immediateRender: false }, 16.12);
+  [16.5, 17.0].forEach((t) => tl.fromTo('#sceau', { scale: 1.04 }, { scale: 1, duration: .3, ease: 'power2.out', immediateRender: false }, t));
+  u.sortir(ligne('#d-pl'), 17.08, .2);
+  [['#d-w1', 17.25], ['#d-w2', 17.5], ['#d-w3', 17.75], ['#d-w4', 18.0]].forEach(([w, t]) => claquer(w, t, { s: 1.8, d: .28 }));
+  u.eclair(18.0, 1, .6); u.secousse(18.02, 24, .4);
+  tl.fromTo('#sceau', { scale: 1.12 }, { scale: 1, duration: .4, ease: 'power3.out', immediateRender: false }, 18.0);
+  u.brillance('#d-w3, #d-w4', 18.2, 1.0);
+  rafale({ graine: 7, t0: 18.02, x: 540, y: 520, dx: 600, n: 160, v: [300, 1500], vie: [1.0, 1.8], taille: [3, 8], couleurs: OR, types: ['confetti', 'etoile', 'point'], g: 380 });
+  pluie({ graine: 8, t0: 18.1, n: 70, etale: 1.3, v: [300, 560], taille: [4, 9], couleurs: OR, types: ['confetti', 'etoile', 'point'] });
+  tl.fromTo('#d-sous', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .45, immediateRender: false }, 18.4);
+  // Vers l'inscription
+  tl.to('#sceau', { scale: 7, opacity: 0, duration: .42, ease: 'power3.in' }, 19.48);
+  tl.to('#d-l1, #d-l2, #d-sous', { opacity: 0, y: -40, duration: .3, ease: 'power2.in' }, 19.5);
+  u.montrer('#se', 19.6);
+  tl.fromTo('#se', { clipPath: 'circle(0% at 50% 46%)' }, { clipPath: 'circle(150% at 50% 46%)', duration: .5, ease: 'power3.inOut', immediateRender: false }, 19.6);
+  u.cacher('#sd', 20.15);
+
+  // ================================================================== E. Inscription (19,6 à 22,1 s)
+  tl.fromTo('#motif-e', { rotation: 0 }, { rotation: 5, duration: 2.6, ease: 'none', immediateRender: false }, 19.6);
+  claquer('#e-l1', 19.8, { s: 1.4 });
+  tl.fromTo('#e-l2', { opacity: 0, letterSpacing: '.5em' }, { opacity: 1, letterSpacing: '.22em', duration: .5, immediateRender: false }, 19.98);
+  gsap.set('#tel', { transformPerspective: 1600 });
+  tl.fromTo('#tel', { y: 900, rotationX: 38, scale: .9 }, { y: 0, rotationX: 0, scale: 1, duration: .75, ease: 'expo.out', immediateRender: false }, 19.72);
+  const ondes = $('#ondes');
+  const toucher = (x, y, t) => {
+    tl.to('#doigt', { x, y, duration: .26, ease: 'power2.inOut' }, t - .28);
+    tl.to('#doigt', { scale: .78, duration: .07, ease: 'power2.in' }, t - .02);
+    tl.to('#doigt', { scale: 1, duration: .16, ease: 'power2.out' }, t + .05);
+    const o = document.createElement('div'); o.className = 'onde'; o.style.left = x + 'px'; o.style.top = y + 'px'; ondes.appendChild(o);
+    tl.fromTo(o, { scale: .4, opacity: 1 }, { scale: 2.6, opacity: 0, duration: .5, ease: 'power2.out', immediateRender: false }, t);
+  };
+  tl.set('#doigt', { x: 360, y: 980 }, 19.6);
+  tl.to('#doigt', { opacity: 1, duration: .2 }, 20.06);
+  const choisir = (n, t) => {
+    $$('.opt').forEach((o, k) => {
+      const actif = k === n - 1;
+      tl.to(o, { borderColor: actif ? '#5E1D27' : '#D3C4AE', backgroundColor: actif ? '#F6ECE6' : '#FFFFFF', duration: .18 }, t);
+      tl.to(o.querySelector('.radio'), { borderColor: actif ? '#5E1D27' : '#B9AA95', duration: .18 }, t);
+      tl.to(o.querySelector('.radio i'), { scale: actif ? 1 : 0, duration: .25, ease: actif ? 'back.out(3)' : 'power2.in' }, t);
+    });
+    tl.fromTo('#opt' + n, { scale: 1 }, { scale: .96, duration: .08, yoyo: true, repeat: 1, immediateRender: false }, t);
+  };
+  [[1, 20.35, 355], [2, 20.75, 457], [3, 21.15, 559]].forEach(([n, t, y]) => { toucher(330, y, t); choisir(n, t); });
+  toucher(330, 699, 21.62);
+  tl.fromTo('#e-reflet', { x: 0 }, { x: 900, duration: .45, ease: 'power2.inOut', immediateRender: false }, 21.4);
+  tl.fromTo('#e-btn', { scale: 1 }, { scale: .95, duration: .08, yoyo: true, repeat: 1, immediateRender: false }, 21.62);
+  tl.to('#e-btn .t1', { opacity: 0, y: -30, duration: .2 }, 21.66);
+  tl.fromTo('#e-btn .t2', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .3, ease: 'back.out(2)', immediateRender: false }, 21.72);
+  tl.to('#e-btn', { backgroundColor: '#7A2A35', duration: .3 }, 21.66);
+  rafale({ graine: 9, t0: 21.66, x: 540, y: 1270, dx: 420, n: 90, v: [250, 1100], vie: [.7, 1.3], taille: [3, 7], couleurs: OR, types: ['confetti', 'etoile', 'point'], g: 300 });
+  tl.to('#doigt', { opacity: 0, duration: .2 }, 21.85);
+
+  // ================================================================== Final (22,1 à 25 s)
+  finale(tl, 22.1, { duree: 25, slogan: 'Une tenue<br>pour chaque fête.', cta: 'Inscription gratuite · lallat.be', bas: 'Prélancement · Ouverture très bientôt' });
+  u.cacher('#se', 22.7);
+
+  // Poussière d'or (profondeur)
+  poussiere({ graine: 11, t0: 3.5, t1: 16, n: 46, alpha: .42 });
+  poussiere({ graine: 12, t0: 16, t1: 19.7, n: 34, alpha: .5 });
+
+  // ================================================================== Carte de Belgique (canvas, 4,95 à 6,45 s)
+  const B = window.BELGIQUE, OX = 90, OY = 620, CENTRE = [540, 760];
+  const BXL = [424, 238];
+  const rc = graine(21);
+  const dmax = Math.max(...B.points.map(([x, y]) => Math.hypot(x - BXL[0], y - BXL[1])));
+  const PTS = B.points.map(([x, y]) => ({ x: OX + x, y: OY + y, a: 5.2 + Math.hypot(x - BXL[0], y - BXL[1]) / dmax * .45 + rc() * .08, ph: rc() * 6.28 }));
+  const VOLS = FEN.map((f) => {
+    const cible = PTS[Math.floor(rc() * PTS.length)];
+    const mx = (f.cx + cible.x) / 2, my = (f.cy + cible.y) / 2, dx = cible.x - f.cx, dy = cible.y - f.cy, n = Math.hypot(dx, dy) || 1, k = (rc() - .5) * 520;
+    return { x0: f.cx, y0: f.cy, x1: cible.x, y1: cible.y, qx: mx - dy / n * k, qy: my + dx / n * k, t0: 5.04 + f.anneau * .04 + rc() * .05, d: .62 };
+  });
+  const VILLES = [['Bruxelles', 4.35, 50.85], ['Anvers', 4.40, 51.22], ['Gand', 3.72, 51.05], ['Liège', 5.57, 50.63], ['Charleroi', 4.44, 50.41], ['Namur', 4.87, 50.47]]
+    .map(([nom, lon, lat], i) => ({ nom, x: OX + (lon - 2.54) / 3.87 * 900, y: OY + (51.505 - lat) / 2.008 * 739.9, t: 5.5 + i * .06 }));
+  const cv = $('#carte'), cx = cv.getContext('2d');
+  const ease = (p) => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+  const bez = (v, p) => { const q = 1 - p; return [q * q * v.x0 + 2 * q * p * v.qx + p * p * v.x1, q * q * v.y0 + 2 * q * p * v.qy + p * p * v.y1]; };
+  const aspirer = (x, y, k) => { // implosion vers le centre, avec un léger tourbillon
+    if (!k) return [x, y];
+    const a = k * 1.6, dx = x - CENTRE[0], dy = y - CENTRE[1], c = Math.cos(a), s = Math.sin(a), f = 1 - k;
+    return [CENTRE[0] + (dx * c - dy * s) * f, CENTRE[1] + (dx * s + dy * c) * f];
+  };
+  const point = (x, y, r, a, c = '#F3D99A') => { cx.globalAlpha = a; cx.fillStyle = c; cx.beginPath(); cx.arc(x, y, r, 0, 6.283); cx.fill(); };
+  const lueur = (x, y, r, a) => { const g = cx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(255,236,190,${a})`); g.addColorStop(1, 'rgba(255,236,190,0)'); cx.globalAlpha = 1; cx.fillStyle = g; cx.beginPath(); cx.arc(x, y, r, 0, 6.283); cx.fill(); };
+  function dessinerCarte(t) {
+    cx.clearRect(0, 0, 1080, 1920);
+    if (t < 4.98 || t > 6.56) return;
+    const imp = clamp((t - 6.26) / .24), k = imp * imp * imp;
+    cx.globalCompositeOperation = 'lighter';
+    for (const p of PTS) {
+      const a = clamp((t - p.a) / .25);
+      if (a <= 0) continue;
+      const [x, y] = aspirer(p.x, p.y, k);
+      point(x, y, 2.9 + k * 1.5, a * (.68 + .3 * Math.sin(t * 7 + p.ph)) * (1 - k * .3));
+    }
+    for (const v of VOLS) {
+      if (t < v.t0) { const g = clamp((t - 4.98) / .3); lueur(v.x0, v.y0, 10 + 30 * g, .9 * g); continue; }
+      const p = clamp((t - v.t0) / v.d);
+      for (let j = 5; j >= 0; j--) {
+        const pp = Math.max(0, p - j * .025), [x, y] = aspirer(...bez(v, ease(pp)), k);
+        point(x, y, 6 - j * .8, (1 - j / 6) * .9, '#FFF3CF');
+      }
+      const [x, y] = aspirer(...bez(v, ease(p)), k);
+      lueur(x, y, 26, .7);
+      if (p >= 1) { const q = clamp((t - v.t0 - v.d) / .4); if (q < 1) { cx.globalAlpha = (1 - q) * .8; cx.strokeStyle = '#F3D99A'; cx.lineWidth = 2; cx.beginPath(); cx.arc(x, y, 4 + q * 26, 0, 6.283); cx.stroke(); } }
+    }
+    cx.globalCompositeOperation = 'source-over';
+    for (const v of VILLES) {
+      const a = clamp((t - v.t) / .2) * (1 - clamp((t - 6.2) / .1));
+      if (a <= 0) continue;
+      const q = clamp((t - v.t) / .5);
+      cx.globalAlpha = a * (1 - q); cx.strokeStyle = '#FFF3CF'; cx.lineWidth = 3; cx.beginPath(); cx.arc(v.x, v.y, 8 + q * 40, 0, 6.283); cx.stroke();
+      point(v.x, v.y, 7, a, '#FFF8EC');
+      cx.globalAlpha = a; cx.fillStyle = '#FFF8EC'; cx.font = '500 34px Jost'; cx.textAlign = v.nom === 'Liège' ? 'right' : 'left';
+      cx.shadowColor = 'rgba(0,0,0,.6)'; cx.shadowBlur = 10;
+      cx.fillText(v.nom, v.x + (v.nom === 'Liège' ? -16 : 16), v.y - 12);
+      cx.shadowBlur = 0;
+    }
+    if (k > .4) lueur(CENTRE[0], CENTRE[1], 60 + 260 * k, k);
+    cx.globalAlpha = 1;
+  }
+
+  demarrer(tl, 25, dessinerCarte);
+</script>
+</body>
+</html>
