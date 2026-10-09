@@ -108,7 +108,7 @@ Restez en **mode test** (interrupteur « Test mode » en haut à droite) tant qu
 1. Sur resend.com, ouvrez **Domains → Add domain** et saisissez `lallat.be` (votre domaine).
 2. Ajoutez chez votre registraire les enregistrements DNS que Resend affiche (SPF, DKIM), puis attendez la validation (de quelques minutes à quelques heures).
 3. Ouvrez **API Keys → Create API key** (permission « Sending access »). Ce sera `RESEND_API_KEY`.
-4. L'adresse d'envoi par défaut est `bonjour@<domaine>` (définie dans `assets/config.js`). Pour en utiliser une autre, ajoutez la variable facultative `EMAIL_FROM`, par exemple `LALLAT <bonjour@lallat.be>`.
+4. L'adresse d'envoi par défaut est `info@<domaine>` (définie dans `assets/config.js`). Pour en utiliser une autre, ajoutez la variable facultative `EMAIL_FROM`, par exemple `LALLAT <reservations@lallat.be>`.
 
 ---
 

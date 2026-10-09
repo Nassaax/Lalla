@@ -9,7 +9,7 @@
   var CONFIG = {
     brand: {
       name: 'LALLAT',
-      email: 'bonjour@lallat.be',
+      email: 'info@lallat.be',
       instagram: 'lallat.be',
       domaine: 'lallat.be'
     },

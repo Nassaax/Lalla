@@ -7,13 +7,20 @@
 - [x] Resend : compte créé (lallat.info@gmail.com), `RESEND_API_KEY` et `EMAIL_FROM` provisoire dans Vercel
 - [x] `EMAIL_ADMIN` = lallat.info@gmail.com
 
-## À faire quand le domaine lallat.be est acheté
-- [ ] Vercel : ajouter le domaine au projet `lalla` (lallat.be et www.lallat.be)
-- [ ] Resend : section Domains, ajouter `lallat.be` (région Irlande), puis ajouter les enregistrements DNS (DKIM, SPF, DMARC)
-- [ ] Vercel : **supprimer `EMAIL_FROM`** (les emails partiront alors de bonjour@lallat.be)
-- [ ] Vercel : `SITE_URL` = https://lallat.be
-- [ ] Supabase : Authentication, URL Configuration, Site URL = https://lallat.be (+ redirections)
+## Domaine lallat.be (acheté chez OVHcloud le 8 octobre 2026)
+- [x] Achat chez OVHcloud (6,99 € la 1re année, puis 7,89 €/an), DNSSEC retiré, boîte Zimbra Starter incluse
+- [x] Vercel : domaine ajouté au compte avec zone DNS, rattaché au projet `lalla` (lallat.be ; www.lallat.be redirige en 308)
+- [x] OVHcloud : serveurs DNS remplacés par ns1.vercel-dns.com et ns2.vercel-dns.com
+- [x] Zone Vercel : MX OVH (mx0 1, mx1 5, mx2 50, mx3 100 .mail.ovh.net), SPF `v=spf1 include:mx.ovh.com ~all`, DMARC `p=none`
+- [x] Adresse de contact du site : info@lallat.be
+- [ ] Attendre la prise en compte des serveurs DNS (Vercel ne doit plus afficher ns111.ovh.net), puis vérifier https://lallat.be
+- [ ] OVHcloud Zimbra : associer lallat.be, créer la boîte **info@lallat.be** ; ajouter dans la zone Vercel les 2 CNAME propres au compte (vérification `ovh-zimbra-…` et DKIM `ovhmo-selector-1._domainkey`)
+- [ ] Resend : section Domains, ajouter `lallat.be` (région Irlande), puis ajouter ses enregistrements dans la zone Vercel (DKIM `resend._domainkey`, MX et TXT sur `send`)
+- [ ] Vercel : **supprimer `EMAIL_FROM`** une fois Resend vérifié (les emails partiront alors de info@lallat.be)
+- [ ] Vercel : `SITE_URL` = https://lallat.be (seulement quand https://lallat.be répond)
+- [ ] Supabase : Authentication, URL Configuration, Site URL = https://lallat.be (+ redirections https://lallat.be/**)
 - [ ] Stripe : mettre à jour l'URL des 2 webhooks vers https://lallat.be/api/webhook
+- [ ] App : adresse par défaut dans `app/scripts/construire.mjs` ; dossiers de démarchage (`SITE` dans dossiers.html) puis régénérer
 - [ ] Redéployer, puis vérifier un email reçu par une adresse quelconque
 
 ## Avant l'ouverture des réservations
