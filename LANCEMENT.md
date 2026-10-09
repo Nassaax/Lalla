@@ -18,11 +18,11 @@
 - [x] Zone Vercel : SRV `_autodiscover._tcp` (0 0 443 zimbra1.mail.ovh.net) et DKIM `ovhmo-selector-1/2._domainkey` (CNAME vers *.jo.dkim.mail.ovh.net)
 - [x] OVHcloud Zimbra : boîte **info@lallat.be** créée (webmail OVHcloud ; IMAP imap.mail.ovh.net:993 SSL, SMTP smtp.mail.ovh.net:465 SSL)
 - [ ] Diagnostic Zimbra : Rafraîchir (SRV et DKIM au vert, bouton Activer pour le DKIM si proposé) ; test d'envoi et de réception
-- [ ] Resend : section Domains, ajouter `lallat.be` (région Irlande), puis ajouter ses enregistrements dans la zone Vercel (DKIM `resend._domainkey`, MX et TXT sur `send`)
-- [ ] Vercel : **supprimer `EMAIL_FROM`** une fois Resend vérifié (les emails partiront alors de info@lallat.be)
+- [x] Resend : domaine `lallat.be` ajouté (région Irlande), enregistrements posés automatiquement dans la zone Vercel (DKIM `resend._domainkey`, MX et SPF sur `send`)
+- [x] Vercel : `EMAIL_FROM` = `LALLAT <info@lallat.be>` (remplace l'adresse provisoire onboarding@resend.dev)
 - [x] Vercel : `SITE_URL` = https://lallat.be
 - [x] Supabase : Authentication, URL Configuration, Site URL = https://lallat.be (+ redirections)
-- [ ] **Bloquant avant le recrutement** : Supabase, SMTP personnalisé via Resend (smtp.resend.com, port 465, utilisateur `resend`, mot de passe = clé API Resend dédiée, expéditeur info@lallat.be). Sans lui, Supabase n'envoie les emails de confirmation qu'aux membres de l'équipe (2 par heure) : les inscriptions publiques échouent.
+- [x] Supabase : SMTP personnalisé via Resend renseigné (à confirmer par un test : lien de connexion ou mot de passe oublié). Pour mémoire : SMTP personnalisé via Resend (smtp.resend.com, port 465, utilisateur `resend`, mot de passe = clé API Resend dédiée, expéditeur info@lallat.be). Sans lui, Supabase n'envoie les emails de confirmation qu'aux membres de l'équipe (2 par heure) : les inscriptions publiques échouent.
 - [ ] Stripe : webhooks sur https://lallat.be/api/webhook au passage en mode réel (les webhooks de test sur vercel.app continuent de fonctionner)
 - [x] App : adresse par défaut dans `app/scripts/construire.mjs` ; dossiers de démarchage régénérés avec lallat.be
 - [ ] Plus tard (après mise à jour des webhooks Stripe) : rediriger lalla-pearl.vercel.app vers lallat.be
