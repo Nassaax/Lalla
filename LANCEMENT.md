@@ -22,11 +22,12 @@
 - [x] Vercel : `EMAIL_FROM` = `LALLAT <info@lallat.be>` (remplace l'adresse provisoire onboarding@resend.dev)
 - [x] Vercel : `SITE_URL` = https://lallat.be
 - [x] Supabase : Authentication, URL Configuration, Site URL = https://lallat.be (+ redirections)
-- [x] Supabase : SMTP personnalisé via Resend renseigné (à confirmer par un test : lien de connexion ou mot de passe oublié). Pour mémoire : SMTP personnalisé via Resend (smtp.resend.com, port 465, utilisateur `resend`, mot de passe = clé API Resend dédiée, expéditeur info@lallat.be). Sans lui, Supabase n'envoie les emails de confirmation qu'aux membres de l'équipe (2 par heure) : les inscriptions publiques échouent.
+- [x] Supabase : SMTP personnalisé via Resend renseigné, testé le 9 octobre (email de confirmation bien reçu à l'inscription). Pour mémoire : SMTP personnalisé via Resend (smtp.resend.com, port 465, utilisateur `resend`, mot de passe = clé API Resend dédiée, expéditeur info@lallat.be). Sans lui, Supabase n'envoie les emails de confirmation qu'aux membres de l'équipe (2 par heure) : les inscriptions publiques échouent.
 - [ ] Stripe : webhooks sur https://lallat.be/api/webhook au passage en mode réel (les webhooks de test sur vercel.app continuent de fonctionner)
 - [x] App : adresse par défaut dans `app/scripts/construire.mjs` ; dossiers de démarchage régénérés avec lallat.be
 - [ ] Plus tard (après mise à jour des webhooks Stripe) : rediriger lalla-pearl.vercel.app vers lallat.be
-- [ ] Redéployer, puis vérifier un email reçu par une adresse quelconque
+- [x] Redéployer, puis vérifier un email reçu par une adresse quelconque
+- [ ] Supabase : modèles d'emails LALLAT en FR et NL collés (inscription et lien de connexion, voir `supabase/templates/MODE-EMPLOI.md`), puis testés
 
 ## Avant l'ouverture des réservations
 - [ ] Inscription indépendant complémentaire (numéro BCE, caisse d'assurances sociales, TVA)

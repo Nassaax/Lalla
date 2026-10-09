@@ -1,0 +1,37 @@
+<!doctype html>
+{{ $nl := eq (index .Data "langue") "nl" }}<html lang="{{ if $nl }}nl{{ else }}fr{{ end }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+<title>LALLAT</title>
+</head>
+<body style="margin:0;padding:0;background-color:#FAF6F0;-webkit-text-size-adjust:100%;">
+<div style="display:none;max-height:0;max-width:0;overflow:hidden;opacity:0;mso-hide:all;">{{ if $nl }}Nog één stap om uw account te activeren.{{ else }}Plus qu'une étape pour activer votre compte.{{ end }}&#8204;&nbsp;&#8204;&nbsp;&#8204;&nbsp;&#8204;&nbsp;&#8204;&nbsp;&#8204;&nbsp;&#8204;&nbsp;&#8204;&nbsp;&#8204;&nbsp;&#8204;&nbsp;</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FAF6F0" style="background-color:#FAF6F0;">
+<tr><td align="center" style="padding:28px 12px 36px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+<tr><td align="center" bgcolor="#5E1D27" style="background-color:#5E1D27;border-radius:14px 14px 0 0;padding:30px 20px 26px;">
+<img src="https://lallat.be/assets/icones/icone-192.png" width="60" height="60" alt="" style="display:block;margin:0 auto;width:60px;height:60px;border:0;">
+<p style="margin:12px 0 0;padding-left:.32em;font-family:'Bodoni 72','Bodoni Moda',Didot,Georgia,serif;font-size:30px;line-height:1.2;letter-spacing:.32em;color:#FAF6F0;">LALLAT</p>
+<p style="margin:8px 0 0;font-family:'Jost','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;line-height:1.6;letter-spacing:.22em;text-transform:uppercase;color:#C9A66B;">{{ if $nl }}Verhuur van Marokkaanse kledij&nbsp;·&nbsp;België{{ else }}Location de tenues marocaines&nbsp;·&nbsp;Belgique{{ end }}</p>
+</td></tr>
+<tr><td bgcolor="#FFFFFF" style="background-color:#FFFFFF;border:1px solid #E5D9C8;border-top:0;border-radius:0 0 14px 14px;padding:36px 28px 32px;">
+<h1 style="margin:0 0 14px;font-family:'Bodoni 72','Bodoni Moda',Didot,Georgia,serif;font-size:28px;font-weight:400;line-height:1.25;color:#241B17;">{{ if $nl }}Welkom bij LALLAT{{ else }}Bienvenue chez LALLAT{{ end }}</h1>
+<p style="margin:0 0 26px;font-family:'Jost','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#54483F;">{{ if $nl }}Bedankt voor uw inschrijving. Nog één stap: bevestig uw e-mailadres om uw account te activeren.{{ else }}Merci pour votre inscription. Il ne reste qu'une étape&nbsp;: confirmez votre adresse email pour activer votre compte.{{ end }}</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#5E1D27" style="background-color:#5E1D27;border-radius:12px;">
+<a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:16px 30px;font-family:'Jost','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;line-height:1.2;letter-spacing:.08em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;border-radius:12px;">{{ if $nl }}Mijn adres bevestigen{{ else }}Confirmer mon adresse{{ end }}</a>
+</td></tr></table>
+<p style="margin:26px 0 0;font-family:'Jost','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;color:#8A7E74;">{{ if $nl }}Werkt de knop niet? Kopieer deze link in uw browser:{{ else }}Le bouton ne fonctionne pas&nbsp;? Copiez ce lien dans votre navigateur&nbsp;:{{ end }}<br><a href="{{ .ConfirmationURL }}" style="color:#5E1D27;word-break:break-all;">{{ .ConfirmationURL }}</a></p>
+<p style="margin:22px 0 0;padding-top:20px;border-top:1px solid #E5D9C8;font-family:'Jost','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.6;color:#8A7E74;">{{ if $nl }}Hebt u geen account aangemaakt? Negeer deze e-mail dan gewoon: er wordt niets geactiveerd.{{ else }}Vous n'avez pas créé de compte&nbsp;? Ignorez simplement cet email&nbsp;: rien ne sera activé.{{ end }}</p>
+</td></tr>
+<tr><td align="center" style="padding:22px 16px 0;font-family:'Jost','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.7;color:#8A7E74;">
+{{ if $nl }}Een outfit voor elk feest{{ else }}Une tenue pour chaque fête{{ end }}<br>
+<a href="https://lallat.be/{{ if $nl }}?lang=nl{{ end }}" style="color:#8A7E74;text-decoration:underline;">lallat.be</a>&nbsp;·&nbsp;<a href="mailto:info@lallat.be" style="color:#8A7E74;text-decoration:underline;">info@lallat.be</a>
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
