@@ -34,6 +34,7 @@
 - [ ] Conditions générales relues par un avocat (caution en espèces, DAC7, annulations) + assurance RC pro
 - [ ] 10 à 20 loueuses inscrites avec annonces validées
 - [ ] Une location réelle à petit prix, puis « Ouvrir les réservations » dans l'admin
+- [ ] Le même jour : dernière ligne de la bio Instagram remplacée par « ✨ Réservez en ligne 👇 » (voir `marque/PROFIL-INSTAGRAM.md`)
 
 ## Application iPhone / iPad / Android
 - [x] Projet Capacitor (`app/`), icône, écran de démarrage ; interface embarquée copiée du site (site inchangé)

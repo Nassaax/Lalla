@@ -3,6 +3,9 @@ tests/
 scripts/
 supabase/
 PLAN.md
+LANCEMENT.md
+README.md
+maquettes/
 node_modules/
 marque/
 app/
