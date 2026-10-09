@@ -14,7 +14,9 @@
 - [x] Zone Vercel : MX OVH (mx0 1, mx1 5, mx2 50, mx3 100 .mail.ovh.net), SPF `v=spf1 include:mx.ovh.com ~all`, DMARC `p=none`
 - [x] Adresse de contact du site : info@lallat.be
 - [x] Serveurs DNS pris en compte (9 octobre), certificats HTTPS émis pour lallat.be et www.lallat.be
-- [ ] OVHcloud Zimbra : associer lallat.be, créer la boîte **info@lallat.be** ; ajouter dans la zone Vercel les 2 CNAME propres au compte (vérification `ovh-zimbra-…` et DKIM `ovhmo-selector-1._domainkey`)
+- [x] OVHcloud Zimbra : organisation « Lallat » créée, lallat.be associé (diagnostic MX et SPF OK)
+- [x] Zone Vercel : SRV `_autodiscover._tcp` (0 0 443 zimbra1.mail.ovh.net) et DKIM `ovhmo-selector-1/2._domainkey` (CNAME vers *.jo.dkim.mail.ovh.net)
+- [ ] OVHcloud Zimbra : créer la boîte **info@lallat.be** (onglet Compte email), puis Rafraîchir le diagnostic (SRV et DKIM au vert)
 - [ ] Resend : section Domains, ajouter `lallat.be` (région Irlande), puis ajouter ses enregistrements dans la zone Vercel (DKIM `resend._domainkey`, MX et TXT sur `send`)
 - [ ] Vercel : **supprimer `EMAIL_FROM`** une fois Resend vérifié (les emails partiront alors de info@lallat.be)
 - [x] Vercel : `SITE_URL` = https://lallat.be
