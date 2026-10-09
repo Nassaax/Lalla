@@ -9,6 +9,14 @@ Règle d'or : toujours une phrase personnalisée sur SON travail (une pièce, un
 
 ## 1. Fournisseuses de tenues (particulières, negafas, créatrices)
 
+### DM Instagram, version douce (premier contact, sans argument commercial)
+
+> Bonjour [Prénom] 🤍
+> Quel coup de cœur pour [votre takchita émeraude] ! On sent tout le soin que vous mettez dans vos tenues.
+> Chez LALLAT, on rêve que chaque invitée puisse se sentir belle le jour d'un mariage, d'un henné ou de l'Aïd, en louant sa tenue près de chez elle. Et que les belles pièces ne dorment plus au fond de l'armoire entre deux fêtes.
+> On aimerait beaucoup que les vôtres fassent partie des premières que l'on présente.
+> Ça vous dirait qu'on en parle ? 🌸
+
 ### DM Instagram (premier contact, court)
 
 > Bonjour [Prénom] 🤍
@@ -35,6 +43,14 @@ Règle d'or : toujours une phrase personnalisée sur SON travail (une pièce, un
 ---
 
 ## 2. Prestataires (maquilleuses, coiffeuses, hennayas, negafas, photographes, musiciens, DJ, traiteurs)
+
+### DM Instagram, version douce (premier contact, sans argument commercial)
+
+> Bonjour [Prénom] 🤍
+> Quel coup de cœur pour [votre henné de mariée] ! On sent tout le soin que vous mettez dans chaque détail.
+> Chez LALLAT, on rêve que chaque invitée puisse se préparer sereinement pour la fête : sa tenue, son henné, son maquillage, trouvés près de chez elle.
+> On prépare une série de portraits, « Les mains de la fête », et on aimerait beaucoup vous y présenter.
+> Ça vous dirait qu'on en parle ? 🌸
 
 ### DM Instagram (premier contact, court)
 
