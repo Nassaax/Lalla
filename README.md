@@ -178,7 +178,7 @@ Vercel envoie automatiquement l'en-tête `Authorization: Bearer <CRON_SECRET>`. 
 
 > **Plan Hobby (gratuit)** : Vercel n'autorise qu'un passage par jour. Le passage horaire est donc assuré par **GitHub Actions** (gratuit), via `.github/workflows/cron-horaire.yml`. À régler une seule fois dans GitHub → *Settings* → *Secrets and variables* → *Actions* :
 > - onglet **Secrets** : `CRON_SECRET` = la même valeur que sur Vercel ;
-> - onglet **Variables** : `SITE_URL` = l'adresse du site (ex. `https://lalla-pearl.vercel.app`, sans « / » final).
+> - onglet **Variables** : `SITE_URL` = l'adresse du site (ex. `https://lallat.be`, sans « / » final).
 >
 > Tant que ces deux réglages manquent, le workflow ne fait rien. Avec le **plan Pro** de Vercel, vous pouvez remettre `"0 * * * *"` pour `/api/cron/horaire` dans `vercel.json` et supprimer le workflow.
 

@@ -13,14 +13,15 @@
 - [x] OVHcloud : serveurs DNS remplacés par ns1.vercel-dns.com et ns2.vercel-dns.com
 - [x] Zone Vercel : MX OVH (mx0 1, mx1 5, mx2 50, mx3 100 .mail.ovh.net), SPF `v=spf1 include:mx.ovh.com ~all`, DMARC `p=none`
 - [x] Adresse de contact du site : info@lallat.be
-- [ ] Attendre la prise en compte des serveurs DNS (Vercel ne doit plus afficher ns111.ovh.net), puis vérifier https://lallat.be
+- [x] Serveurs DNS pris en compte (9 octobre), certificats HTTPS émis pour lallat.be et www.lallat.be
 - [ ] OVHcloud Zimbra : associer lallat.be, créer la boîte **info@lallat.be** ; ajouter dans la zone Vercel les 2 CNAME propres au compte (vérification `ovh-zimbra-…` et DKIM `ovhmo-selector-1._domainkey`)
 - [ ] Resend : section Domains, ajouter `lallat.be` (région Irlande), puis ajouter ses enregistrements dans la zone Vercel (DKIM `resend._domainkey`, MX et TXT sur `send`)
 - [ ] Vercel : **supprimer `EMAIL_FROM`** une fois Resend vérifié (les emails partiront alors de info@lallat.be)
-- [ ] Vercel : `SITE_URL` = https://lallat.be (seulement quand https://lallat.be répond)
+- [x] Vercel : `SITE_URL` = https://lallat.be
 - [ ] Supabase : Authentication, URL Configuration, Site URL = https://lallat.be (+ redirections https://lallat.be/**)
 - [ ] Stripe : mettre à jour l'URL des 2 webhooks vers https://lallat.be/api/webhook
-- [ ] App : adresse par défaut dans `app/scripts/construire.mjs` ; dossiers de démarchage (`SITE` dans dossiers.html) puis régénérer
+- [x] App : adresse par défaut dans `app/scripts/construire.mjs` ; dossiers de démarchage régénérés avec lallat.be
+- [ ] Plus tard (après mise à jour des webhooks Stripe) : rediriger lalla-pearl.vercel.app vers lallat.be
 - [ ] Redéployer, puis vérifier un email reçu par une adresse quelconque
 
 ## Avant l'ouverture des réservations
@@ -38,5 +39,5 @@
 - [ ] App Store Connect : créer l'app « LALLAT » (identifiant be.lallat.app), fiche, captures, confidentialité
 - [ ] Compte Google Play Console (25 $ une fois) puis secrets GitHub : ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD
 - [ ] Notifications push (Firebase + clé APNs) : à brancher quand les comptes existent
-- [ ] Domaine lallat.be : changer l'adresse par défaut dans `app/scripts/construire.mjs` et republier les apps
+- [x] Domaine lallat.be : adresse par défaut changée dans `app/scripts/construire.mjs` (à republier avec les apps)
 - [ ] Une fois les apps publiées : ajouter sur le site un bouton vers l'App Store et Google Play

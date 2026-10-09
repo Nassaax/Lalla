@@ -2,7 +2,7 @@
 import { db } from '../lib/supabase.js';
 import { siteUrl } from '../lib/env.js';
 
-const STATIQUES = ['', 'catalogue.html', 'aide.html', 'partenaires.html', 'conditions.html', 'mentions-legales.html', 'confidentialite.html',
+const STATIQUES = ['', 'catalogue.html', 'aide.html', 'partenaires.html', 'notre-histoire.html', 'conditions.html', 'mentions-legales.html', 'confidentialite.html',
   'catalogue.html?categorie=caftan', 'catalogue.html?categorie=takchita', 'catalogue.html?categorie=mariee'];
 
 export default async function handler(req, res) {

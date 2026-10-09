@@ -9,7 +9,7 @@ const ici = path.dirname(fileURLToPath(import.meta.url));
 const app = path.resolve(ici, '..');
 const site = path.resolve(app, '..');
 const www = path.join(app, 'www');
-const SITE = (process.argv[2] || process.env.LALLAT_SITE || 'https://lalla-pearl.vercel.app').replace(/\/+$/, '');
+const SITE = (process.argv[2] || process.env.LALLAT_SITE || 'https://lallat.be').replace(/\/+$/, '');
 
 // Pages utiles dans l'app (l'administration reste sur le site)
 const PAGES = readdirSync(site).filter((f) => f.endsWith('.html') && !['admin.html', 'offline.html'].includes(f));
