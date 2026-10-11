@@ -1003,7 +1003,7 @@ a.puce { text-decoration: none; display: inline-flex; align-items: center; color
 /* Barre d'onglets (téléphone et tablette) */
 .onglets { display: none; }
 @media (max-width: 1023px) {
-  .onglets { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; z-index: 60; left: 0; right: 0; bottom: 0;
+  .onglets { display: grid; grid-template-columns: repeat(6, 1fr); position: fixed; z-index: 60; left: 0; right: 0; bottom: 0;
     padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); background: rgba(250, 246, 240, .96); border-top: 1px solid var(--ligne);
     -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); }
   .onglets__lien { display: grid; justify-items: center; gap: 2px; padding: 4px 0; min-height: 48px; color: var(--encre); opacity: .62; text-decoration: none; font-size: 10.5px; letter-spacing: .02em; -webkit-tap-highlight-color: transparent; transition: opacity .2s, color .2s; }
@@ -1011,6 +1011,10 @@ a.puce { text-decoration: none; display: inline-flex; align-items: center; color
   .onglets__lien.est-actif { opacity: 1; color: var(--bordeaux); font-weight: 600; }
   .onglets__icone { position: relative; display: block; width: 24px; height: 24px; }
   .onglets__icone .icone { width: 24px; height: 24px; }
+  /* « Publier » : pastille bordeaux bien visible, pour que les fournisseuses trouvent où déposer leurs annonces */
+  .onglets__lien--publier { opacity: 1; color: var(--bordeaux); font-weight: 600; }
+  .onglets__lien--publier .onglets__icone { width: 40px; height: 40px; margin-top: -14px; border-radius: 50%; background: var(--bordeaux); color: var(--ivoire-clair); display: grid; place-items: center; box-shadow: 0 6px 16px -6px rgba(94, 29, 39, .7); }
+  .onglets__lien--publier .onglets__icone .icone { width: 24px; height: 24px; }
   .onglets__compteur { position: absolute; top: -4px; right: -9px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px; background: var(--bordeaux); color: var(--ivoire-clair); font-size: 10px; font-weight: 600; line-height: 17px; text-align: center; }
   .a-onglets body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
   .a-onglets .toasts { bottom: calc(80px + env(safe-area-inset-bottom)); }

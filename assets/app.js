@@ -492,6 +492,7 @@
   /** Barre d'onglets en bas de l'écran sur téléphone et tablette (comme une application). */
   var ICONES_ONGLETS = {
     accueil: '<path d="M4 11.5 12 5l8 6.5V20h-5.5v-5h-5v5H4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>',
+    publier: '<path d="M12 6v12M6 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
     explorer: '<circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
     favoris: '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>',
     panier: '<path d="M6 8h12l-1 12H7L6 8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.5"/>',
@@ -501,17 +502,18 @@
     if (['admin', 'tenue'].indexOf(page) >= 0 || $('.onglets')) return;
     var vue = L.param('vue');
     var actif = page === 'index' ? 'accueil' : page === 'catalogue' ? 'explorer' : page === 'panier' ? 'panier'
-      : page === 'compte' ? (vue === 'favoris' ? 'favoris' : 'compte') : null;
+      : page === 'compte' ? (vue === 'favoris' ? 'favoris' : vue === 'annonces' ? 'publier' : 'compte') : null;
     var compteur = h('span', { class: 'onglets__compteur', 'aria-hidden': 'true' });
     function majCompteur() { var n = L.panier.nb(); compteur.textContent = n ? String(n) : ''; compteur.hidden = !n; }
     function onglet(cle, href, libelle, extra) {
-      return h('a', { href: href, class: 'onglets__lien' + (actif === cle ? ' est-actif' : ''), 'aria-current': actif === cle ? 'page' : null },
+      return h('a', { href: href, class: 'onglets__lien onglets__lien--' + cle + (actif === cle ? ' est-actif' : ''), 'aria-current': actif === cle ? 'page' : null },
         h('span', { class: 'onglets__icone' }, L.ui.icone(ICONES_ONGLETS[cle]), extra || null),
         h('span', { class: 'onglets__libelle', 'data-i18n': libelle }, t(libelle)));
     }
     var barre = h('nav', { class: 'onglets', 'aria-label': t('onglet.navigation') },
       onglet('accueil', 'index.html', 'onglet.accueil'),
       onglet('explorer', 'catalogue.html', 'onglet.explorer'),
+      onglet('publier', 'compte.html?vue=annonces', 'onglet.publier'),
       onglet('favoris', 'compte.html?vue=favoris', 'onglet.favoris'),
       onglet('panier', 'panier.html', 'onglet.panier', compteur),
       onglet('compte', 'compte.html', 'onglet.compte'));
@@ -523,6 +525,8 @@
       var href = a.getAttribute('href');
       L.auth.pret.then(function () {
         if (L.session) location.href = href;
+        // « Publier » sans compte : inscription directement avec le profil fournisseuse (lien « Se connecter » dans la fenêtre)
+        else if (/vue=annonces/.test(href)) L.ui.authentification('inscription', { role: 'fournisseuse' });
         else L.ui.authentification('connexion', { ensuite: function () { location.href = href; } });
       });
     });
