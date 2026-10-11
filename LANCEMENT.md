@@ -34,6 +34,7 @@
 - [ ] Stripe en mode réel : activation du compte, nouvelles clés, 2 webhooks, option Accounts v1
 - [ ] Conditions générales relues par un avocat (caution en espèces, DAC7, annulations) + assurance RC pro
 - [ ] 10 à 20 loueuses inscrites avec annonces validées
+- [ ] Une fois Stripe en mode réel : demander à chaque fournisseuse de configurer son compte de versement (Mon espace, Paiements). Sans lui, ses annonces restent visibles mais ne peuvent pas être réservées. La colonne « Stripe » des comptes dans l'admin indique qui relancer.
 - [ ] Une location réelle à petit prix, puis « Ouvrir les réservations » dans l'admin
 - [ ] Le même jour : dernière ligne de la bio Instagram remplacée par « ✨ Réservez en ligne 👇 » (voir `marque/PROFIL-INSTAGRAM.md`)
 

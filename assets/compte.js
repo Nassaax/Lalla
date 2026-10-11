@@ -544,7 +544,8 @@
     if (!etat.profil.est_fournisseuse) return devenirFournisseuse(contenu);
     return sb(L.sb.from('tenues').select('*, tenue_photos(id, type, chemin, ordre)').eq('fournisseuse_id', etat.profil.id).order('created_at', { ascending: false })).then(function (liste) {
       L.vider(contenu);
-      if (!etat.profil.stripe_onboarding_complet) contenu.appendChild(h('p', { class: 'message message--alerte' }, t('annonce.stripe_requis'), ' ', h('a', { href: '?vue=paiements', onclick: function (e) { e.preventDefault(); etat.aller('paiements'); } }, t('annonce.stripe_lien'))));
+      // Publier ne demande pas Stripe : le compte de versement n'est exigé qu'avant la première réservation.
+      if (!etat.profil.stripe_onboarding_complet) contenu.appendChild(h('p', { class: 'message' }, t('annonce.stripe_avant_location'), ' ', h('a', { href: '?vue=paiements', onclick: function (e) { e.preventDefault(); etat.aller('paiements'); } }, t('annonce.stripe_lien'))));
       var serie = etat.profil.type_fournisseuse !== 'particuliere';
       var tete = h('div', { class: 'actions', style: { marginTop: 0 } },
         h('button', { class: 'bouton bouton--petit', type: 'button', onclick: function () { formulaireTenue(contenu, null, false); } }, t('annonce.nouvelle')),
@@ -578,7 +579,7 @@
       e.preventDefault();
       L.sb.from('profils').update({ est_fournisseuse: true, type_fournisseuse: form.type.value, code_postal: form.code_postal.value }).eq('id', etat.profil.id).then(function (r) {
         if (r.error) { erreur($('.retour', form), r.error); return; }
-        location.href = 'compte.html?vue=paiements';
+        location.href = 'compte.html?vue=annonces';
       });
     });
     L.vider(contenu).appendChild(panneau(t('compte.v_devenir'), form));
