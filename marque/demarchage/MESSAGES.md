@@ -1,7 +1,7 @@
 # LALLAT : messages de démarchage
 
 À copier-coller. Remplacez [Prénom], [sa spécialité] et [détail personnalisé] avant d'envoyer.
-Envoyez le lien de la brochure en ligne : **lallat.be/devenir-fournisseuse** ou **lallat.be/devenir-prestataire**. Elle s'ouvre directement dans Instagram et WhatsApp, avec un bouton qui ouvre l'inscription sur le bon profil. Envoyez le lien après une première réponse : dans un tout premier message, Instagram peut filtrer les liens. Le PDF reste disponible pour l'email (`lallat-fournisseuses.pdf`, `lallat-prestataires.pdf`).
+Envoyez le lien de la brochure en ligne : **lallat.be/devenir-fournisseuse** ou **lallat.be/devenir-prestataire**. Pour les loueurs de matériel, **lallat.be/devenir-loueur** ouvre directement l'inscription avec le profil « loueur de matériel » (pas de brochure dédiée). Elle s'ouvre directement dans Instagram et WhatsApp, avec un bouton qui ouvre l'inscription sur le bon profil. Envoyez le lien après une première réponse : dans un tout premier message, Instagram peut filtrer les liens. Le PDF reste disponible pour l'email (`lallat-fournisseuses.pdf`, `lallat-prestataires.pdf`).
 
 Règle d'or : toujours une phrase personnalisée sur SON travail (une pièce, une photo, un post). C'est ce qui fait répondre.
 
@@ -81,6 +81,11 @@ Règle d'or : toujours une phrase personnalisée sur SON travail (une pièce, un
 > Nous lançons LALLAT, la plateforme des fêtes en Belgique (tenues marocaines, prestataires et matériel). Votre [amaria / sono / décoration] correspond exactement à ce que nos clientes cherchent pour leurs hennés, fiançailles et soirées.
 > Publication gratuite, vous fixez votre prix et votre caution, état des lieux en photos à la remise et au retour, paiement encaissé en ligne avant la location. Commission de 15 % seulement quand vous louez.
 > Je vous envoie notre dossier de présentation ?
+
+### Après une réponse positive
+
+> Merci [Prénom] ! Vous pouvez créer votre compte ici, le profil « loueur de matériel » est déjà sélectionné : lallat.be/devenir-loueur
+> Ensuite, le bouton « Publier » en bas de l'écran vous permet d'ajouter votre matériel, une photo principale suffit. Je peux vous aider pour la première annonce si vous voulez.
 
 ---
 

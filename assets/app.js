@@ -1094,10 +1094,10 @@
     if (L.bandeauLancement) L.bandeauLancement(page);
     L.motion.reveler(document);
     if (L.param('connexion') === '1') L.auth.pret.then(function () { if (!L.session) L.ui.authentification('connexion', page === 'admin' ? { ensuite: function () { location.reload(); } } : undefined); });
-    // Lien direct vers l'inscription avec le bon profil (brochures de démarchage) : ?inscription=fournisseuse, prestataire, partenaire ou cliente
+    // Lien direct vers l'inscription avec le bon profil (brochures de démarchage) : ?inscription=fournisseuse, prestataire, loueur, partenaire ou cliente
     var inscription = L.param('inscription');
-    if (['cliente', 'fournisseuse', 'partenaire', 'prestataire'].indexOf(inscription) >= 0) L.auth.pret.then(function () {
-      if (!L.session) L.ui.authentification('inscription', inscription === 'prestataire' ? { role: 'fournisseuse', type: 'prestataire' } : { role: inscription });
+    if (['cliente', 'fournisseuse', 'partenaire', 'prestataire', 'loueur'].indexOf(inscription) >= 0) L.auth.pret.then(function () {
+      if (!L.session) L.ui.authentification('inscription', inscription === 'prestataire' || inscription === 'loueur' ? { role: 'fournisseuse', type: inscription } : { role: inscription });
     });
     // Application installable : service worker (HTTPS uniquement, hors tests locaux).
     if ('serviceWorker' in navigator && location.protocol === 'https:') {

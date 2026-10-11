@@ -20,6 +20,11 @@
       "source": "/package-lock.json",
       "destination": "/",
       "permanent": false
+    },
+    {
+      "source": "/devenir-loueur",
+      "destination": "/?inscription=loueur",
+      "permanent": false
     }
   ],
   "functions": {
