@@ -789,7 +789,7 @@
       var retour = h('div');
       var typeBloc = h('div', { class: 'champ', hidden: true },
         h('span', { class: 'champ__libelle' }, t('auth.type')),
-        h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'creatrice', 'prestataire', 'loueur'].map(function (ty) {
+        h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'loueur_tenues', 'creatrice', 'prestataire', 'loueur'].map(function (ty) {
           return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'type', value: ty, checked: (options.type || 'particuliere') === ty }), h('span', null, t('type.' + ty)));
         })));
       var form = h('form', { class: 'formulaire', novalidate: true },

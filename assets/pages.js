@@ -523,7 +523,7 @@
       h('label', { class: 'champ__libelle', for: 'f-prix' }, t('cat.budget_max')),
       h('input', { id: 'f-prix', name: 'prix_max', type: 'number', inputmode: 'numeric', min: '10', step: '5', class: 'champ__controle', value: etat.prix_max || '', placeholder: '150' }))));
     if (u === 'tenue') form.appendChild(groupe('cat.f_vendeuse', h('div', { class: 'choix-pastilles' },
-      [['', t('cat.toutes')], ['negafa', t('type.negafa')], ['creatrice', t('type.creatrice')], ['particuliere', t('type.particuliere')]].map(function (v) {
+      [['', t('cat.toutes')], ['negafa', t('type.negafa')], ['loueur_tenues', t('type.loueur_tenues')], ['creatrice', t('type.creatrice')], ['particuliere', t('type.particuliere')]].map(function (v) {
         return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'boutique', value: v[0], checked: (etat.boutique || '') === v[0] }), h('span', null, v[1]));
       }))));
   }

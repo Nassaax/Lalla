@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const site = siteUrl();
   const [tenues, boutiques] = await Promise.all([
     db().from('tenues').select('id, updated_at').eq('statut', 'validee').limit(5000),
-    db().from('profils').select('id, created_at').eq('est_fournisseuse', true).eq('compte_valide', true).in('type_fournisseuse', ['negafa', 'creatrice']).limit(2000)
+    db().from('profils').select('id, created_at').eq('est_fournisseuse', true).eq('compte_valide', true).in('type_fournisseuse', ['negafa', 'loueur_tenues', 'creatrice']).limit(2000)
   ]);
   const url = (loc, lastmod, prio) => `<url><loc>${loc.replace(/&/g, '&amp;')}</loc>${lastmod ? `<lastmod>${lastmod.slice(0, 10)}</lastmod>` : ''}<priority>${prio}</priority>` +
     `<xhtml:link rel="alternate" hreflang="nl-BE" href="${(loc + (loc.includes('?') ? '&' : '?') + 'lang=nl').replace(/&/g, '&amp;')}"/></url>`;

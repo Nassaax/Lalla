@@ -571,7 +571,7 @@
   function devenirFournisseuse(contenu) {
     var form = h('form', { class: 'formulaire' },
       h('p', { class: 'chapeau' }, t('devenir.intro')),
-      h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'creatrice', 'prestataire', 'loueur'].map(function (ty, i) { return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'type', value: ty, checked: i === 0 }), h('span', null, t('type.' + ty))); })),
+      h('div', { class: 'choix-pastilles' }, ['particuliere', 'negafa', 'loueur_tenues', 'creatrice', 'prestataire', 'loueur'].map(function (ty, i) { return h('label', { class: 'pastille' }, h('input', { type: 'radio', name: 'type', value: ty, checked: i === 0 }), h('span', null, t('type.' + ty))); })),
       L.ui.champ('code_postal', 'profil.code_postal', { required: true, inputmode: 'numeric', maxlength: 4, pattern: '[0-9]{4}', autocomplete: 'postal-code', value: etat.profil.code_postal || '', aide: t('profil.code_postal_aide') }),
       h('div', { class: 'retour' }),
       h('button', { class: 'bouton', type: 'submit' }, t('devenir.activer')));
